@@ -1,0 +1,445 @@
+{
+	"title": "Peach-G Portal",
+	"description": "PeachDB: a curated collection of genetic variation for the interactive analysis of peach genome data",
+	"long_description": "Next-generation sequencing technology are moving towards many species of horticultural interest, bearing the potential to accelerate the understanding and exploitation of genetic resource. Peach-DB is an open-source catalog of genetic variants present in peach (P. persica L. Batsch) and wild-related species of Prunus genera, annotated from 146 publicly released Sequence Reads Archive (SRA). Our scope is to make quickly and easily accessible a large amount of information from whole-genome sequencing projects for a range of purposes, spacing from genotyping to functional genomics. The web interface of the database is designed and optimized for an intuitive and user-friendly and intuitive exploration, and provides several tools for searching and downloading, along with useful statistics and information.",
+	"image": {
+		"src": "http://www.rodalesorganiclife.com/sites/rodalesorganiclife.com/files/styles/slideshow-desktop/public/peachpit_zadorozhna_natalia_1100.jpg?itok=TFYdDSOe",
+		"percentage_width": "200"
+	},
+	"logos": [
+		{
+			"image": "http://users.unimi.it/valorvi/members_file/image004.jpg"
+		},
+		{
+			"image": "http://www.procedamus.it/images/CINECA.jpg"
+		}
+	],
+	"menu": [{
+			"name": "Home",
+			"url": "main"
+		}, {
+			"name": "Search",
+			"items": [{
+				"name": "Search by region",
+				"url": "search_by_region"
+			}, {
+				"name": "Search by gene type",
+				"url": "search_by_gene_type"
+			}, {
+				"name": "Search by gene ID",
+				"url": "search_by_gene_name"
+			}, {
+				"name": "Search by cultivars",
+				"url": "search_by_cultivar"
+			}]
+		}, {
+			"name": "Cultivars",
+			"items": [{
+				"name": "See cultivars info",
+				"url": "cultivars"
+			}]
+		}, {
+			"name": "Tools",
+			"items": [{
+				"name": "blast",
+				"url": "launch_blast"
+			}, {
+				"name": "Calculate allele frequency",
+				"url": "calculate_allele_frequency"
+			}, {
+				"name": "Evaluate differences between two cultivars",
+				"url": "evaluate_differences_between_two_cultivars"
+			}]
+		}, {
+			"name": "JBrowse",
+			"items": [{
+				"name": "Visualize cultivar's variant",
+				"url": "http://localhost/jbrowse/JBrowse-1.12.1/index.html?data=data%2FpersicaV2&loc=Pp01%3A22694568..22709370&tracks=DNA%2CMy%20Genes%2CMySNPs%2CMyIndels&highlight="
+			}, {
+				"name": "Load external VCF",
+				"url": "load_external_vcf"
+			}]
+		},
+		{
+			"name": "Documents & Downloads",
+			"url": "downloads"
+		}, {
+			"name": "Statistics",
+			"url": "statistic"
+		}, {
+			"name": "Contact",
+			"url": "contact"
+		}
+	],
+	"forms": [{
+		"name": "search_by_region",
+		"submit": {
+			"label": "Search",
+			"url": "http://localhost/api/peach/search_by_chromosome/"
+		},
+		"fields": [{
+			"label": "Chromosome",
+			"type": "select",
+			"values": "http://localhost/api/peach/chromosomes/",
+			"placeholder": "Pp01",
+			"default": "Pp01",
+			"required": "true"
+		}, {
+			"label": "Start position",
+			"type": "number",
+			"placeholder": "1",
+			"default": "1",
+			"required": "true"
+		}, {
+			"label": "End position",
+			"type": "number",
+			"placeholder": "24320214",
+			"default": "24320214",
+			"required": "true"
+		},
+		{
+			"label": "Include SNP",
+			"type": "checkbox",
+			"value": "false"
+		},
+		{
+			"label": "Include INDELS",
+			"type": "checkbox",
+			"value": "true"
+		}]
+	}, {
+		"name": "search_by_gene_type",
+		"submit": {
+			"label": "Search",
+			"url": "http://localhost/api/peach/search_by_gene_type/"
+		},
+		"fields": [{
+			"label": "Gene type",
+			"type": "select",
+			"values": "http://localhost/api/peach/gene_types/"
+		}
+		]
+	}, {
+		"name": "search_by_gene_name",
+		"submit": {
+			"label": "Search",
+			"url": "http://localhost/api/peach/search_by_gene_name/"
+		},
+		"fields": [{
+			"label": "Gene name",
+			"type": "autocomplete",
+			"values": "http://localhost/api/peach/genes/"
+		}
+		]
+	}, {
+		"name": "search_by_cultivar",
+		"submit": {
+			"label": "Search",
+			"url": "http://localhost/api/peach/search_by_cultivar/",
+			"type": "POST"
+		},
+		"fields": [{
+			"label": "Cultivar name(s)",
+			"type": "select",
+			"values": "http://localhost/api/peach/cultivars/",
+			"multiple": true,
+			"required": "true"
+		}]
+	}, {
+		"name": "search_snp_cultivar",
+		"fields": [{
+			"label": "Select one or more cultivars",
+			"type": "select",
+			"values": "http://localhost/api/peach/snp_cultivar",
+			"placeholder": "Any",
+			"default": "...",
+			"required": "true"
+		}, {
+			"label": "Chromosome",
+			"type": "text",
+			"values": "http://localhost/api/peach/chromosomes/snp",
+			"placeholder": "14",
+			"default": "14",
+			"required": "true"
+		}, {
+			"label": "Start position",
+			"type": "number",
+			"placeholder": "24292198",
+			"default": "24292198",
+			"required": "true"
+		}, {
+			"label": "End position",
+			"type": "number",
+			"placeholder": "24320214",
+			"default": "24320214",
+			"required": "true"
+		}, {
+			"name": "search_indel_region",
+			"fields": [{
+				"label": "Chromosome",
+				"type": "text",
+				"values": "http://localhost/api/peach/chromosomes/indel",
+				"placeholder": "14",
+				"default": "14",
+				"required": "true"
+			}, {
+				"label": "Start position",
+				"type": "number",
+				"placeholder": "24292198",
+				"default": "24292198",
+				"required": "true"
+			}, {
+				"label": "End position",
+				"type": "number",
+				"placeholder": "24320214",
+				"default": "24320214",
+				"required": "true"
+			}]
+		}, {
+			"name": "search_indel_gene",
+			"fields": [{
+				"label": "Gene name",
+				"type": "text",
+				"values": "http://localhost/api/peach/Gene/indel",
+				"placeholder": "...",
+				"default": "...",
+				"required": "true"
+			}]
+		}, {
+			"name": "search_indel_information",
+			"fields": [{
+				"label": "Please insert information or annotation",
+				"type": "text",
+				"values": "http://localhost/api/peach/indelinfo",
+				"placeholder": "...",
+				"default": "...",
+				"required": "true"
+			}]
+		}, {
+			"name": "search_indel_cultivar",
+			"fields": [{
+				"label": "Gene name",
+				"type": "text",
+				"values": "http://localhost/api/peach/snp_cultivar",
+				"placeholder": "...",
+				"default": "...",
+				"required": "true"
+			}, {
+				"label": "Chromosome",
+				"type": "text",
+				"values": "http://localhost/api/peach/chromosomes/indel",
+				"placeholder": "14",
+				"default": "14",
+				"required": "true"
+			}, {
+				"label": "Start position",
+				"type": "number",
+				"placeholder": "24292198",
+				"default": "24292198",
+				"required": "true"
+			}, {
+				"label": "End position",
+				"type": "number",
+				"placeholder": "24320214",
+				"default": "24320214",
+				"required": "true"
+			}
+			]
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/peach/chromosomes/"
+		}
+	}],
+	"pages": [
+		{
+			"title": "main",
+			"elements": [
+				[
+					{
+						"title": "Nuvola di cultivar",
+						"width": "50",
+						"elements": [
+							{
+								"type": "cloud",
+								"width": "400",
+								"height": "400",
+								"steps": "7",
+								"data": {
+									"url": "http://localhost/api/peach/get_stats/INDELS_PER_SAMPLE/"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "Gene density by chromosome",
+						"width": "100",
+						"elements": [
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/api/peach/load_distribution/0/",
+									"onClick": {
+										"action": "write",
+										"key": "chromosome"
+									}
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "Gene density by region",
+						"width": "100",
+						"elements": [
+							{
+								"type": "slider",
+								"label": "Select the window of interest for this chromosome",
+								"data": {
+									"min": "0",
+									"max": "1000000",
+									"value": "500000",
+									"step": "50000"
+								}
+							},
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/api/peach/load_distribution/CHROMOSOME/",
+									"template": "CHROMOSOME",
+									"key": "chromosome",
+									"value": "1"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "Number of variants per cultivar",
+						"width": "33",
+						"elements": [
+							{
+								"type": "chart-pie",
+								"data": {
+									"url": "http://localhost/api/peach/get_distribution/Cultivar/Variants/"
+								}
+							}
+						]
+					},
+					{
+						"title": "Global statistics",
+						"width": "66",
+						"elements": [
+							{
+								"type": "table",
+								"data": {
+									"url": "http://localhost/api/peach/get_total_stats/"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "Dataset overview (peach)",
+						"width": "50",
+						"actions": [
+							{
+								"url": "http://localhost/api/peach/download/excel/",
+								"label": "Download as Excel",
+								"type": "button",
+								"icon": "fa-file-excel-o",
+								"modifiers": "fa-lg"
+							},
+							{
+								"url": "http://localhost/api/peach/download/csv/",
+								"label": "Download as CSV",
+								"type": "button",
+								"icon": "fa-table",
+								"modifiers": "fa-lg"
+							}
+						],
+						"elements": [
+							{
+								"type": "table",
+								"data": {
+									"url": "http://localhost/api/peach/get_info_all_simple/persica/"
+								}
+							}
+						]
+					},
+					{
+						"title": "Dataset overview (wild-related species)",
+						"width": "50",
+						"actions": [
+							{
+								"url": "http://localhost/api/peach/download/excel/",
+								"label": "Download as Excel",
+								"type": "button",
+								"icon": "fa-file-excel-o",
+								"modifiers": "fa-lg"
+							},
+							{
+								"url": "http://localhost/api/peach/download/csv/",
+								"label": "Download as CSV",
+								"type": "button",
+								"icon": "fa-table",
+								"modifiers": "fa-lg"
+							}
+						],
+						"elements": [
+							{
+								"type": "table",
+								"data": {
+									"url": "http://localhost/api/peach/get_info_all_simple/wild/"
+								}
+							}
+						]
+					}
+				]
+			]
+		},
+		{
+			"title": "cultivars",
+			"elements": [
+				[
+					{
+						"title": "Dataset overview (peach)",
+						"width": "100",
+						"elements": [
+						{
+                                        "type": "table",
+                                        "data": {
+                                                "url": "http://localhost/api/peach/get_info_all/persica/"
+                                        }
+                                }
+                        ]
+					}
+				],
+				[
+					{
+						"title": "Dataset overview (wild-related species)",
+                        "width": "100",
+                        "elements": [
+                        {
+                                        "type": "table",
+                                        "data": {
+                                                "url": "http://localhost/api/peach/get_info_all/wild/"
+                                        }
+                                }
+                        ]
+					}
+				]
+			]
+		},
+		{
+			"title": "info",
+			"elements": [
+			]
+		}
+	]
+}
