@@ -75,12 +75,12 @@
 		"name": "search_by_region",
 		"submit": {
 			"label": "Search",
-			"url": "http://localhost/api/peach/search_by_chromosome/"
+			"url": "http://localhost/peach_api/peach/search_by_chromosome/"
 		},
 		"fields": [{
 			"label": "Chromosome",
 			"type": "select",
-			"values": "http://localhost/api/peach/chromosomes/",
+			"values": "http://localhost/peach_api/peach/chromosomes/",
 			"placeholder": "Pp01",
 			"default": "Pp01",
 			"required": "true"
@@ -111,37 +111,37 @@
 		"name": "search_by_gene_type",
 		"submit": {
 			"label": "Search",
-			"url": "http://localhost/api/peach/search_by_gene_type/"
+			"url": "http://localhost/peach_api/peach/search_by_gene_type/"
 		},
 		"fields": [{
 			"label": "Gene type",
 			"type": "select",
-			"values": "http://localhost/api/peach/gene_types/"
+			"values": "http://localhost/peach_api/peach/gene_types/"
 		}
 		]
 	}, {
 		"name": "search_by_gene_name",
 		"submit": {
 			"label": "Search",
-			"url": "http://localhost/api/peach/search_by_gene_name/"
+			"url": "http://localhost/peach_api/peach/search_by_gene_name/"
 		},
 		"fields": [{
 			"label": "Gene name",
 			"type": "autocomplete",
-			"values": "http://localhost/api/peach/genes/"
+			"values": "http://localhost/peach_api/peach/genes/"
 		}
 		]
 	}, {
 		"name": "search_by_cultivar",
 		"submit": {
 			"label": "Search",
-			"url": "http://localhost/api/peach/search_by_cultivar/",
+			"url": "http://localhost/peach_api/peach/search_by_cultivar/",
 			"type": "POST"
 		},
 		"fields": [{
 			"label": "Cultivar name(s)",
 			"type": "select",
-			"values": "http://localhost/api/peach/cultivars/",
+			"values": "http://localhost/peach_api/peach/cultivars/",
 			"multiple": true,
 			"required": "true"
 		}]
@@ -150,14 +150,14 @@
 		"fields": [{
 			"label": "Select one or more cultivars",
 			"type": "select",
-			"values": "http://localhost/api/peach/snp_cultivar",
+			"values": "http://localhost/peach_api/peach/snp_cultivar",
 			"placeholder": "Any",
 			"default": "...",
 			"required": "true"
 		}, {
 			"label": "Chromosome",
 			"type": "text",
-			"values": "http://localhost/api/peach/chromosomes/snp",
+			"values": "http://localhost/peach_api/peach/chromosomes/snp",
 			"placeholder": "14",
 			"default": "14",
 			"required": "true"
@@ -178,7 +178,7 @@
 			"fields": [{
 				"label": "Chromosome",
 				"type": "text",
-				"values": "http://localhost/api/peach/chromosomes/indel",
+				"values": "http://localhost/peach_api/peach/chromosomes/indel",
 				"placeholder": "14",
 				"default": "14",
 				"required": "true"
@@ -200,7 +200,7 @@
 			"fields": [{
 				"label": "Gene name",
 				"type": "text",
-				"values": "http://localhost/api/peach/Gene/indel",
+				"values": "http://localhost/peach_api/peach/Gene/indel",
 				"placeholder": "...",
 				"default": "...",
 				"required": "true"
@@ -210,7 +210,7 @@
 			"fields": [{
 				"label": "Please insert information or annotation",
 				"type": "text",
-				"values": "http://localhost/api/peach/indelinfo",
+				"values": "http://localhost/peach_api/peach/indelinfo",
 				"placeholder": "...",
 				"default": "...",
 				"required": "true"
@@ -220,14 +220,14 @@
 			"fields": [{
 				"label": "Gene name",
 				"type": "text",
-				"values": "http://localhost/api/peach/snp_cultivar",
+				"values": "http://localhost/peach_api/peach/snp_cultivar",
 				"placeholder": "...",
 				"default": "...",
 				"required": "true"
 			}, {
 				"label": "Chromosome",
 				"type": "text",
-				"values": "http://localhost/api/peach/chromosomes/indel",
+				"values": "http://localhost/peach_api/peach/chromosomes/indel",
 				"placeholder": "14",
 				"default": "14",
 				"required": "true"
@@ -248,7 +248,7 @@
 		}],
 		"submit": {
 			"label": "Submit",
-			"url": "http://localhost/api/peach/chromosomes/"
+			"url": "http://localhost/peach_api/peach/chromosomes/"
 		}
 	}],
 	"pages": [
@@ -257,7 +257,21 @@
 			"elements": [
 				[
 					{
-						"title": "Nuvola di cultivar",
+						"title": "Estimation of diversity",
+						"subtitle": "Diversity between the two popolations (persica and wild) in terms of number of variants",
+						"width": "50",
+						"elements": [
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/peach_api/peach/variant_peach_stat_global/0/200000/"
+								}
+							}
+						]
+					},
+					{
+						"title": "Cultivar cloud",
+						"subtitle": "Cultivar displayed according to the number of variants (indels). Name size correlates to relevance.",
 						"width": "50",
 						"elements": [
 							{
@@ -266,7 +280,7 @@
 								"height": "400",
 								"steps": "7",
 								"data": {
-									"url": "http://localhost/api/peach/get_stats/INDELS_PER_SAMPLE/"
+									"url": "http://localhost/peach_api/peach/get_stats/INDELS_PER_SAMPLE/"
 								}
 							}
 						]
@@ -280,7 +294,7 @@
 							{
 								"type": "chart-bar",
 								"data": {
-									"url": "http://localhost/api/peach/load_distribution/0/",
+									"url": "http://localhost/peach_api/peach/variant_peach_stat/gene.density/0/200000/",
 									"onClick": {
 										"action": "write",
 										"key": "chromosome"
@@ -308,7 +322,7 @@
 							{
 								"type": "chart-bar",
 								"data": {
-									"url": "http://localhost/api/peach/load_distribution/CHROMOSOME/",
+									"url": "http://localhost/peach_api/peach/load_distribution/CHROMOSOME/",
 									"template": "CHROMOSOME",
 									"key": "chromosome",
 									"value": "1"
@@ -325,7 +339,7 @@
 							{
 								"type": "chart-pie",
 								"data": {
-									"url": "http://localhost/api/peach/get_distribution/Cultivar/Variants/"
+									"url": "http://localhost/peach_api/peach/get_distribution/Cultivar/Variants/"
 								}
 							}
 						]
@@ -337,7 +351,7 @@
 							{
 								"type": "table",
 								"data": {
-									"url": "http://localhost/api/peach/get_total_stats/"
+									"url": "http://localhost/peach_api/peach/get_total_stats/"
 								}
 							}
 						]
@@ -349,14 +363,14 @@
 						"width": "50",
 						"actions": [
 							{
-								"url": "http://localhost/api/peach/download/excel/",
+								"url": "http://localhost/peach_api/peach/download/excel/",
 								"label": "Download as Excel",
 								"type": "button",
 								"icon": "fa-file-excel-o",
 								"modifiers": "fa-lg"
 							},
 							{
-								"url": "http://localhost/api/peach/download/csv/",
+								"url": "http://localhost/peach_api/peach/download/csv/",
 								"label": "Download as CSV",
 								"type": "button",
 								"icon": "fa-table",
@@ -367,7 +381,7 @@
 							{
 								"type": "table",
 								"data": {
-									"url": "http://localhost/api/peach/get_info_all_simple/persica/"
+									"url": "http://localhost/peach_api/peach/get_info_all_simple/persica/"
 								}
 							}
 						]
@@ -377,14 +391,14 @@
 						"width": "50",
 						"actions": [
 							{
-								"url": "http://localhost/api/peach/download/excel/",
+								"url": "http://localhost/peach_api/peach/download/excel/",
 								"label": "Download as Excel",
 								"type": "button",
 								"icon": "fa-file-excel-o",
 								"modifiers": "fa-lg"
 							},
 							{
-								"url": "http://localhost/api/peach/download/csv/",
+								"url": "http://localhost/peach_api/peach/download/csv/",
 								"label": "Download as CSV",
 								"type": "button",
 								"icon": "fa-table",
@@ -395,7 +409,7 @@
 							{
 								"type": "table",
 								"data": {
-									"url": "http://localhost/api/peach/get_info_all_simple/wild/"
+									"url": "http://localhost/peach_api/peach/get_info_all_simple/wild/"
 								}
 							}
 						]
@@ -414,7 +428,7 @@
 						{
                                         "type": "table",
                                         "data": {
-                                                "url": "http://localhost/api/peach/get_info_all/persica/"
+                                                "url": "http://localhost/peach_api/peach/get_info_all/persica/"
                                         }
                                 }
                         ]
@@ -428,7 +442,7 @@
                         {
                                         "type": "table",
                                         "data": {
-                                                "url": "http://localhost/api/peach/get_info_all/wild/"
+                                                "url": "http://localhost/peach_api/peach/get_info_all/wild/"
                                         }
                                 }
                         ]

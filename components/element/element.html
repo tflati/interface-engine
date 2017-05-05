@@ -87,9 +87,11 @@
 <div>
 	<canvas ng-if="type == 'chart-bar'"
 		class="chart chart-bar"
-		chart-data="subdata.items"
-		chart-labels="subdata.header"
+		chart-data="subdata.points"
+		chart-labels="subdata.labels"
+		chart-series="subdata.series"
 		chart-click="onClick"
+		chart-options="subdata.options"
 		>
 	</canvas>
 <div>

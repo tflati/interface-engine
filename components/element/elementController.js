@@ -68,7 +68,34 @@ app.controller("elementController", function($scope, $http, dataService){
 		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response.data);
 		$scope.subdata = response.data.details;
 		
+		if($scope.type == "chart-bar"){
+			$scope.subdata.labels = []
+			$scope.subdata.points = []
+			
+//			if ($scope.subdata.header.length > 2)
+				for(var i=0; i<$scope.subdata.header.length-1; i++)
+					$scope.subdata.points.push([]);
+			
+			for(var i=0; i<$scope.subdata.items.length; i++)
+			{
+				var item = $scope.subdata.items[i];
+				
+				$scope.subdata.labels.push(item[0]);
+				
+//				if ($scope.subdata.header.length > 2)
+					for(var j=1; j<$scope.subdata.header.length; j++)
+						$scope.subdata.points[j-1].push(item[j]);
+//				else
+//					$scope.subdata.points.push(item[1]);
+			}
+			
+			$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
+			
+			$scope.subdata.options = {legend: { display: $scope.subdata.series.length > 0}};
+		}
+		
 		console.log("ELEMENT DATA: ", $scope.subdata);
+		console.log("SCOPE ELEMENT DATA: ", $scope);
 	};
 	
 	$scope.onClick = function(evt){

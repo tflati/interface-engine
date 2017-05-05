@@ -273,8 +273,11 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 			var field = self.form.fields[i];
 			var value = field.value;
 			console.log("VALUE", value)
-			if (value == undefined || value == "") continue;
-			else args.push(value);
+//			if (value == undefined || value == "") continue;
+//			else args.push(value);
+			
+			if (value == undefined || value == "undefined" || value == "") value = "ALL";
+			args.push(value);
 		}
 		
 		console.log("ARGS", args);
@@ -283,24 +286,33 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		
 		if(self.form.submit.type == "POST")
 		{
+			self.sending = true;
+			
 			console.log("SENDING AJAX VIA POST", args);
 			$http.post(self.form.submit.url, args)
 			.then(function(response) {
+				self.sending = false;
 				console.log("QUERY POST SUCCESS", response);
 				self.form_results = response.data;
 				
 			}, function(response){
+				self.sending = false;
 				console.log("ERROR WHILE SENDING QUERY...", response);
 			});
 		}
 		else
 		{
+			self.sending = true;
+			
 			$http.get(self.form.submit.url + args.join("/") + "/")
 			.then(function(response) {
 				console.log("QUERY GET SUCCESS", response);
 				self.form_results = response.data;
 				
+				self.sending = false;
+				
 			}, function(response){
+				self.sending = false;
 				console.log("ERROR WHILE SENDING QUERY...", response);
 			});
 		}
@@ -387,7 +399,7 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
             	{
             		field.checked = true;
             	}
-            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values && field.values.startsWith("http")))
+            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
             	{
             		var ajaxForms = self.ajax2forms[field.values];
             		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
