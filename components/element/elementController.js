@@ -72,9 +72,8 @@ app.controller("elementController", function($scope, $http, dataService){
 			$scope.subdata.labels = []
 			$scope.subdata.points = []
 			
-//			if ($scope.subdata.header.length > 2)
-				for(var i=0; i<$scope.subdata.header.length-1; i++)
-					$scope.subdata.points.push([]);
+			for(var i=0; i<$scope.subdata.header.length-1; i++)
+				$scope.subdata.points.push([]);
 			
 			for(var i=0; i<$scope.subdata.items.length; i++)
 			{
@@ -82,11 +81,8 @@ app.controller("elementController", function($scope, $http, dataService){
 				
 				$scope.subdata.labels.push(item[0]);
 				
-//				if ($scope.subdata.header.length > 2)
-					for(var j=1; j<$scope.subdata.header.length; j++)
-						$scope.subdata.points[j-1].push(item[j]);
-//				else
-//					$scope.subdata.points.push(item[1]);
+				for(var j=1; j<$scope.subdata.header.length; j++)
+					$scope.subdata.points[j-1].push(item[j]);
 			}
 			
 			$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
