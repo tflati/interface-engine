@@ -51,14 +51,11 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		    ["Y" , 59373566]
 	 ]};
 	
-	self.print = function(){
-		console.log(self.info.forms);
-	};
-	
 	self.get_current_page_data = function(){
-		for(var i=0; i<self.info.pages.length; i++)
-			if(self.info.pages[i].title == self.page.replace(".html", "").replace("templates/", ""))
-				return self.info.pages[i];
+		if(self.info.pages)
+			for(var i=0; i<self.info.pages.length; i++)
+				if(self.info.pages[i].title == self.page.replace(".html", "").replace("templates/", ""))
+					return self.info.pages[i];
 	};
 	
 	self.load_form = function(group, option){
@@ -117,19 +114,20 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		
 		// Check if the url is a form name
 		var isForm = false;
-		for(var f=0; f<self.info.forms.length; f++)
-		{
-			var form = self.info.forms[f];
-			if(form.name == url)
+		if( self.info.forms )
+			for(var f=0; f<self.info.forms.length; f++)
 			{
-				isForm = true;
-				self.form = form;
-				
-				console.log(self.form);
-				
-				break;
+				var form = self.info.forms[f];
+				if(form.name == url)
+				{
+					isForm = true;
+					self.form = form;
+					
+					console.log(self.form);
+					
+					break;
+				}
 			}
-		}
 		
 		if(isForm) {
 			console.log("Going to render form");
@@ -143,24 +141,25 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 			
 			console.log("Going to render page");
 			
-			if(url.startsWith("http://")){
+			if(url.startsWith("http://")) {
 				$window.location.href = url;
 			}
-
-			self.page = 'templates/'+url+'.html';
-			
-			if(item.action) {
-				self.info.image.percentage_width = self.info.image.percentage_width_original / 2;
-				self.header.show_logos = false;
-				self.load_data(item.action);
-
-				console.log("CONTROLLER", self.info);
-			}
-			
-			if(url == "main") {
-				self.page = 'templates/main.html'; // window.location = url;
-				self.info.image.percentage_width = self.info.image.percentage_width_original;
-				self.header.show_logos = true;
+			else {
+				self.page = 'templates/'+url+'.html';
+				
+				if(item.action) {
+					self.info.image.percentage_width = self.info.image.percentage_width_original / 2;
+					self.header.show_logos = false;
+					self.load_data(item.action);
+	
+					console.log("CONTROLLER", self.info);
+				}
+				
+				if(url == "main") {
+					self.page = 'templates/main.html'; // window.location = url;
+					self.info.image.percentage_width = self.info.image.percentage_width_original;
+					self.header.show_logos = true;
+				}
 			}
 		}
 	};
@@ -381,78 +380,79 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 // 								}
 // 						);
         
-        for(var f=0; f<self.info.forms.length; f++)
-        {
-        	var form = self.info.forms[f];
-        	
-            for(var i=0; i<form.fields.length; i++)
-            {
-            	var field = form.fields[i];
-            	
-            	// Assign the chosen default value
-            	if(field.default) field.value = field.default;
-            	
-            	// Check types
-            	if(field.type == "number") field.value = parseInt(field.value);
-            	
-            	if(field.type === "checkbox" && field.value === "true")
-            	{
-            		field.checked = true;
-            	}
-            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
-            	{
-            		var ajaxForms = self.ajax2forms[field.values];
-            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
-            		ajaxForms.push(field);
-            	}
-            	
-            	// Subform handling 
-            	if(field.form) {
-            		// console.log("Handling subforms");
-            		for(var j=0; j < field.form.length; j++)
-            		{	
-            			var subform = field.form[j];
-// 	                        			console.log("SUBFORM: ", subform);
-            			
-            			for(var s=0; s<subform.fields.length; s++)
-            			{
-            				var subfield = subform.fields[s];
-// 	                        				console.log("\tSUBFORM FIELD", subfield);
-            				if(subfield.type == "select") {
-            					console.log("FOUND SUBSELECT", subfield);
-                    			var ajaxForms = self.ajax2forms[subfield.values];
-                        		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[subfield.values] = ajaxForms;}
-                        		ajaxForms.push(subfield);
-                			}
-            			}
-            			
-            			// console.log("Handling subform = ", subform);
-            			
-                		if(!subform.value && !subform.index) continue;
-                		
-                		// console.log("\tsubform= ", subform.value, subform.index, field.values);
-                		
-            			for(var c=0; c < field.values.length; c++)
-						{
-							var value = field.values[c];
-							// console.log("\t\tvalue=", value);
-							
-							if(subform.value && value.label == subform.value)
+        if(self.info.forms)
+	        for(var f=0; f<self.info.forms.length; f++)
+	        {
+	        	var form = self.info.forms[f];
+	        	
+	            for(var i=0; i<form.fields.length; i++)
+	            {
+	            	var field = form.fields[i];
+	            	
+	            	// Assign the chosen default value
+	            	if(field.default) field.value = field.default;
+	            	
+	            	// Check types
+	            	if(field.type == "number") field.value = parseInt(field.value);
+	            	
+	            	if(field.type === "checkbox" && field.value === "true")
+	            	{
+	            		field.checked = true;
+	            	}
+	            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
+	            	{
+	            		var ajaxForms = self.ajax2forms[field.values];
+	            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
+	            		ajaxForms.push(field);
+	            	}
+	            	
+	            	// Subform handling 
+	            	if(field.form) {
+	            		// console.log("Handling subforms");
+	            		for(var j=0; j < field.form.length; j++)
+	            		{	
+	            			var subform = field.form[j];
+	// 	                        			console.log("SUBFORM: ", subform);
+	            			
+	            			for(var s=0; s<subform.fields.length; s++)
+	            			{
+	            				var subfield = subform.fields[s];
+	// 	                        				console.log("\tSUBFORM FIELD", subfield);
+	            				if(subfield.type == "select") {
+	            					console.log("FOUND SUBSELECT", subfield);
+	                    			var ajaxForms = self.ajax2forms[subfield.values];
+	                        		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[subfield.values] = ajaxForms;}
+	                        		ajaxForms.push(subfield);
+	                			}
+	            			}
+	            			
+	            			// console.log("Handling subform = ", subform);
+	            			
+	                		if(!subform.value && !subform.index) continue;
+	                		
+	                		// console.log("\tsubform= ", subform.value, subform.index, field.values);
+	                		
+	            			for(var c=0; c < field.values.length; c++)
 							{
-								// console.log("\tsubform's name="+subform.value+" equals name of option="+value);
-								value.url = subform.name;
-								value.form = subform;
+								var value = field.values[c];
+								// console.log("\t\tvalue=", value);
+								
+								if(subform.value && value.label == subform.value)
+								{
+									// console.log("\tsubform's name="+subform.value+" equals name of option="+value);
+									value.url = subform.name;
+									value.form = subform;
+								}
+								else if(subform.index && c == subform.index)
+								{
+									value.url = subform.name;
+									value.form = subform;
+								}
 							}
-							else if(subform.index && c == subform.index)
-							{
-								value.url = subform.name;
-								value.form = subform;
-							}
-						}
-            		}
-            	}
-            }
-        }
+	            		}
+	            	}
+	            }
+	        }
         
         console.log("ajax2forms", self.ajax2forms);
         

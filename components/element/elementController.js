@@ -11,6 +11,7 @@ app.controller("elementController", function($scope, $http, dataService){
 	$scope.init = function(data){
 		
 		$scope.type = data.type;
+		$scope.data = data.data;
 		$scope.label = data.label;
 		$scope.data_source = data.data;
 		$scope.numbered = data.numbered;

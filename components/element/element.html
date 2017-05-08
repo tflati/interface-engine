@@ -1,3 +1,16 @@
+
+<div ng-if="type == 'text'">
+	<p ng-bind="data"></p>
+</div>
+
+<div ng-if="type == 'bullet_list'">
+	<ul>
+		<li ng-repeat="item in data">
+			<p ng-bind-html="item"></p>
+		</li>
+	</ul>
+</div>
+
 <div ng-if="type == 'table'" style="max-height: 300px; overflow: auto;">
 
 	<table md-table md-row-select multiple>
