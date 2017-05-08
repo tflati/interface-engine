@@ -153,7 +153,9 @@
 					min="{{data_source.min}}"
 					max="{{data_source.max}}"
 					ng-model="data_source.value"
-					aria-label="{{label}}">
+					aria-label="{{label}}"
+					ng-change="onChange(data_source.value)"
+					>
 		</md-slider>
 	</md-slider-container>
 </div>
@@ -166,5 +168,9 @@
 		height="{{height}}"
 		steps="{{steps}}">
 	</jqcloud>
+</div>
+
+<div ng-if="type == 'tree'" ng-controller="treeController" style="overflow: scroll;">
+	<svg id="tree"></svg>
 </div>
 

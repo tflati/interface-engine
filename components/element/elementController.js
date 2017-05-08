@@ -34,6 +34,26 @@ app.controller("elementController", function($scope, $http, dataService){
 			    }
 			});
 		}
+		
+		if($scope.data_source.onChange){
+			var listener = $scope.data_source.onChange;
+			if(listener.action == "write") {
+				console.log("GLOBAL:", dataService);
+				dataService.global[listener.key] = $scope.data_source.value;
+				console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + $scope.data_source.value + " (real value: "+dataService.global[listener.key]+")");
+			}
+		}
+	};
+	
+	$scope.onChange = function(newValue){
+		console.log("NEW VALUE: ", newValue);
+		
+		var listener = $scope.data_source.onChange;
+		if(listener.action == "write") {
+			console.log("GLOBAL:", dataService);
+			dataService.global[listener.key] = newValue;
+			console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + newValue + " (real value: "+dataService.global[listener.key]+")");
+		}
 	};
 	
 	$scope.get_url = function(){
@@ -99,18 +119,23 @@ app.controller("elementController", function($scope, $http, dataService){
 		
 		var value = $scope.subdata.header[evt[0]._index];
 		console.log("CLICK EVENT", evt, value);
-//	    var chr_for_query = chr.replace("chr", "").trim();
-//	    self.clicked_chromosome = chr_for_query;
-//	    self.load_subdata(self.info.links.statistics_single_chromosome + chr_for_query + "/");
 		
 		var listener = $scope.data_source.onClick;
 		if(listener.action == "write") {
-			
 		$scope.$apply(function() {
 			console.log("GLOBAL:", dataService);
 			dataService.global[listener.key] = value;
 			console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + value + " (real value: "+dataService.global[listener.key]+")");
 		    });
 		}
+		
+//		var changeListener = $scope.data_source.onClick;
+//		if(changeListener.action == "write") {
+//			$scope.$apply(function() {
+//				console.log("GLOBAL:", dataService);
+//				dataService.global[changeListener.key] = value;
+//				console.log("CHANGING VALUE OF VARIABLE '" + changeListener.key + "' TO " + value + " (real value: "+dataService.global[changeListener.key]+")");
+//			});
+//		}
 	};
 });

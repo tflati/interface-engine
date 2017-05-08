@@ -1,6 +1,6 @@
 {
-	"title": "Peach-G Portal",
-	"description": "PeachDB: a curated collection of genetic variation for the interactive analysis of peach genome data",
+	"title": "Peach-DB Portal",
+	"description": "Peach-DB: a curated collection of genetic variation for the interactive analysis of peach genome data",
 	"long_description": "Next-generation sequencing technology are moving towards many species of horticultural interest, bearing the potential to accelerate the understanding and exploitation of genetic resource. Peach-DB is an open-source catalog of genetic variants present in peach (P. persica L. Batsch) and wild-related species of Prunus genera, annotated from 146 publicly released Sequence Reads Archive (SRA). Our scope is to make quickly and easily accessible a large amount of information from whole-genome sequencing projects for a range of purposes, spacing from genotyping to functional genomics. The web interface of the database is designed and optimized for an intuitive and user-friendly and intuitive exploration, and provides several tools for searching and downloading, along with useful statistics and information.",
 	"image": {
 		"src": "http://www.rodalesorganiclife.com/sites/rodalesorganiclife.com/files/styles/slideshow-desktop/public/peachpit_zadorozhna_natalia_1100.jpg?itok=TFYdDSOe",
@@ -257,6 +257,21 @@
 			"elements": [
 				[
 					{
+						"title": "Phylogenetic tree",
+						"subtitle": "",
+						"width": "100",
+						"elements": [
+							{
+								"type": "tree",
+								"data": {
+									"url": "http://localhost/peach_api/peach/get_tree/"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
 						"title": "Estimation of diversity",
 						"subtitle": "Diversity between the two popolations (persica and wild) in terms of number of variants",
 						"width": "50",
@@ -311,21 +326,82 @@
 						"elements": [
 							{
 								"type": "slider",
-								"label": "Select the window of interest for this chromosome",
+								"label": "Select the size of the window",
 								"data": {
-									"min": "0",
-									"max": "1000000",
-									"value": "500000",
-									"step": "50000"
+									"min": "1000000",
+									"max": "10000000",
+									"value": "10000000",
+									"step": "500000",
+									"onChange": {
+										"action": "write",
+										"key": "window"
+									}
 								}
 							},
 							{
 								"type": "chart-bar",
 								"data": {
-									"url": "http://localhost/peach_api/peach/load_distribution/CHROMOSOME/",
-									"template": "CHROMOSOME",
-									"key": "chromosome",
-									"value": "1"
+									"url": "http://localhost/peach_api/peach/variant_peach_stat/gene.density/1/WINDOW/",
+									"template": "WINDOW",
+									"key": "window"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "SNP density by region (wild)",
+						"width": "50",
+						"elements": [
+							{
+								"type": "slider",
+								"label": "Select the size of the window",
+								"data": {
+									"min": "1000000",
+									"max": "10000000",
+									"value": "10000000",
+									"step": "500000",
+									"onChange": {
+										"action": "write",
+										"key": "window_snp_density"
+									}
+								}
+							},
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/peach_api/peach/variant_peach_stat/wildLD.pi/1/WINDOW_SNP_DENSITY/",
+									"template": "WINDOW_SNP_DENSITY",
+									"key": "window_snp_density"
+								}
+							}
+						]
+					},
+					{
+						"title": "SNP density by region (persica)",
+						"width": "50",
+						"elements": [
+							{
+								"type": "slider",
+								"label": "Select the size of the window",
+								"data": {
+									"min": "1000000",
+									"max": "10000000",
+									"value": "10000000",
+									"step": "500000",
+									"onChange": {
+										"action": "write",
+										"key": "window_snp_persica_density"
+									}
+								}
+							},
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/peach_api/peach/variant_peach_stat/persicaLD.pi/1/WINDOW_SNP_PERSICA_DENSITY/",
+									"template": "WINDOW_SNP_PERSICA_DENSITY",
+									"key": "window_snp_persica_density"
 								}
 							}
 						]
