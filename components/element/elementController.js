@@ -1,4 +1,4 @@
-app.controller("elementController", function($scope, $http, dataService){
+app.controller("elementController", function($scope, $http, dataService, messageService){
 	
 	$scope.subdata = [];
 	$scope.sending = false;
@@ -11,6 +11,7 @@ app.controller("elementController", function($scope, $http, dataService){
 	$scope.init = function(data){
 		
 		$scope.type = data.type;
+		$scope.stacked = data.stacked;
 		$scope.data = data.data;
 		$scope.label = data.label;
 		$scope.data_source = data.data;
@@ -79,6 +80,7 @@ app.controller("elementController", function($scope, $http, dataService){
 			function myError(response) {
 				$scope.sending = false;
             	console.log("ERROR IN GETTING DATA FROM " + url, response);
+            	messageService.showMessage('Errore durante il recupero dei dati da '+response.config.url+'. ' + 'Error code: ' + response.status, "error");
 			}
 		);
 	};
@@ -107,12 +109,20 @@ app.controller("elementController", function($scope, $http, dataService){
 			}
 			
 			$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
-			
 			$scope.subdata.options = {legend: { display: $scope.subdata.series.length > 0}};
+			if($scope.stacked)
+			{
+				$scope.subdata.options.scales = {
+			        xAxes: [{
+			          stacked: true,
+			        }],
+			        yAxes: [{
+			          stacked: true
+		        }]};
+			}
 		}
 		
-		console.log("ELEMENT DATA: ", $scope.subdata);
-		console.log("SCOPE ELEMENT DATA: ", $scope);
+//		console.log("SCOPE ELEMENT DATA: ", $scope);
 	};
 	
 	$scope.onClick = function(evt){

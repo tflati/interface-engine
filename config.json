@@ -250,11 +250,44 @@
 			"label": "Submit",
 			"url": "http://localhost/peach_api/peach/chromosomes/"
 		}
+	},
+	{
+		"name": "evaluate_differences_between_two_cultivars",
+		"submit": {
+			"label": "Search",
+			"url": "http://localhost/peach_api/peach/differences/"
+		},
+		"fields": [{
+			"label": "First cultivar",
+			"type": "select",
+			"values": "http://localhost/peach_api/peach/cultivars/",
+			"required": "true"
+		}, {
+			"label": "Second cultivar",
+			"type": "select",
+			"values": "http://localhost/peach_api/peach/cultivars/",
+			"required": "true"
+		}]
 	}],
 	"pages": [
 		{
 			"title": "main",
 			"elements": [
+				[
+					{
+						"title": "Population structure",
+						"width": "100",
+						"elements": [
+							{
+								"type": "chart-bar",
+								"stacked": "true",
+								"data": {
+									"url": "http://localhost/peach_api/peach/get_family_structure/"
+								}
+							}
+						]
+					}
+				],
 				[
 					{
 						"title": "Phylogenetic tree",
