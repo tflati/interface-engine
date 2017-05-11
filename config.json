@@ -548,13 +548,36 @@
 						"title": "Dataset overview (wild-related species)",
                         "width": "100",
                         "elements": [
-                        {
-                                        "type": "table",
-                                        "data": {
-                                                "url": "http://localhost/peach_api/peach/get_info_all/wild/"
-                                        }
+                        	{
+                                "type": "table",
+                                "data":
+                                {
+                                        "url": "http://localhost/peach_api/peach/get_info_all/wild/"
                                 }
+                            }
                         ]
+					}
+				]
+			]
+		},
+		{
+			"title": "downloads",
+			"elements":
+			[
+				[
+					{
+						"title": "Download data",
+						"width": "100",
+						"elements":
+						[
+							{
+								"type": "table",
+	                            "data":
+	                            {
+	                                    "url": "http://localhost/peach_api/peach/download/"
+	                            }
+                            }
+						]
 					}
 				]
 			]

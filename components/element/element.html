@@ -23,10 +23,19 @@
 				</tr>
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td md-cell ng-repeat="field in item track by $index">
-                  <md-button  ng-if='field.type == "button"' ng-click="ctrl.show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
-                  <span ng-if='field.startsWith("NO ")'>-</span>
-                  <span ng-if='!field.startsWith("NO ") && field.type != "button"' style="text-overflow: ellipsis;">{{field}}</span>
+              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
+              
+              	<span ng-switch-when="undefined" style="text-overflow: ellipsis;">
+              		<span>{{field}}</span>
+              	</span>
+              	
+                <div ng-switch-default>
+                	<md-button ng-if='field.type == "button"' ng-click="ctrl.show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}">
+              			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
+              		<span ng-if='field.type == "text"'>{{field.label + "#" + field.type}}</span>
+                </div>
+                
               </td>
 			</tr>
 		</tbody>
