@@ -3,6 +3,10 @@
 	<p ng-bind="data"></p>
 </div>
 
+<div ng-if="type == 'image'">
+	<img style="max-width:100%" ng-src="{{data.url}}"></img>
+</div>
+
 <div ng-if="type == 'bullet_list'">
 	<ul>
 		<li ng-repeat="item in data">
@@ -96,8 +100,8 @@
 	</table>
 </div>
 
-<div>
-	<canvas ng-if="type == 'chart-pie'"
+<div ng-if="type == 'chart-pie'">
+	<canvas
 		class="chart chart-pie"
 		chart-data="subdata.items"
 		chart-labels="subdata.header"
@@ -106,8 +110,19 @@
 	</canvas>
 </div>
 
-<div>
-	<canvas ng-if="type == 'chart-bar'"
+
+<div ng-if="type == 'chart-doughnut'">
+	<canvas
+		class="chart chart-doughnut"
+		chart-data="subdata.items"
+		chart-labels="subdata.header"
+		chart-click="onClick"
+		>
+	</canvas>
+</div>
+
+<div ng-if="type == 'chart-bar'">
+	<canvas
 		class="chart chart-bar"
 		chart-data="subdata.points"
 		chart-labels="subdata.labels"

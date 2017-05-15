@@ -24,7 +24,8 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
 		
-		$scope.update($scope.get_url());
+		if($scope.type != "image")
+			$scope.update($scope.get_url());
 		
 		if($scope.data_source.key){
 			$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
