@@ -1,75 +1,37 @@
-app.controller("controller", function($http, $window, $scope, $mdDialog, $timeout, $mdSidenav, toaster, messageService){
+app.controller("pageController", function($http, $window, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, page){
 
-	self = this;
+	var self = this;
 	
-	self.page = 'templates/main.html';
-	self.info = {};
-	self.header = {show_logos: true};
+	console.log("PAGE CONTROLLER", info, page);
 	
-	self.sending = true;
+	$scope.page = 'templates/main.html';
+	$scope.info = info;
+	$scope.header = {show_logos: true};
 	
-	self.form;
-	self.form_results = [];
+	$scope.sending = false;
+	
+	$scope.form;
+	$scope.form_results = [];
 
-	self.circos = { value: "CCLE_001", values: [], events: [ "LINK01", {
-		  LinkRadius: 60,
-		  LinkFillColor: "#F26223",
-		  LinkWidth: 3,
-		  displayLinkAxis: true,
-		  LinkAxisColor: "#B8B8B8",
-		  LinkAxisWidth: 0.5,
-		  LinkAxisPad: 3,
-		  displayLinkLabel: true,
-		  LinkLabelColor: "red",
-		  LinkLabelSize: 13,
-		  LinkLabelPad: 8,
-		}],
-		genome: [
-		    ["1" , 249250621],
-		    ["2" , 243199373],
-		    ["3" , 198022430],
-		    ["4" , 191154276],
-		    ["5" , 180915260],
-		    ["6" , 171115067],
-		    ["7" , 159138663],
-		    ["8" , 146364022],
-		    ["9" , 141213431],
-		    ["10" , 135534747],
-		    ["11" , 135006516],
-		    ["12" , 133851895],
-		    ["13" , 115169878],
-		    ["14" , 107349540],
-		    ["15" , 102531392],
-		    ["16" , 90354753],
-		    ["17" , 81195210],
-		    ["18" , 78077248],
-		    ["19" , 59128983],
-		    ["20" , 63025520],
-		    ["21" , 48129895],
-		    ["22" , 51304566],
-		    ["X" , 155270560],
-		    ["Y" , 59373566]
-	 ]};
-	
-	self.get_current_page_data = function(){
-		if(self.info.pages)
-			for(var i=0; i<self.info.pages.length; i++)
-				if(self.info.pages[i].title == self.page.replace(".html", "").replace("templates/", ""))
-					return self.info.pages[i];
+	$scope.get_current_page_data = function(){
+		if($scope.info.pages)
+			for(var i=0; i<$scope.info.pages.length; i++)
+				if($scope.info.pages[i].title == $scope.page.replace(".html", "").replace("templates/", ""))
+					return $scope.info.pages[i];
 	};
 	
-	self.load_form = function(group, option){
+	$scope.load_form = function(group, option){
 		
 		// Remove previous form inputs...
-		for(var f=0; f<self.form.fields.length;)
+		for(var f=0; f<$scope.form.fields.length;)
 		{
-			//console.log("FORM FIELD: ", f, self.form.fields[f]);
+			//console.log("FORM FIELD: ", f, $scope.form.fields[f]);
 			
-			if(self.form.fields[f].parent_group_id == group.group_id)
+			if($scope.form.fields[f].parent_group_id == group.group_id)
 			{
-				//console.log("Removing form field " + f, self.form.fields[f]);
+				//console.log("Removing form field " + f, $scope.form.fields[f]);
 				// toRemove.push(f);
-				self.form.fields.splice(f, 1);
+				$scope.form.fields.splice(f, 1);
 			}
 			else f++;
 		}
@@ -81,7 +43,7 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 			option.form.fields[f].parent_group_id = group.group_id;
 			var newForm = option.form.fields[f];
 			
-			self.form.fields.push(newForm);
+			$scope.form.fields.push(newForm);
 			
 			/*
 			if(newForm.type === "checkbox" && newForm.value === "true")
@@ -108,22 +70,22 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		}
 	};
 	
-	self.goTo = function(item){
+	$scope.goTo = function(item){
 		url = item.url
 		console.log("Want to go to " + url);
 		
 		// Check if the url is a form name
 		var isForm = false;
-		if( self.info.forms )
-			for(var f=0; f<self.info.forms.length; f++)
+		if( $scope.info.forms )
+			for(var f=0; f<$scope.info.forms.length; f++)
 			{
-				var form = self.info.forms[f];
+				var form = $scope.info.forms[f];
 				if(form.name == url)
 				{
 					isForm = true;
-					self.form = form;
+					$scope.form = form;
 					
-					console.log(self.form);
+					console.log($scope.form);
 					
 					break;
 				}
@@ -131,10 +93,10 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		
 		if(isForm) {
 			console.log("Going to render form");
-			self.form_results = [];
-			self.page = 'templates/form.html';
-			self.info.image.percentage_width = self.info.image.percentage_width_original / 2;
-			self.header.show_logos = false;
+			$scope.form_results = [];
+			$scope.page = 'templates/form.html';
+			$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
+			$scope.header.show_logos = false;
 		}
 		else {
 			if(url == "home") url = "main";
@@ -145,33 +107,39 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 				$window.location.href = url;
 			}
 			else {
-				self.page = 'templates/'+url+'.html';
+				$scope.page = 'templates/'+url+'.html';
+				$location.url(url);
 				
 				if(item.action) {
-					self.info.image.percentage_width = self.info.image.percentage_width_original / 2;
-					self.header.show_logos = false;
-					self.load_data(item.action);
+					$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
+					$scope.header.show_logos = false;
+					$scope.load_data(item.action);
 	
-					console.log("CONTROLLER", self.info);
+					console.log("CONTROLLER", $scope.info);
 				}
 				
 				if(url == "main") {
-					self.page = 'templates/main.html'; // window.location = url;
-					self.info.image.percentage_width = self.info.image.percentage_width_original;
-					self.header.show_logos = true;
+					$scope.page = 'templates/main.html'; // window.location = url;
+					$scope.info.image.percentage_width = $scope.info.image.percentage_width_original;
+					$scope.header.show_logos = true;
 				}
 			}
 		}
 	};
 	
-	self.show_dialog = function(ev, card){
+	$scope.show_dialog = function(ev, card){
         
         console.log(ev, card);
     
         $mdDialog.show({
-            locals: {initial_data: card},
-            controller: 'cardController',
-            templateUrl: 'components/card/card.html',
+        	locals: {data: card},
+            controller: function DialogController($scope, $mdDialog, data) {
+                $scope.row = [data];
+                $scope.closeDialog = function() {
+                  $mdDialog.hide();
+                };
+              },
+            templateUrl: 'templates/dialog.html',
             parent: angular.element(document.body),
             targetEvent: ev,
             clickOutsideToClose:true
@@ -190,86 +158,12 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 	    else field.value.push(item);
 	};
 	
-	self.show_circos = function(url){
-        $("#biocircos").empty();
-        self.sending = true;
-        self.circos.events[2] = [];
-        
-        $http.get(url).then(function(response) {
-            self.sending = false;
-            
-            console.log("SHOWING CIRCOS DATA: SUCCESS from url", url, response.data.rows);
-            
-            var circos_events = [];
-            
-            for(var i=0; i<response.data.rows.items.length; i++)
-            {
-                    var item = response.data.rows.items[i];
-                    
-                    // Prototype: {fusion: "FGFR3--TACC3", g1chr: 4, g1start: 1795662, g1end: 1808986, g1name: "FGFR3", g2chr: 4, g2start: 1723217, g2end: 1746905, g2name: "TACC3"},
-                    
-                    if(i<10) console.log(item);
-                    
-                    item.fusion = item.g1 + "--" + item.g2;
-                    item.g1name = item.g1;
-                    item.g2name = item.g2;
-                    delete item.g1
-                    delete item.g2
-                    
-                    item.g1start = parseInt(item.g1start);
-                    item.g1end = item.g1start
-                    item.g2start = parseInt(item.g2start);
-                    item.g2end = item.g2start
-                    item.g1chr = item.g1chr.replace("chr", "");
-                    item.g2chr = item.g2chr.replace("chr", "");
-                    
-                    circos_events.push(item);
-
-//                         circos_events.push({fusion: gene1+"--"+gene2 , g1chr: chrm1, g1start: fusion_point1, g1end: fusion_point1, g1name: gene1, g2chr: chrm2, g2start: fusion_point2, g2end: fusion_point2, g2name: gene2});
-            }                              
-            
-            console.log("CIRCOS EVENTS", circos_events);
-            circos_events = circos_events.slice(0, 30);
-            
-            self.circos.events[2] = circos_events;
-            
-            BioCircos01 = new BioCircos(self.circos.events, self.circos.genome, {
-                target : "biocircos",
-                svgWidth : 600,
-                svgHeight : 400,
-                innerRadius: 160,
-                outerRadius: 180,
-                genomeFillColor: ["#FFFFCC", "#CCFFFF", "#FFCCCC", "#CCCC99","#0099CC", "#996699", "#336699", "#FFCC33","#66CC00"],
-                LINKMouseEvent : true,
-                LINKMouseClickDisplay : true,
-                LINKMouseClickOpacity : 1.0,
-                LINKMouseClickStrokeColor : "red",
-                LINKMouseClickStrokeWidth : 6,
-                LINKLabelDragEvent : false,
-                });
-                BioCircos01.draw_genome(BioCircos01.genomeLength);
-                
-            }, function(response){
-                    self.sending = false;
-                    console.log("ERROR WHILE GETTING CIRCOS DATA...", response);
-            });
-	};
-	
-	self.load_circos = function(url){
-		$http.get(url).then(function(response) {
-			console.log("CIRCOS DATA OPTIONS: SUCCESS", response.data);
-			self.circos.values = response.data;
-		}, function(response){
-			console.log("ERROR WHILE GETTING CIRCOS DATA OPTIONS...", response);
-		});
-	};
-	
-	self.send_query = function(){
+	$scope.send_query = function(){
 		var args = [];
-		console.log(self.form)
-		for(var i=0; i<self.form.fields.length; i++)
+		console.log($scope.form)
+		for(var i=0; i<$scope.form.fields.length; i++)
 		{
-			var field = self.form.fields[i];
+			var field = $scope.form.fields[i];
 			var value = field.value;
 			console.log("VALUE", value)
 //			if (value == undefined || value == "") continue;
@@ -281,45 +175,45 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		
 		console.log("ARGS", args);
 		
-		if( ! self.form.submit.url.endsWith("/") ) self.form.submit.url = self.form.submit.url  + "/";
+		if( ! $scope.form.submit.url.endsWith("/") ) $scope.form.submit.url = $scope.form.submit.url  + "/";
 		
-		if(self.form.submit.type == "POST")
+		if($scope.form.submit.type == "POST")
 		{
-			self.sending = true;
+			$scope.sending = true;
 			
 			console.log("SENDING AJAX VIA POST", args);
-			$http.post(self.form.submit.url, args)
+			$http.post($scope.form.submit.url, args)
 			.then(function(response) {
-				self.sending = false;
+				$scope.sending = false;
 				console.log("QUERY POST SUCCESS", response);
-				self.form_results = response.data;
+				$scope.form_results = response.data;
 				
 			}, function(response){
-				self.sending = false;
+				$scope.sending = false;
 				console.log("ERROR WHILE SENDING QUERY...", response);
 			});
 		}
 		else
 		{
-			self.sending = true;
+			$scope.sending = true;
 			
-			$http.get(self.form.submit.url + args.join("/") + "/")
+			$http.get($scope.form.submit.url + args.join("/") + "/")
 			.then(function(response) {
 				console.log("QUERY GET SUCCESS", response);
-				self.form_results = response.data;
+				$scope.form_results = response.data;
 				
-				self.sending = false;
+				$scope.sending = false;
 				
 			}, function(response){
-				self.sending = false;
+				$scope.sending = false;
 				console.log("ERROR WHILE SENDING QUERY...", response);
 			});
 		}
 	};
 	
-	self.ajax2forms = [];
+//	self.ajax2forms = [];
 
-	self.load_data = function(url){
+	$scope.load_data = function(url){
 		
 		$scope.data = [];
 		$http.get(url).then(function(response)
@@ -335,7 +229,7 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		);
 	};
 	
-	self.load_subdata = function(url){
+	$scope.load_subdata = function(url){
 		
 		$scope.subdata = [];
 		$http.get(url).then(function(response)
@@ -351,148 +245,150 @@ app.controller("controller", function($http, $window, $scope, $mdDialog, $timeou
 		);
 	};
 	
-	$http.get('config.json').then(function(response) {
-		
-		messageService.showMessage('File di configurazione caricato correttamente.');
-		console.log("FILE CONFIG OK");
-		
-		self.sending = false;
-		
-        self.info = response.data;
-        self.info.image.percentage_width_original = self.info.image.percentage_width;
-        console.log(self.info);
-        
-//                         self.load_data(self.info.links.statistics_all);
-//                         self.clicked_chromosome = "1"
-//                         self.load_subdata(self.info.links.statistics_single_chromosome + self.clicked_chromosome + "/");
-        
-//                         $http.get(self.info.links.statistics_by_chromosome).then(function(response)
-//                         		{
-// 									console.log("SUCCESS IN GETTING STATISTICS BY CHROMOSOME");
-// 									console.log(response.data);
-// 									$scope.pielabels = response.data.details.header; 
-// 									$scope.piedata = response.data.details.items;
-// 									$scope.pieheader = response.data.details.labels;
-// 								},
-// 								function myError(response) {
-// 									console.log(response);
-// 				                	console.log("ERROR IN GETTING STATISTICS CHROMOSOME");
-// 								}
-// 						);
-        
-        if(self.info.forms)
-	        for(var f=0; f<self.info.forms.length; f++)
-	        {
-	        	var form = self.info.forms[f];
-	        	
-	            for(var i=0; i<form.fields.length; i++)
-	            {
-	            	var field = form.fields[i];
-	            	
-	            	// Assign the chosen default value
-	            	if(field.default) field.value = field.default;
-	            	
-	            	// Check types
-	            	if(field.type == "number") field.value = parseInt(field.value);
-	            	
-	            	if(field.type === "checkbox" && field.value === "true")
-	            	{
-	            		field.checked = true;
-	            	}
-	            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
-	            	{
-	            		var ajaxForms = self.ajax2forms[field.values];
-	            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
-	            		ajaxForms.push(field);
-	            	}
-	            	
-	            	// Subform handling 
-	            	if(field.form) {
-	            		// console.log("Handling subforms");
-	            		for(var j=0; j < field.form.length; j++)
-	            		{	
-	            			var subform = field.form[j];
-	// 	                        			console.log("SUBFORM: ", subform);
-	            			
-	            			for(var s=0; s<subform.fields.length; s++)
-	            			{
-	            				var subfield = subform.fields[s];
-	// 	                        				console.log("\tSUBFORM FIELD", subfield);
-	            				if(subfield.type == "select") {
-	            					console.log("FOUND SUBSELECT", subfield);
-	                    			var ajaxForms = self.ajax2forms[subfield.values];
-	                        		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[subfield.values] = ajaxForms;}
-	                        		ajaxForms.push(subfield);
-	                			}
-	            			}
-	            			
-	            			// console.log("Handling subform = ", subform);
-	            			
-	                		if(!subform.value && !subform.index) continue;
-	                		
-	                		// console.log("\tsubform= ", subform.value, subform.index, field.values);
-	                		
-	            			for(var c=0; c < field.values.length; c++)
-							{
-								var value = field.values[c];
-								// console.log("\t\tvalue=", value);
-								
-								if(subform.value && value.label == subform.value)
-								{
-									// console.log("\tsubform's name="+subform.value+" equals name of option="+value);
-									value.url = subform.name;
-									value.form = subform;
-								}
-								else if(subform.index && c == subform.index)
-								{
-									value.url = subform.name;
-									value.form = subform;
-								}
-							}
-	            		}
-	            	}
-	            }
-	        }
-        
-        console.log("ajax2forms", self.ajax2forms);
-        
-        // Make all the ajax calls here
-        for(var key in self.ajax2forms)
-        {
-        	console.log("GETTING VALUES FOR SELECT: " + key);	                        		
-    		$http.get(key).then(
-    				function(response) {
-            			console.log("RESPONSE", response);
-            			console.log("FORMS AFFECTED", self.ajax2forms[response.config.url]);
-//    	                        			console.log("ajax2forms", self.ajax2forms);
-//    	                        			console.log("self", self);
-//    	                        			console.log("url", response.config.url);
-//    	                        			console.log("form chosen", self.ajax2forms[response.config.url]);
-
-						var affectedForms = self.ajax2forms[response.config.url]
-						for(var formId in affectedForms)
-							affectedForms[formId].values = response.data;
-//    	                        			console.log("form chosen after", self.ajax2forms[response.config.url]);
-            			
-            			// var selectField = self.form.fields[self.formIndex];	                        			
-            			// selectField.values = response.data;
-            			// console.log("NEW VALUES A: ", selectField);
-            			// console.log("NEW VALUES B: ", self.info.forms.fields[selectIndex]);
-            		},
-            		function(response){
-            			console.log("COULD NOT GET VALUES FOR SELECT FIELD", response);
-            			var affectedForms = self.ajax2forms[response.config.url]
-						for(var formId in affectedForms)
-							affectedForms[formId].values = ["NOT AVAILABLE"];
-            		}
-            );
-        }
-        
-        // self.show_circos(self.info.links.circos_url + self.circos.value + "/");
-        
-	}, function(response){
-		console.log(response);
-		messageService.showMessage('Impossibile trovare il file di configurazione. (message: "' + response.statusText + '", code: '+response.status+')', "error", "Error");
-	});
+	if(page != undefined) $scope.goTo({url: page});
+	
+//	$http.get('config.json').then(function(response) {
+//		
+//		messageService.showMessage('File di configurazione caricato correttamente.');
+//		console.log("FILE CONFIG OK");
+//		
+//		$scope.sending = false;
+//		
+//        self.info = response.data;
+//        self.info.image.percentage_width_original = self.info.image.percentage_width;
+//        console.log(self.info);
+//        
+////                         self.load_data(self.info.links.statistics_all);
+////                         self.clicked_chromosome = "1"
+////                         self.load_subdata(self.info.links.statistics_single_chromosome + self.clicked_chromosome + "/");
+//        
+////                         $http.get(self.info.links.statistics_by_chromosome).then(function(response)
+////                         		{
+//// 									console.log("SUCCESS IN GETTING STATISTICS BY CHROMOSOME");
+//// 									console.log(response.data);
+//// 									$scope.pielabels = response.data.details.header; 
+//// 									$scope.piedata = response.data.details.items;
+//// 									$scope.pieheader = response.data.details.labels;
+//// 								},
+//// 								function myError(response) {
+//// 									console.log(response);
+//// 				                	console.log("ERROR IN GETTING STATISTICS CHROMOSOME");
+//// 								}
+//// 						);
+//        
+//        if(self.info.forms)
+//	        for(var f=0; f<self.info.forms.length; f++)
+//	        {
+//	        	var form = self.info.forms[f];
+//	        	
+//	            for(var i=0; i<form.fields.length; i++)
+//	            {
+//	            	var field = form.fields[i];
+//	            	
+//	            	// Assign the chosen default value
+//	            	if(field.default) field.value = field.default;
+//	            	
+//	            	// Check types
+//	            	if(field.type == "number") field.value = parseInt(field.value);
+//	            	
+//	            	if(field.type === "checkbox" && field.value === "true")
+//	            	{
+//	            		field.checked = true;
+//	            	}
+//	            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
+//	            	{
+//	            		var ajaxForms = self.ajax2forms[field.values];
+//	            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
+//	            		ajaxForms.push(field);
+//	            	}
+//	            	
+//	            	// Subform handling 
+//	            	if(field.form) {
+//	            		// console.log("Handling subforms");
+//	            		for(var j=0; j < field.form.length; j++)
+//	            		{	
+//	            			var subform = field.form[j];
+//	// 	                        			console.log("SUBFORM: ", subform);
+//	            			
+//	            			for(var s=0; s<subform.fields.length; s++)
+//	            			{
+//	            				var subfield = subform.fields[s];
+//	// 	                        				console.log("\tSUBFORM FIELD", subfield);
+//	            				if(subfield.type == "select") {
+//	            					console.log("FOUND SUBSELECT", subfield);
+//	                    			var ajaxForms = self.ajax2forms[subfield.values];
+//	                        		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[subfield.values] = ajaxForms;}
+//	                        		ajaxForms.push(subfield);
+//	                			}
+//	            			}
+//	            			
+//	            			// console.log("Handling subform = ", subform);
+//	            			
+//	                		if(!subform.value && !subform.index) continue;
+//	                		
+//	                		// console.log("\tsubform= ", subform.value, subform.index, field.values);
+//	                		
+//	            			for(var c=0; c < field.values.length; c++)
+//							{
+//								var value = field.values[c];
+//								// console.log("\t\tvalue=", value);
+//								
+//								if(subform.value && value.label == subform.value)
+//								{
+//									// console.log("\tsubform's name="+subform.value+" equals name of option="+value);
+//									value.url = subform.name;
+//									value.form = subform;
+//								}
+//								else if(subform.index && c == subform.index)
+//								{
+//									value.url = subform.name;
+//									value.form = subform;
+//								}
+//							}
+//	            		}
+//	            	}
+//	            }
+//	        }
+//        
+//        console.log("ajax2forms", self.ajax2forms);
+//        
+//        // Make all the ajax calls here
+//        for(var key in self.ajax2forms)
+//        {
+//        	console.log("GETTING VALUES FOR SELECT: " + key);	                        		
+//    		$http.get(key).then(
+//    				function(response) {
+//            			console.log("RESPONSE", response);
+//            			console.log("FORMS AFFECTED", self.ajax2forms[response.config.url]);
+////    	                        			console.log("ajax2forms", self.ajax2forms);
+////    	                        			console.log("self", self);
+////    	                        			console.log("url", response.config.url);
+////    	                        			console.log("form chosen", self.ajax2forms[response.config.url]);
+//
+//						var affectedForms = self.ajax2forms[response.config.url]
+//						for(var formId in affectedForms)
+//							affectedForms[formId].values = response.data;
+////    	                        			console.log("form chosen after", self.ajax2forms[response.config.url]);
+//            			
+//            			// var selectField = $scope.form.fields[$scope.formIndex];	                        			
+//            			// selectField.values = response.data;
+//            			// console.log("NEW VALUES A: ", selectField);
+//            			// console.log("NEW VALUES B: ", self.info.forms.fields[selectIndex]);
+//            		},
+//            		function(response){
+//            			console.log("COULD NOT GET VALUES FOR SELECT FIELD", response);
+//            			var affectedForms = self.ajax2forms[response.config.url]
+//						for(var formId in affectedForms)
+//							affectedForms[formId].values = ["NOT AVAILABLE"];
+//            		}
+//            );
+//        }
+//        
+//        // self.show_circos(self.info.links.circos_url + self.circos.value + "/");
+//        
+//	}, function(response){
+//		console.log(response);
+//		messageService.showMessage('Impossibile trovare il file di configurazione. (message: "' + response.statusText + '", code: '+response.status+')', "error", "Error");
+//	});
 }// End of controller
 );

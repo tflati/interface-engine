@@ -1,3 +1,6 @@
+<div ng-if="sending" style="text-align: center; color: cadetblue;">
+	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+</div>
 
 <div ng-if="type == 'text'">
 	<p ng-bind="data"></p>
@@ -20,8 +23,8 @@
 	<table md-table md-row-select multiple>
 		<tbody md-body>
 			<thead md-head>
-				<tr md-row>
-					<th md-column ng-repeat="label in subdata.header track by $index">
+				<tr md-row md-auto-select>
+					<th md-cell md-column ng-repeat="label in subdata.header track by $index">
 						<span>{{label}}</span>
 					</th>
 				</tr>
@@ -34,10 +37,8 @@
               	</span>
               	
                 <div ng-switch-default>
-                	<md-button ng-if='field.type == "button"' ng-click="ctrl.show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
-              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}">
-              			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
-              		<span ng-if='field.type == "text"'>{{field.label + "#" + field.type}}</span>
+                	<md-button ng-if='field.type == "button"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
                 </div>
                 
               </td>
@@ -61,11 +62,11 @@
 <!-- 	 </table> -->
 </div>
 
-<div ng-if="type == 'two-column-table'" style="max-height: 300px; overflow: auto;">
+<div ng-if="type == 'two-column-table'" style="max-height: 500px; overflow: auto;">
 	<table md-table md-row-select multiple>
 		<tbody md-body>
 			<thead md-head>
-				<tr md-row>
+				<tr md-row md-auto-select>
 					<th md-column ng-repeat="label in subdata.labels"><span>{{label}}</span></th>
 				</tr>
 			</thead>
@@ -131,7 +132,7 @@
 		chart-options="subdata.options"
 		>
 	</canvas>
-<div>
+</div>
 
 <div ng-if="type == 'paginated-table'">
 	<md-table-container>
@@ -196,5 +197,9 @@
 
 <div ng-if="type == 'tree'" ng-controller="treeController" style="overflow: scroll;">
 	<svg id="tree"></svg>
+</div>
+
+<div ng-if="type == 'circos'" ng-controller="circosController">
+	<div align="center" style="font-size: 0.5em;" id="biocircos"></div>
 </div>
 

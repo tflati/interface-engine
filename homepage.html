@@ -1,0 +1,40 @@
+<div layout="column" ng-cloak>
+		
+	<md-toolbar class="md-menu-toolbar" id="toolbar">
+	<div layout="row">
+		<div>
+			<md-menu-bar> <md-menu ng-repeat="item in info.menu">
+			<button ng-click="item.items ? $mdOpenMenu() : goTo(item)">
+				{{item.name}}</button>
+			<md-menu-content> <md-menu-item
+				ng-repeat="subitem in item.items"> <md-button
+				ng-click="goTo(subitem)"> {{subitem.name}} </md-button> </md-menu-item> </md-menu-content>
+			</md-menu> </md-menu-bar>
+		</div>
+	</div>
+	</md-toolbar>
+
+	<section layout="row" flex="100">
+		<md-card layout="row" class="full-card full-card-header">
+		    <img ng-src="{{info.image.src}}" class="md-card-image header-image" style="max-height:{{info.image.percentage_width}}px;">
+			<md-card-title layout="column">
+				<md-card-title-text layout="column">
+					<span class="md-headline" style="font-size: 2em;" ng-bind="info.title"></span>
+					<span class="md-subhead" ng-bind-html="info.description"></span>
+						
+					<md-card-title-media ng-if="header.show_logos" layout="row" class="header-logo-container" flex="auto" layout-padding>
+						<img class="header-logo" ng-repeat="logo in info.logos" ng-src="{{logo.image}}">
+					</md-card-title-media>
+				</md-card-title-text>
+			</md-card-title>
+		</md-card>
+	</section>
+	
+	<div ng-include="page"></div>
+	
+	<section>
+		<div id="footer">
+		<p>Developed by Cineca</p>
+		</div>
+	</section>
+</div>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <meta http-equiv="Cache-control" content="no-cache">
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -19,15 +20,22 @@
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-material/angular-material.js"></script>
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+
+<!-- jqCloud -->
+<link rel="stylesheet" href="bower_components/jqcloud2/dist/jqcloud.min.css" type="text/css" />
+<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="bower_components/jqcloud2/dist/jqcloud.min.js"></script>
+<script type="text/javascript" src="bower_components/angular-jqcloud/angular-jqcloud.js" ></script>
 
 <!-- Charts -->
 <script src="bower_components/chart.js/dist/Chart.js"></script>
 <script src="bower_components/angular-chart.js/angular-chart.js"></script>
 
 <!-- d3 -->
-<!-- <script src="lib/jquery.js"></script> -->
-<!-- <script src="lib/d3.js"></script> -->
-<!-- <script src="lib/biocircos-1.1.2.js"></script> -->
+<script src="lib/jquery.js"></script>
+<script src="lib/d3.js"></script>
+<script src="lib/biocircos-1.1.2.js"></script>
 
 <!-- TABLES -->
 <link href="bower_components/angular-material-data-table/dist/md-data-table.min.css" rel="stylesheet" type="text/css" />
@@ -37,12 +45,6 @@
 <script src="bower_components/AngularJS-Toaster/toaster.min.js"  type="text/javascript"></script>
 <link href="bower_components/AngularJS-Toaster/toaster.min.css" rel="stylesheet" type="text/css" />
 
-<!-- jqCloud -->
-<link rel="stylesheet" href="bower_components/jqcloud2/dist/jqcloud.min.css" type="text/css" />
-<script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="bower_components/jqcloud2/dist/jqcloud.min.js"></script>
-<script type="text/javascript" src="bower_components/angular-jqcloud/angular-jqcloud.js" ></script>
-
 <!-- Phylotree -->
 <link rel="stylesheet" href="bower_components/phylotree/phylotree.css">
 <script type="text/javascript" src="bower_components/underscore/underscore.min.js"></script>
@@ -50,14 +52,18 @@
 <script type="text/javascript" src="bower_components/phylotree/phylotree.js"></script>
 
 <style>
-.md-table tbody tr {
-	transition: all 0.1s ease-in;
+/* .md-table tbody tr { */
+/* 	transition: all 0.1s ease-in; */
+/* } */
+
+.md-row {
+	height: 48px;
 }
 
-.md-table tbody tr:hover {
-	cursor: pointer;
-	background-color: rgba(63, 81, 181, 0.2);
-}
+/* .md-table tbody tr:hover { */
+/* 	cursor: pointer; */
+/* 	background-color: rgba(63, 81, 181, 0.2); */
+/* } */
 
 #toolbar {
 	background-color: #efefef;
@@ -173,7 +179,7 @@ md-menu button {
 
 <script>
 
-			var app = angular.module( 'app', [ 'ngMaterial', 'ngSanitize', 'chart.js', 'ngAnimate', 'md.data.table', 'toaster', 'angular-jqcloud'] );
+			var app = angular.module( 'engine', [ 'ngMaterial', 'ngSanitize', 'chart.js', 'ngAnimate', 'md.data.table', 'toaster', 'angular-jqcloud', 'ngRoute' ] );
 			
 // 			app.run(['$templateCache', function ( $templateCache ) {
 // 				    $templateCache.removeAll(); }]);
@@ -193,81 +199,125 @@ md-menu button {
 		
 		<script src="components/services/message.js" type="text/javascript"></script>
 		<script src="components/services/global.js" type="text/javascript"></script>
+		<script src="components/services/configFileService.js" type="text/javascript"></script>
 		
 		<script src="components/button/buttonDirective.js" type="text/javascript"></script>
 		<script src="components/button/buttonController.js" type="text/javascript"></script>
 		
+		<script src="components/element/cloudController.js" type="text/javascript"></script>
+		<script src="components/circos/circosController.js" type="text/javascript"></script>
+		<script src="components/tree/treeController.js" type="text/javascript"></script>
+		
 		<script src="components/element/elementController.js" type="text/javascript"></script>
 		<script src="components/element/elementDirective.js" type="text/javascript"></script>
-		<script src="components/element/cloudController.js" type="text/javascript"></script>
 		
 		<script src="components/card/cardController.js" type="text/javascript"></script>
 		<script src="components/card/cardDirective.js" type="text/javascript"></script>
+	
+		<script src="components/autocomplete/autocompleteController.js" type="text/javascript"></script>
 		
-		<script src="components/tree/treeController.js" type="text/javascript"></script>
-		
-<!-- 		<script src="components/tree/tree.js" type="text/javascript"></script> -->
-		
-		<script src="components/autocomplete/autocompleteController.js" type="text/javascript"></script>		
+		<script type="text/javascript">
+			app.config(function ($routeProvider, $locationProvider) {
+				
+				console.log("ROUTING", $routeProvider, $locationProvider);
+				$locationProvider.hashPrefix('!');
+				
+			    $routeProvider.
+			    when("/:pageName?", {
+			        templateUrl: "homepage.html",
+			        controller: "pageController",
+			        resolve: {
+			            info: function(configFileService){
+			                return configFileService.get_config_file();
+			            },
+			            page: function($route){
+			            	console.log("ASKED FOR ", $route.current.params.pageName);
+			            	return $route.current.params.pageName;
+			            }
+			        }
+			    }).
+			    otherwise({
+			    	templateUrl: "homepage.html",
+			        controller: "pageController",
+			        resolve: {
+			            info: function(configFileService){
+			                return configFileService.get_config_file();
+			            },
+			            page: function($route){
+			            	console.log("ASKED FOR SPECIAL CASE");
+			            	return undefined;
+			            }
+			        }
+			    });
+			});
+			
+			app.run([
+				  '$rootScope', '$route',
+				  function($rootScope, $route) {
+				    // see what's going on when the route tries to change
+				    $rootScope.$on('$routeChangeStart', function(event, next, current) {
+				      // next is an object that is the route that we are starting to go to
+				      // current is an object that is the route where we are currently
+				      var currentPath = undefined;
+				      if(current != undefined) currentPath = current.originalPath;
+				      var nextPath = next.originalPath;
+
+				      console.log('Starting to leave %s to go to %s', currentPath, nextPath, $route);
+				    });
+				  }
+				]);
+		</script>
 		
 		<script src="main.js" type="text/javascript"></script>
-		
 </head>
 
-<body style="margin: 0px; font-size: 1.2em;" ng-app="app"
+<body style="margin: 0px; font-size: 1.2em;" ng-app="engine"
 	md-theme="big-data-theme">
-
-	<toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
-
-<!-- 	<card ng-controller="cardController" ng-init="init({title: 'Title', type: 'PieChart', footer: {label: 'Footer label', data: [1, 2, 3, 4, 5], pluralize: true, prefixFunction: 'total'}})"></card> -->
 	
-	<div ng-controller="controller as ctrl" layout="column" ng-cloak>
+	<toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
+	
+	<div ng-view></div>
+	
+<!-- 	<div ng-controller="pageController as ctrl" layout="column" ng-cloak> -->
 		
-<!-- 		<div ng-repeat="page in ctrl.info.pages"> -->
-<!-- 			<section style="width: 80%; margin-left: auto; margin-right: auto;" layout="row" flex="100" ng-repeat="row in page.elements"> -->
-<!-- 				<card flex="{{width}}" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)"> -->
-<!-- 				</card> -->
-<!-- 			</section> -->
+<!-- 		<md-toolbar class="md-menu-toolbar" id="toolbar"> -->
+<!-- 		<div layout="row"> -->
+<!-- 			<div> -->
+<!-- 				<md-menu-bar> <md-menu ng-repeat="item in ctrl.info.menu"> -->
+<!-- 				<button ng-click="item.items ? $mdOpenMenu() : ctrl.goTo(item)"> -->
+<!-- 					{{item.name}}</button> -->
+<!-- 				<md-menu-content> <md-menu-item -->
+<!-- 					ng-repeat="subitem in item.items"> <md-button -->
+<!-- 					ng-click="ctrl.goTo(subitem)"> {{subitem.name}} </md-button> </md-menu-item> </md-menu-content> -->
+<!-- 				</md-menu> </md-menu-bar> -->
+<!-- 			</div> -->
 <!-- 		</div> -->
+<!-- 		</md-toolbar> -->
 
-		<md-toolbar class="md-menu-toolbar" id="toolbar">
-		<div layout="row">
-			<div>
-				<md-menu-bar> <md-menu ng-repeat="item in ctrl.info.menu">
-				<button ng-click="item.items ? $mdOpenMenu() : ctrl.goTo(item)">
-					{{item.name}}</button>
-				<md-menu-content> <md-menu-item
-					ng-repeat="subitem in item.items"> <md-button
-					ng-click="ctrl.goTo(subitem)"> {{subitem.name}} </md-button> </md-menu-item> </md-menu-content>
-				</md-menu> </md-menu-bar>
-			</div>
-		</div>
-		</md-toolbar>
-
-		<section layout="row" flex="100">
-			<md-card layout="row" class="full-card full-card-header">
-			    <img ng-src="{{ctrl.info.image.src}}" class="md-card-image header-image" style="max-height:{{ctrl.info.image.percentage_width}}px;">
-				<md-card-title layout="column">
-					<md-card-title-text layout="column">
-						<span class="md-headline" style="font-size: 2em;" ng-bind="ctrl.info.title"></span>
-						<span class="md-subhead" ng-bind-html="ctrl.info.description"></span>
+<!-- 		<section layout="row" flex="100"> -->
+<!-- 			<md-card layout="row" class="full-card full-card-header"> -->
+<!-- 			    <img ng-src="{{ctrl.info.image.src}}" class="md-card-image header-image" style="max-height:{{ctrl.info.image.percentage_width}}px;"> -->
+<!-- 				<md-card-title layout="column"> -->
+<!-- 					<md-card-title-text layout="column"> -->
+<!-- 						<span class="md-headline" style="font-size: 2em;" ng-bind="ctrl.info.title"></span> -->
+<!-- 						<span class="md-subhead" ng-bind-html="ctrl.info.description"></span> -->
 							
-						<md-card-title-media ng-if="ctrl.header.show_logos" layout="row" class="header-logo-container" flex="auto" layout-padding>
-							<img class="header-logo" ng-repeat="logo in ctrl.info.logos" ng-src="{{logo.image}}">
-						</md-card-title-media>
-					</md-card-title-text>
-				</md-card-title>
-			</md-card>
-		</section>
+<!-- 						<md-card-title-media ng-if="ctrl.header.show_logos" layout="row" class="header-logo-container" flex="auto" layout-padding> -->
+<!-- 							<img class="header-logo" ng-repeat="logo in ctrl.info.logos" ng-src="{{logo.image}}"> -->
+<!-- 						</md-card-title-media> -->
+<!-- 					</md-card-title-text> -->
+<!-- 				</md-card-title> -->
+<!-- 			</md-card> -->
+<!-- 		</section> -->
 		
-		<div ng-include="ctrl.page"></div>
+<!-- 		<div ng-include="ctrl.page"></div> -->
 		
-		<section>
-			<div id="footer">
-			<p>Developed by Cineca</p>
-			</div>
-		</section>
-	</div>
+<!-- 		<section> -->
+<!-- 			<div id="footer"> -->
+<!-- 			<p>Developed by Cineca</p> -->
+<!-- 			</div> -->
+<!-- 		</section> -->
+<!-- 	</div> -->
 </body>
 
 </html>
