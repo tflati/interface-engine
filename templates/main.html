@@ -9,7 +9,7 @@
 <section layout="column" flex="100" style="width:80%; margin-left: auto; margin-right: auto;">
 
 	<div layout="row" ng-repeat="row in get_current_page_data().elements track by $index">
-		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}">
+		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
 		</card>
 	</div>
 

@@ -1,273 +1,64 @@
 {
-	"title": "Peach-DB Portal",
-	"description": "Peach-DB: a curated collection of genetic variation for the interactive analysis of peach genome data",
-	"long_description": "Next-generation sequencing technology are moving towards many species of horticultural interest, bearing the potential to accelerate the understanding and exploitation of genetic resource. Peach-DB is an open-source catalog of genetic variants present in peach (P. persica L. Batsch) and wild-related species of Prunus genera, annotated from 146 publicly released Sequence Reads Archive (SRA). Our scope is to make quickly and easily accessible a large amount of information from whole-genome sequencing projects for a range of purposes, spacing from genotyping to functional genomics. The web interface of the database is designed and optimized for an intuitive and user-friendly and intuitive exploration, and provides several tools for searching and downloading, along with useful statistics and information.",
+	"title": "CCLE-Fusion Portal",
+	"description": "CCLE-Fusion Portal provides an easy access to a comprehensive database designed for storing, displaying and annotating gene fusion events detected from NGS data data.",
+	"long_description": "CCLE-Fusion Portal is an integrated resource which allows to query a database of somatic fusion genes events predicted and annotated starting from paired-end RNA-seq data. Data have been analysed using three fusion detection algorithms: FusionCatcher, EricScript and Tophat-Fusion. Tha analysis has been carried out on 935 tumor cell lines obtained from The Cancer Cell Line Encyclopedia (CCLE) repository (<a href='https://portals.broadinstitute.org/ccle/home'>https://portals.broadinstitute.org/ccle/home</a>) using hg38 as reference genome. The obtained results are detailed for each source algorithm and, whenever the fusion genes predictions coincide for two or more methods, the intersection is shown in order to provide more reliable results.",
 	"image": {
-		"src": "http://www.rodalesorganiclife.com/sites/rodalesorganiclife.com/files/styles/slideshow-desktop/public/peachpit_zadorozhna_natalia_1100.jpg?itok=TFYdDSOe",
+		"src": "logo.png",
 		"percentage_width": "200"
 	},
 	"logos": [
 		{
-			"image": "http://users.unimi.it/valorvi/members_file/image004.jpg"
+			"image": "http://www.procedamus.it/images/CINECA.jpg"
 		},
 		{
-			"image": "http://www.procedamus.it/images/CINECA.jpg"
+			"image": "logo_negri.png"
 		}
 	],
+	"links": {
+		"statistics_all": "http://localhost/api/fusion/statistics_all/",
+		"statistics_by_chromosome": "http://localhost/api/fusion/get_distribution/Chromosome/Fusion/",
+		"statistics_single_chromosome": "http://localhost/api/fusion/get_single_distribution/Chromosome/",
+		"circos_url": "http://localhost/api/fusion/cell_line_events/"
+	},
 	"menu": [{
 			"name": "Home",
-			"url": "main"
+			"url": "home"
 		}, {
 			"name": "Search",
 			"items": [{
-				"name": "Search by region",
-				"url": "search_by_region"
+				"name": "Search for Cell line",
+				"url": "search_for_cell_line"
 			}, {
-				"name": "Search by gene type",
-				"url": "search_by_gene_type"
+				"name": "Search for Chromosome",
+				"url": "search_for_chromosome"
 			}, {
-				"name": "Search by gene ID",
-				"url": "search_by_gene_name"
+				"name": "Search for Gene",
+				"url": "search_for_gene"
 			}, {
-				"name": "Search by cultivars",
-				"url": "search_by_cultivar"
+				"name": "Search for Exon",
+				"url": "search_for_exon"
+			}, {
+				"name": "Search for Transcript",
+				"url": "search_for_transcript"
+			}, {
+				"name": "Search for Fusion information",
+				"url": "search_for_fusion"
+			}, {
+                                "name": "Search for Algorithm",
+                                "url": "search_for_algorithm"
+			}, {
+				"name": "Search Viruses",
+				"url": "search_for_viruses"
 			}]
-		}, {
-			"name": "Cultivars",
-			"items": [{
-				"name": "See cultivars info",
-				"url": "cultivars"
-			}]
-		}, {
-			"name": "Tools",
-			"items": [{
-				"name": "blast",
-				"url": "launch_blast"
-			}, {
-				"name": "Calculate allele frequency",
-				"url": "calculate_allele_frequency"
-			}, {
-				"name": "Evaluate differences between two cultivars",
-				"url": "evaluate_differences_between_two_cultivars"
-			}]
-		}, {
-			"name": "JBrowse",
-			"items": [{
-				"name": "Visualize cultivar's variant",
-				"url": "http://localhost/jbrowse/JBrowse-1.12.1/index.html?data=data%2FpersicaV2&loc=Pp01%3A22694568..22709370&tracks=DNA%2CMy%20Genes%2CMySNPs%2CMyIndels&highlight="
-			}, {
-				"name": "Load external VCF",
-				"url": "load_external_vcf"
-			}]
-		},
-		{
-			"name": "Documents & Downloads",
-			"url": "downloads"
-		}, {
-			"name": "Statistics",
-			"url": "statistic"
-		}, {
-			"name": "Contact",
-			"url": "contact"
-		}
-	],
-	"forms": [{
-		"name": "search_by_region",
-		"submit": {
-			"label": "Search",
-			"url": "http://localhost/peach_api/peach/search_by_chromosome/"
-		},
-		"fields": [{
-			"label": "Chromosome",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/chromosomes/",
-			"placeholder": "Pp01",
-			"default": "Pp01",
-			"required": "true"
-		}, {
-			"label": "Start position",
-			"type": "number",
-			"placeholder": "1",
-			"default": "1",
-			"required": "true"
-		}, {
-			"label": "End position",
-			"type": "number",
-			"placeholder": "24320214",
-			"default": "24320214",
-			"required": "true"
-		},
-		{
-			"label": "Include SNP",
-			"type": "checkbox",
-			"value": "false"
-		},
-		{
-			"label": "Include INDELS",
-			"type": "checkbox",
-			"value": "true"
-		}]
 	}, {
-		"name": "search_by_gene_type",
-		"submit": {
-			"label": "Search",
-			"url": "http://localhost/peach_api/peach/search_by_gene_type/"
-		},
-		"fields": [{
-			"label": "Gene type",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/gene_types/"
-		}
-		]
+		"name": "Documents & Downloads",
+		"url": "downloads",
+		"action": "http://localhost/api/fusion/download_data/"
 	}, {
-		"name": "search_by_gene_name",
-		"submit": {
-			"label": "Search",
-			"url": "http://localhost/peach_api/peach/search_by_gene_name/"
-		},
-		"fields": [{
-			"label": "Gene name",
-			"type": "autocomplete",
-			"values": "http://localhost/peach_api/peach/genes/"
-		}
-		]
+		"name": "Statistics",
+		"url": "statistics"
 	}, {
-		"name": "search_by_cultivar",
-		"submit": {
-			"label": "Search",
-			"url": "http://localhost/peach_api/peach/search_by_cultivar/",
-			"type": "POST"
-		},
-		"fields": [{
-			"label": "Cultivar name(s)",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/cultivars/",
-			"multiple": true,
-			"required": "true"
-		}]
-	}, {
-		"name": "search_snp_cultivar",
-		"fields": [{
-			"label": "Select one or more cultivars",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/snp_cultivar",
-			"placeholder": "Any",
-			"default": "...",
-			"required": "true"
-		}, {
-			"label": "Chromosome",
-			"type": "text",
-			"values": "http://localhost/peach_api/peach/chromosomes/snp",
-			"placeholder": "14",
-			"default": "14",
-			"required": "true"
-		}, {
-			"label": "Start position",
-			"type": "number",
-			"placeholder": "24292198",
-			"default": "24292198",
-			"required": "true"
-		}, {
-			"label": "End position",
-			"type": "number",
-			"placeholder": "24320214",
-			"default": "24320214",
-			"required": "true"
-		}, {
-			"name": "search_indel_region",
-			"fields": [{
-				"label": "Chromosome",
-				"type": "text",
-				"values": "http://localhost/peach_api/peach/chromosomes/indel",
-				"placeholder": "14",
-				"default": "14",
-				"required": "true"
-			}, {
-				"label": "Start position",
-				"type": "number",
-				"placeholder": "24292198",
-				"default": "24292198",
-				"required": "true"
-			}, {
-				"label": "End position",
-				"type": "number",
-				"placeholder": "24320214",
-				"default": "24320214",
-				"required": "true"
-			}]
-		}, {
-			"name": "search_indel_gene",
-			"fields": [{
-				"label": "Gene name",
-				"type": "text",
-				"values": "http://localhost/peach_api/peach/Gene/indel",
-				"placeholder": "...",
-				"default": "...",
-				"required": "true"
-			}]
-		}, {
-			"name": "search_indel_information",
-			"fields": [{
-				"label": "Please insert information or annotation",
-				"type": "text",
-				"values": "http://localhost/peach_api/peach/indelinfo",
-				"placeholder": "...",
-				"default": "...",
-				"required": "true"
-			}]
-		}, {
-			"name": "search_indel_cultivar",
-			"fields": [{
-				"label": "Gene name",
-				"type": "text",
-				"values": "http://localhost/peach_api/peach/snp_cultivar",
-				"placeholder": "...",
-				"default": "...",
-				"required": "true"
-			}, {
-				"label": "Chromosome",
-				"type": "text",
-				"values": "http://localhost/peach_api/peach/chromosomes/indel",
-				"placeholder": "14",
-				"default": "14",
-				"required": "true"
-			}, {
-				"label": "Start position",
-				"type": "number",
-				"placeholder": "24292198",
-				"default": "24292198",
-				"required": "true"
-			}, {
-				"label": "End position",
-				"type": "number",
-				"placeholder": "24320214",
-				"default": "24320214",
-				"required": "true"
-			}
-			]
-		}],
-		"submit": {
-			"label": "Submit",
-			"url": "http://localhost/peach_api/peach/chromosomes/"
-		}
-	},
-	{
-		"name": "evaluate_differences_between_two_cultivars",
-		"submit": {
-			"label": "Search",
-			"url": "http://localhost/peach_api/peach/differences/"
-		},
-		"fields": [{
-			"label": "First cultivar",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/cultivars/",
-			"required": "true"
-		}, {
-			"label": "Second cultivar",
-			"type": "select",
-			"values": "http://localhost/peach_api/peach/cultivars/",
-			"required": "true"
-		}]
+		"name": "Contact"
 	}],
 	"pages": [
 		{
@@ -275,317 +66,1031 @@
 			"elements": [
 				[
 					{
-						"title": "Population structure",
-						"width": "100",
+						"title": "Global summary",
+						"width": "33",
 						"elements": [
 							{
-								"type": "chart-bar",
-								"stacked": "true",
+								"type": "two-column-table",
 								"data": {
-									"url": "http://localhost/peach_api/peach/get_family_structure/"
-								}
-							}
-						]
-					}
-				],
-				[
-					{
-						"title": "Phylogenetic tree",
-						"subtitle": "",
-						"width": "100",
-						"elements": [
-							{
-								"type": "tree",
-								"data": {
-									"url": "http://localhost/peach_api/peach/get_tree/"
-								}
-							}
-						]
-					}
-				],
-				[
-					{
-						"title": "Estimation of diversity",
-						"subtitle": "Diversity between the two popolations (persica and wild) in terms of number of variants",
-						"width": "50",
-						"elements": [
-							{
-								"type": "chart-bar",
-								"data": {
-									"url": "http://localhost/peach_api/peach/variant_peach_stat_global/0/200000/"
+									"url": "http://localhost/api/fusion/statistics_all/"
 								}
 							}
 						]
 					},
 					{
-						"title": "Cultivar cloud",
-						"subtitle": "Cultivar displayed according to the number of variants (indels). Name size correlates to relevance.",
-						"width": "50",
+						"title": "Fusion events by chromosome",
+						"subtitle": "Distribution of fusion events (y-axis) divided by chromosomes (x-axis)",
+						"width": "33",
 						"elements": [
 							{
-								"type": "cloud",
-								"width": "400",
-								"height": "400",
-								"steps": "7",
+								"type": "chart-doughnut",
 								"data": {
-									"url": "http://localhost/peach_api/peach/get_stats/INDELS_PER_SAMPLE/"
-								}
-							}
-						]
-					}
-				],
-				[
-					{
-						"title": "Gene density by chromosome",
-						"width": "100",
-						"elements": [
-							{
-								"type": "chart-bar",
-								"data": {
-									"url": "http://localhost/peach_api/peach/variant_peach_stat/gene.density/0/200000/",
+									"url": "http://localhost/api/fusion/get_distribution/Chromosome/Fusion/",
 									"onClick": {
 										"action": "write",
 										"key": "chromosome"
 									}
 								}
 							}
-						]
-					}
-				],
-				[
-					{
-						"title": "Gene density by region",
-						"width": "100",
-						"elements": [
-							{
-								"type": "slider",
-								"label": "Select the size of the window",
-								"data": {
-									"min": "1000000",
-									"max": "10000000",
-									"value": "10000000",
-									"step": "500000",
-									"onChange": {
-										"action": "write",
-										"key": "window"
-									}
-								}
-							},
-							{
-								"type": "chart-bar",
-								"data": {
-									"url": "http://localhost/peach_api/peach/variant_peach_stat/gene.density/1/WINDOW/",
-									"template": "WINDOW",
-									"key": "window"
-								}
-							}
-						]
-					}
-				],
-				[
-					{
-						"title": "SNP density by region (wild)",
-						"width": "50",
-						"elements": [
-							{
-								"type": "slider",
-								"label": "Select the size of the window",
-								"data": {
-									"min": "1000000",
-									"max": "10000000",
-									"value": "10000000",
-									"step": "500000",
-									"onChange": {
-										"action": "write",
-										"key": "window_snp_density"
-									}
-								}
-							},
-							{
-								"type": "chart-bar",
-								"data": {
-									"url": "http://localhost/peach_api/peach/variant_peach_stat/wildLD.pi/1/WINDOW_SNP_DENSITY/",
-									"template": "WINDOW_SNP_DENSITY",
-									"key": "window_snp_density"
-								}
-							}
-						]
+						],
+						"footer": {
+							"label": "auto",
+							"pluralize": "true",
+							"prefixFunction": "total"
+						}
 					},
 					{
-						"title": "SNP density by region (persica)",
-						"width": "50",
-						"elements": [
-							{
-								"type": "slider",
-								"label": "Select the size of the window",
-								"data": {
-									"min": "1000000",
-									"max": "10000000",
-									"value": "10000000",
-									"step": "500000",
-									"onChange": {
-										"action": "write",
-										"key": "window_snp_persica_density"
-									}
-								}
-							},
-							{
-								"type": "chart-bar",
-								"data": {
-									"url": "http://localhost/peach_api/peach/variant_peach_stat/persicaLD.pi/1/WINDOW_SNP_PERSICA_DENSITY/",
-									"template": "WINDOW_SNP_PERSICA_DENSITY",
-									"key": "window_snp_persica_density"
-								}
-							}
-						]
-					}
-				],
-				[
-					{
-						"title": "Number of variants per cultivar",
+						"title": "Summary for chromosome",
 						"width": "33",
 						"elements": [
 							{
-								"type": "chart-pie",
+								"type": "two-column-table",
 								"data": {
-									"url": "http://localhost/peach_api/peach/get_distribution/Cultivar/Variants/"
+									"url": "http://localhost/api/fusion/get_single_distribution/Chromosome/CHROMOSOME",
+									"template": "CHROMOSOME",
+									"key": "chromosome",
+									"value": "1"
 								}
 							}
-						]
-					},
-					{
-						"title": "Global statistics",
-						"width": "66",
-						"elements": [
-							{
-								"type": "table",
-								"data": {
-									"url": "http://localhost/peach_api/peach/get_total_stats/"
-								}
-							}
-						]
+						],
+						"footer": {
+							"label": "auto",
+							"pluralize": "true",
+							"prefixFunction": "total"
+						}
 					}
 				],
 				[
 					{
-						"title": "Dataset overview (peach)",
-						"width": "50",
-						"actions": [
-							{
-								"url": "http://localhost/peach_api/peach/download/excel/",
-								"label": "Download as Excel",
-								"type": "button",
-								"icon": "fa-file-excel-o",
-								"modifiers": "fa-lg"
-							},
-							{
-								"url": "http://localhost/peach_api/peach/download/csv/",
-								"label": "Download as CSV",
-								"type": "button",
-								"icon": "fa-table",
-								"modifiers": "fa-lg"
-							}
-						],
+						"width": "100",
+						"title": "Fusion events for cell line",
+						"subtitle": "Ticks in the plot correspond to about 30 million bases",
 						"elements": [
 							{
-								"type": "table",
-								"data": {
-									"url": "http://localhost/peach_api/peach/get_info_all_simple/persica/"
-								}
-							}
-						]
-					},
-					{
-						"title": "Dataset overview (wild-related species)",
-						"width": "50",
-						"actions": [
-							{
-								"url": "http://localhost/peach_api/peach/download/excel/",
-								"label": "Download as Excel",
-								"type": "button",
-								"icon": "fa-file-excel-o",
-								"modifiers": "fa-lg"
+								"type": ""
 							},
 							{
-								"url": "http://localhost/peach_api/peach/download/csv/",
-								"label": "Download as CSV",
-								"type": "button",
-								"icon": "fa-table",
-								"modifiers": "fa-lg"
-							}
-						],
-						"elements": [
-							{
-								"type": "table",
+								"type": "select",
+								"label": "Select a cell line",
 								"data": {
-									"url": "http://localhost/peach_api/peach/get_info_all_simple/wild/"
+									"url": "http://localhost/api/fusion/cell_lines/"
 								}
-							}
+							},
+							{
+								"type": "circos",
+								"data": {
+									"url": "http://localhost/api/fusion/cell_line_events/CELL_LINE/",
+									"template": "CELL_LINE",
+									"key": "cell_line",
+									"value": "CCLE_001"
+								}
+							}							
 						]
 					}
 				]
 			]
 		},
 		{
-			"title": "cultivars",
+			"title": "statistics",
 			"elements": [
 				[
 					{
-						"title": "Dataset overview (peach)",
-						"width": "100",
+						"title": "Distribution of fusion events across genes",
+						"width": "30",
 						"elements": [
-						{
-                                        "type": "table",
-                                        "data": {
-                                                "url": "http://localhost/peach_api/peach/get_info_all/persica/"
-                                        }
-                                }
-                        ]
-					}
-				],
-				[
+							{
+								"type": "table",
+								"data":{
+									"url": "http://localhost/api/fusion/get_distribution/Gene/Fusion/1000/ASC/"
+								}
+							}
+						]
+					},
 					{
-						"title": "Dataset overview (wild-related species)",
-                        "width": "100",
-                        "elements": [
-                        	{
-                                "type": "table",
-                                "data":
-                                {
-                                        "url": "http://localhost/peach_api/peach/get_info_all/wild/"
-                                }
-                            }
-                        ]
-					}
-				]
-			]
-		},
-		{
-			"title": "downloads",
-			"elements":
-			[
-				[
-					{
-						"title": "Download data",
-						"width": "100",
+						"title": "Distribution of fusion events across cell lines",
+						"width": "70",
 						"elements":
 						[
 							{
-								"type": "table",
-	                            "data":
-	                            {
-	                                    "url": "http://localhost/peach_api/peach/download/"
-	                            }
-                            }
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/api/fusion/get_distribution/CellLine/Fusion/50/"
+								}
+							}
+						]
+					}
+				],
+				[
+					{
+						"title": "Distribution of fusion events across chromosomes",
+						"width": "30",
+						"elements":[
+							{
+								"type": "chart-pie",
+								"data": {
+									"url": "http://localhost/api/fusion/get_distribution/Chromosome/Fusion/"
+								}
+							}
+						]
+					},
+					{
+						"title": "Distribution of diseases across cell lines",
+						"width": "70",
+						"elements": [
+							{
+								"type": "chart-bar",
+								"data": {
+									"url": "http://localhost/api/fusion/get_distribution/Disease/CellLine/100/DESC/"
+								}
+							}
 						]
 					}
 				]
 			]
+		}
+	],
+	"forms": [
+		{
+		"name": "search_for_cell_line",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+			"label": "Cell line",
+			"type": "select",
+			"values": "http://localhost/api/fusion/cell_lines/",
+			"placeholder": "CCLE_0384",
+			"default": "CCLE_0384",
+			"required": "true"
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/cell_line/"
+		}
+	},{
+		"name": "search_for_chromosome",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [
+		{
+			"label": "Chromosome 1",
+			"type": "select",
+			"values": "http://localhost/api/fusion/chromosomes/",
+			"required": "true"
 		},
 		{
-			"title": "info",
-			"elements": [
-			]
+			"label": "Chromosome 2",
+			"type": "select",
+			"values": "http://localhost/api/fusion/chromosomes/",
+			"required": "true"
+		},
+		{
+			"label": "Cell line",
+			"type": "select",
+			"values": "http://localhost/api/fusion/cell_lines/",
+			"placeholder": "CCLE_0384",
+			"default": "CCLE_0384",
+			"required": "true"
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/chromosomes/"
 		}
-	]
+	}, {
+		"name": "search_for_fusion",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+			"label": "Cell line",
+			"type": "select",
+			"values": "http://localhost/api/fusion/cell_lines/",
+			"placeholder": "CCLE_0384",
+			"default": "CCLE_0384",
+			"required": "true"
+		}, {
+			"label": "Fusion description",
+			"type": "select",
+			"values": "http://localhost/api/fusion/fusion_descriptions/",
+			"multiple": true,
+			"placeholder": "Any",
+			"required": "true"
+		}, {
+			"label": "Predicted Effects",
+			"type": "select",
+			"values": "http://localhost/api/fusion/predicted_effects/",
+			"multiple": true,
+			"placeholder": "Any",
+			"required": "true"
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/fusions/"
+		}
+	}, {
+		"name": "search_for_algorithm",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+			"label": "Cell line",
+			"type": "select",
+			"values": "http://localhost/api/fusion/cell_lines/",
+			"placeholder": "CCLE_0384",
+			"default": "CCLE_0384",
+			"required": "true"
+		}, {
+			"label": "Algorithm",
+			"type": "checkbox",
+			"values": "http://localhost/api/fusion/algorithms/",
+			"required": "true"
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/fusions_by_algorithm/"
+		}
+	},	
+	{
+		"name": "search_for_gene",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+                        "label": "Symbol or EnsembleID of first gene (e.g., DHRS1 or ENSG00000157379)",
+                        "type": "text",
+                        "values": "http://localhost/api/fusion/Search_for_single_gene",
+                        "placeholder": "DHRS1 or ENSG00000157379",
+                        "required": "true"
+                }, {
+                            "label": "Symbol or EnsembleID of second gene (e.g., RABGGTA or ENSG00000100949)",
+                            "type": "text",
+                            "values": "http://localhost/api/fusion/Search_for_single_gene",
+                            "placeholder": "RABGGTA or ENSG00000100949",
+                            "required": "true"
+                }, {
+                        "label": "Cell line",
+                        "type": "select",
+                        "values": "http://localhost/api/fusion/cell_lines/",
+                        "placeholder": "CCLE_0384",
+                        "default": "CCLE_0384",
+                        "required": "true"
+                }],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/gene"
+		}
+	}, {
+		"name": "search_for_exon",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+                        "label": "Exon EnsembleID of first exon (e.g., ENSE00001678826)",
+                        "type": "text",
+                        "values": "http://localhost/api/fusion/Search_for_single_gene",
+                        "placeholder": "ENSE00001678826",
+                        "required": "true"
+                }, {
+                        "label": "Exon EnsembleID of second exon (e.g., ENSE00000991541)",
+                        "type": "text",
+                        "values": "http://localhost/api/fusion/Search_for_single_gene",
+                        "placeholder": "ENSE00000991541",
+                        "required": "true"
+                }, {
+                        "label": "Cell line",
+                        "type": "select",
+                        "values": "http://localhost/api/fusion/cell_lines/",
+                        "placeholder": "CCLE_0384",
+                        "required": "true"
+                }],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/exon"
+		}
+	}, {
+		"name": "search_for_transcript",
+		"elements": [[
+			{
+				"title": "Legend",
+				"width": "50",
+				"alignment": "right",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+                        "label": "Transcript EnsembleID of first transcript (e.g., ENST00000371998)",
+                        "type": "text",
+                        "values": "http://localhost/api/fusion/Search_for_single_gene",
+                        "placeholder": "ENST00000371998",
+                        "required": "true"
+                }, {
+                        "label": "Transcript EnsembleID of second transcript (e.g., ENST00000302326)",
+                        "type": "text",
+                        "values": "http://localhost/api/fusion/Search_for_single_gene",
+                        "placeholder": "ENST00000302326",
+                        "required": "true"
+                }, {
+                        "label": "Cell line",
+                        "type": "select",
+                        "values": "http://localhost/api/fusion/cell_lines/",
+                        "placeholder": "CCLE_0384",
+                        "required": "true"
+                }],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/transcript"
+		}
+	},{
+		"name": "search_for_viruses",
+		"elements": [[
+			{
+				"title": "Notes",
+				"width": "50",
+				"elements": [
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-exclamation-triangle",
+							"color": "orange",
+							"title": "warning"
+						}
+					},
+					{
+						"type": "text",
+						"data": "This information is available only for those events detected by FusionCatcher.",
+						"inline": "true"
+					}
+				]
+			},
+			{
+				"title": "Legend",
+				"width": "50",
+				"elements":
+				[
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "green",
+							"title": "True positive"
+						}
+					},
+					{
+						"type": "text",
+						"data": "True positive",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "orange",
+							"title": "False positive with medium probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with medium probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "icon",
+						"data": {
+							"icon": "fa-circle",
+							"color": "red",
+							"title": "False positive with high probability"
+						}
+					},
+					{
+						"type": "text",
+						"data": "False positive with high probability",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "cosmic_logo.png"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/cosmic/classic/'>COSMIC</a> repository",
+						"inline": "true"
+					},
+					{
+						"type": "divider"
+					},
+					{
+						"type": "image",
+						"data": {
+							"url": "sanger-logo.png",
+							"width": "80px"
+						}
+					},
+					{
+						"type": "text",
+						"data": "Known gene in <a target='blank' href='http://cancer.sanger.ac.uk/census'>Gene Census</a> repository",
+						"inline": "true"
+					}
+				]
+			}
+			]
+		],
+		"fields": [{
+			"label": "Virus name, GI id or NC ID (e.g., 9626958 or NC_001501.1)",
+			"type": "select",
+			"values": "http://localhost/api/fusion/virus/",
+			"placeholder": "Moloney murine leukemia virus, complete genome, 9626958 or NC_001501.1",
+			"required": "true"
+		}, {
+			"label": "Cell line",
+			"type": "select",
+			"values": "http://localhost/api/fusion/cell_lines/",
+			"placeholder": "CCLE_0384",
+			"required": "true"
+		}],
+		"submit": {
+			"label": "Submit",
+			"url": "http://localhost/api/fusion/virus"
+		}
+	}]
 }

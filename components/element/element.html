@@ -2,13 +2,22 @@
 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
 </div>
 
-<div ng-if="type == 'text'">
-	<p ng-bind="data"></p>
+<div ng-if="type == 'text' && inline != 'true'">
+	<p ng-bind-html="data"></p>
 </div>
 
-<div ng-if="type == 'image'">
-	<img style="max-width:100%" ng-src="{{data.url}}"></img>
-</div>
+<span ng-if="type == 'text' && inline == 'true'" ng-bind-html="data">
+</span>
+
+<span ng-if="type == 'image'">
+	<img style="max-width:{{data.width || '100%'}}; vertical-align: middle;" ng-src="{{data.url}}"></img>
+</span>
+
+<hr ng-if="type == 'divider'">
+
+<span ng-if='type == "icon"' style="vertical-align: sub; padding: 5px;">
+	<i class="fa {{data.icon}} {{data.modifiers}}" aria-label="{{data.title}}" title="{{data.title}}" style="color: {{data.color}}"></i>
+</span>
 
 <div ng-if="type == 'bullet_list'">
 	<ul>

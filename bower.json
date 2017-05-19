@@ -24,6 +24,7 @@
     "AngularJS-Toaster": "angularjs-toaster#^2.1.0",
     "angular-jqcloud": "^1.0.3",
     "phylotree": "^0.1.4",
-    "angular-route": "^1.6.4"
+    "angular-route": "^1.6.4",
+    "components-font-awesome": "^4.7.0"
   }
 }

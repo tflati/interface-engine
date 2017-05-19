@@ -18,10 +18,11 @@ app.controller("elementController", function($scope, $http, dataService, message
 		$scope.numbered = data.numbered;
 		$scope.width = data.width;
 		$scope.height = data.height;
+		$scope.inline = data.inline;
 		
 		console.log("ELEMENT METADATA: ", data);
 		
-		if($scope.data_source.value && $scope.data_source.key)
+		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
 		
 		if($scope.type != "image")
@@ -59,6 +60,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 	};
 	
 	$scope.get_url = function(){
+		if ( ! $scope.data_source ) return "";
 		var template = $scope.data_source.template;
 		
 		var value = dataService.global[$scope.data_source.key];		

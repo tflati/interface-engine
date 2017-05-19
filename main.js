@@ -96,7 +96,7 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 			$scope.form_results = [];
 			$scope.page = 'templates/form.html';
 			$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
-			$scope.header.show_logos = false;
+			$scope.header.show_logos = true;
 		}
 		else {
 			if(url == "home") url = "main";
