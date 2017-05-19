@@ -28,7 +28,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.type != "image")
 			$scope.update($scope.get_url());
 		
-		if($scope.data_source.key){
+		if($scope.data_source != undefined && $scope.data_source.key){
 			$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
 				
 			    if (newValue != oldValue){
@@ -38,7 +38,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			});
 		}
 		
-		if($scope.data_source.onChange){
+		if($scope.data_source != undefined && $scope.data_source.onChange){
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
 				console.log("GLOBAL:", dataService);
@@ -60,7 +60,11 @@ app.controller("elementController", function($scope, $http, dataService, message
 	};
 	
 	$scope.get_url = function(){
-		if ( ! $scope.data_source ) return "";
+		
+		if ( $scope.data_source == undefined ) {
+			console.log("[STRANGE]", $scope);
+			return "";
+		}
 		var template = $scope.data_source.template;
 		
 		var value = dataService.global[$scope.data_source.key];		
@@ -71,6 +75,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 	
 	$scope.update = function(url, fx){
 		if(url == undefined) return;
+		if(url == "") return;
 		
 		if(!url.endsWith("/")) url += "/";
 		
@@ -91,7 +96,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 	$scope.onDataReceived = function(response)
 	{
 		$scope.sending = false;
-		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response.data);
+		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response);
 		$scope.subdata = response.data.details;
 		
 		if($scope.type == "chart-bar"){

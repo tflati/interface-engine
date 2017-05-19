@@ -123,7 +123,7 @@
 			                	
 			              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
 			              		
-			              		<a ng-if='field.type = "link"' target="_blank" ng-href="{{field.data.url}}" ng-bind-html="field.data.label"></a>
+			              		<a ng-if='field.type == "link"' target="_blank" ng-href="{{field.data.url}}" ng-bind-html="field.data.label"></a>
 			                </div>
 						</td>
 <!-- 						<td style="max-width: 100px; overflow-wrap: break-word;" md-cell ng-repeat="field in row track by $index"> -->

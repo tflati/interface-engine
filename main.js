@@ -130,13 +130,34 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 	$scope.show_dialog = function(ev, card){
         
         console.log(ev, card);
-    
+        
         $mdDialog.show({
+        	multiple: true,        	
         	locals: {data: card},
             controller: function DialogController($scope, $mdDialog, data) {
                 $scope.row = [data];
                 $scope.closeDialog = function() {
                   $mdDialog.hide();
+                };
+                
+                $scope.show_dialog = function(ev, card){
+                    
+                    console.log(ev, card);
+                    
+                    $mdDialog.show({
+                    	multiple: true,
+                    	locals: {data: card},
+                        controller: function DialogController($scope, $mdDialog, data) {
+                            $scope.row = [data];
+                            $scope.closeDialog = function() {
+                              $mdDialog.hide();
+                            };
+                          },
+                        templateUrl: 'templates/dialog.html',
+                        parent: angular.element(document.body),
+                        targetEvent: ev,
+                        clickOutsideToClose:true
+                    });
                 };
               },
             templateUrl: 'templates/dialog.html',
@@ -197,7 +218,10 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		{
 			$scope.sending = true;
 			
-			$http.get($scope.form.submit.url + args.join("/") + "/")
+			var url = $scope.form.submit.url + args.join("/") + "/";
+			
+			console.log("SENDING AJAX VIA GET", args, url);
+			$http.get(url)
 			.then(function(response) {
 				console.log("QUERY GET SUCCESS", response);
 				$scope.form_results = response.data;

@@ -33,13 +33,13 @@
 		<tbody md-body>
 			<thead md-head>
 				<tr md-row md-auto-select>
-					<th md-cell md-column ng-repeat="label in subdata.header track by $index">
+					<th style="max-width: 100px; overflow-wrap: break-word;" md-cell md-column ng-repeat="label in subdata.header track by $index">
 						<span>{{label}}</span>
 					</th>
 				</tr>
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
+              <td style="max-width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
               
               	<span ng-switch-when="undefined" style="text-overflow: ellipsis;">
               		<span>{{field}}</span>
