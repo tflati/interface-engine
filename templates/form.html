@@ -3,9 +3,9 @@
 	<form ng-submit="send_query()">
 	
 		<div ng-repeat="field in form.fields track by $index">
-			<div ng-if="field.type != 'autocomplete'">
-				<md-input-container class="md-input-has-placeholder">
-					<label style="min-width: 400px;" ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
+			<md-input-container class="md-input-has-placeholder">
+				<md-content class="md-padding" ng-if="field.type != 'autocomplete'">
+					<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 					
 					<input ng-if="field.type != 'choice' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
 					
@@ -18,13 +18,13 @@
 					</md-select>
 
 					<fieldset ng-if="field.type == 'checkbox' && field.values != undefined">
-			                	<legend>{{field.label}}</legend>
- 			                        <div ng-repeat="value in field.values track by $index" flex="50">
-				                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
-                            				{{value}}
-				                        </md-checkbox>
-			                        </div>
-			                </fieldset>
+	                	<legend>{{field.label}}</legend>
+		                        <div ng-repeat="value in field.values track by $index" flex="50">
+		                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
+                          				{{value}}
+		                        </md-checkbox>
+	                        </div>
+	                </fieldset>
 					
 					<md-checkbox ng-if="field.type == 'checkbox' && !field.values" ng-model="field.value" ng-checked="{{field.checked}}">
 						{{field.label}}
@@ -35,29 +35,27 @@
 							{{value.label}}
 						</md-radio-button>
 					</md-radio-group>
-				</md-input-container>
-			</div>
-					      
-			<div flex="30" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
-				<md-content class="md-padding">
-					<label style="min-width: 400px;" ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
+				</md-content>
+				<md-content class="md-padding" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
+					<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 					<md-autocomplete
+						  placeholder="{{field.label}}"
 				          md-selected-item="field.value"
-				          md-search-text="asearchText"
-				          md-items="item in aquerySearch(asearchText)"
+				          md-search-text="actrl.searchText"
+				          md-items="item in actrl.querySearch(actrl.searchText)"
 				          md-item-text="item"
 				          md-min-length="0"
+				          style="min-width: 600px"
 				        >
 				        <md-item-template>
-				          <span md-highlight-text="asearchText" md-highlight-flags="^i">{{item}}</span>
+				          <span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item}}</span>
 				        </md-item-template>
 				        <md-not-found>
-				          No items matching "{{asearchText}}" were found.
+				          No items matching "{{actrl.searchText}}" were found.
 				        </md-not-found>
 				      </md-autocomplete>
 				</md-content>
-			</div>
-
+			</md-input-container>
 		</div>
 		<md-button ng-click="send_query()" class="md-primary md-raised">{{form.submit.label}}</md-button>
 	</form>
@@ -87,7 +85,7 @@
 			<table md-table md-row-select multiple>
 				<thead md-head>
 		        	<tr md-row>
-		            	<th md-column ng-repeat="col in form_results.header track by $index">
+		            	<th style="word-break: break-word; max-width: 100px; overflow-wrap: break-word;" md-column ng-repeat="col in form_results.header track by $index">
 		            	<span>{{col}}</span>
 		            </th>
 					</tr>
