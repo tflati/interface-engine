@@ -33,20 +33,23 @@
 		<tbody md-body>
 			<thead md-head>
 				<tr md-row md-auto-select>
-					<th style="max-width: 100px; overflow-wrap: break-word;" md-cell md-column ng-repeat="label in subdata.header track by $index">
+					<th style="word-break: break-word; width: 100px; overflow-wrap: break-word; word-wrap: break-word;" md-cell md-column ng-repeat="label in subdata.header track by $index">
 						<span>{{label}}</span>
 					</th>
 				</tr>
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td style="max-width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
+              <td style="width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
               
-              	<span ng-switch-when="undefined" style="text-overflow: ellipsis;">
+              	<span ng-switch-when="undefined">
               		<span>{{field}}</span>
               	</span>
               	
                 <div ng-switch-default>
-                	<md-button ng-if='field.type == "button"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+                	<md-button ng-if='field.type == "button" && field.type == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+                	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
+                		<md-button type="submit" class="md-raised md-primary">{{field.label}}</md-button>
+                	</form>
               		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
                 </div>
                 
@@ -195,7 +198,7 @@
 </div>
 
 <!-- words="[{text: 'Lorem', weight: 13}, {text: 'Ipsum', weight: 10.5}, {text: 'Dolor', weight: 9.4}, {text: 'Sit', weight: 8}, {text: 'Amet', weight: 6.2}, {text: 'Consectetur', weight: 5}, {text: 'Adipiscing', weight: 5}]" -->
-<div align="center" ng-controller="cloudController" ng-if="type == 'cloud'">
+<div ng-if="type == 'cloud'" align="center" ng-controller="cloudController">
 	<jqcloud
 		words="subdata"
 		width="{{width}}"

@@ -1,4 +1,5 @@
-app.controller("autocompleteController", function($scope){
+app.controller("autocompleteController", function($scope, $filter){
+	
 	var self = this;
 	
 	console.log("Autocomplete field: ", $scope.field);
@@ -17,7 +18,7 @@ app.controller("autocompleteController", function($scope){
 					// console.log("FILTER item= vs query=", item, query);
 					return angular.lowercase(item).indexOf(angular.lowercase(query)) === 0;
 				});
-		
+		results = $filter('orderBy')(results); 
 		console.log("# RESULTS: ", results.length);
 		
 		return results;

@@ -1,4 +1,4 @@
-app.controller("cardController", function($scope){
+app.controller("cardController", function($scope, dataService){
 	
 	$scope.sending = false;
 	
@@ -12,7 +12,17 @@ app.controller("cardController", function($scope){
 		$scope.width = data.width;
 		if($scope.width.endsWith("%")) $scope.width = $scope.width.substring(0, $scope.width.length - 1);
 		$scope.footer = data.footer;
-		$scope.elements = data.elements;
+		$scope.elements = data.elements;		
+		$scope.show = true;
+		
+		if (data.show == "after_send"){
+			$scope.show = false;
+			$scope.$watch(function(){return $scope.form_results;}, function(newValue, oldValue) {
+		        if(newValue != oldValue){
+		        	$scope.show = true;
+		        }
+			}, true);
+		}
 		
 		console.log("CARD DATA: ", data);
 	};

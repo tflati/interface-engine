@@ -127,6 +127,13 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		}
 	};
 	
+	$scope.doAction = function(actionType, data){
+		console.log("[DO_ATION] ACTION=" + actionType + " WITH DATA", data);
+		if(actionType == "download"){
+			
+		}
+	};
+	
 	$scope.show_dialog = function(ev, card){
         
         console.log(ev, card);
