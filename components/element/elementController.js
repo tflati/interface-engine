@@ -41,7 +41,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.data_source != undefined && $scope.data_source.onChange){
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
-				console.log("GLOBAL:", dataService);
+				console.log("GLOBAL:", dataService, $scope.data_source);
 				dataService.global[listener.key] = $scope.data_source.value;
 				console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + $scope.data_source.value + " (real value: "+dataService.global[listener.key]+")");
 			}
@@ -67,10 +67,12 @@ app.controller("elementController", function($scope, $http, dataService, message
 		}
 		var template = $scope.data_source.template;
 		
-		var value = dataService.global[$scope.data_source.key];		
 		var url = $scope.data_source.url;
 		if(!template) return url;
-		else return url.replace(template, value);
+		else {
+			var value = dataService.global[$scope.data_source.key];
+			return url.replace(template, value);
+		}
 	};
 	
 	$scope.update = function(url, fx){
@@ -79,7 +81,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		
 		if(!url.endsWith("/")) url += "/";
 		
-		console.log("AJAX TO", url);
+		console.log("AJAX TO", url, $scope.data_source);
 		$scope.sending = true;
 		
 		if(fx == undefined) fx = $scope.onDataReceived;
@@ -96,10 +98,12 @@ app.controller("elementController", function($scope, $http, dataService, message
 	$scope.onDataReceived = function(response)
 	{
 		$scope.sending = false;
-		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response);
-		$scope.subdata = response.data.details;
+		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope.data_source);
 		
-		if($scope.type == "chart-bar"){
+		if(response.data.details) $scope.subdata = response.data.details;
+		else $scope.subdata = response.data;
+		
+		if($scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 			$scope.subdata.labels = []
 			$scope.subdata.points = []
 			
@@ -116,17 +120,29 @@ app.controller("elementController", function($scope, $http, dataService, message
 					$scope.subdata.points[j-1].push(item[j]);
 			}
 			
-			$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
-			$scope.subdata.options = {legend: { display: $scope.subdata.series.length > 0}};
-			if($scope.stacked)
-			{
-				$scope.subdata.options.scales = {
-			        xAxes: [{
-			          stacked: true,
-			        }],
-			        yAxes: [{
-			          stacked: true
-		        }]};
+			if($scope.type !== "chart-bar") {
+				$scope.subdata.points = $scope.subdata.points[0];
+				console.log("SIMPLIFYING DATA", response, $scope.subdata, $scope.subdata.points);
+			}
+			else {
+				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
+				$scope.subdata.options = {legend: { display: $scope.subdata.series.length > 0}};
+				if($scope.stacked)
+				{
+					$scope.subdata.options.scales = {
+				        xAxes: [{
+				          stacked: true,
+				        }],
+				        yAxes: [{
+				          stacked: true,
+			        }]};
+					
+					if($scope.data_source.max)
+						console.log("MAX VALUE", $scope.data_source.max);
+						$scope.subdata.options.scales.yAxes[0].ticks = {
+		                    max: parseFloat($scope.data_source.max),
+		                };
+				}
 			}
 		}
 		

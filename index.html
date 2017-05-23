@@ -35,7 +35,7 @@
 <script src="bower_components/angular-chart.js/angular-chart.js"></script>
 
 <!-- d3 -->
-<script src="lib/jquery.js"></script>
+<!-- <script src="lib/jquery.js"></script> -->
 <script src="lib/d3.js"></script>
 <script src="lib/biocircos-1.1.2.js"></script>
 
@@ -205,6 +205,15 @@ hr {
 	border-width: 1px;
 	display: block;
 	color: lightgray;
+}
+
+
+.md-dialog-backdrop:nth-of-type(even) {
+    z-index: 81;
+}
+
+.md-dialog-backdrop:nth-of-type(odd) {
+    z-index: 79;
 }
 
 .md-dialog-container:nth-of-type(even) {

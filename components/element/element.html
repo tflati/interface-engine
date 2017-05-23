@@ -2,11 +2,11 @@
 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
 </div>
 
-<div ng-if="type == 'text' && inline != 'true'">
+<div ng-if="type == 'paragraph' && inline != 'true'">
 	<p ng-bind-html="data"></p>
 </div>
 
-<span ng-if="type == 'text' && inline == 'true'" ng-bind-html="data">
+<span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data">
 </span>
 
 <span ng-if="type == 'image'">
@@ -40,15 +40,14 @@
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
               <td style="width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
-              
-              	<span ng-switch-when="undefined">
+                <span ng-switch-when="undefined">
               		<span>{{field}}</span>
               	</span>
               	
                 <div ng-switch-default>
-                	<md-button ng-if='field.type == "button" && field.type == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+                	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
                 	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
-                		<md-button type="submit" class="md-raised md-primary">{{field.label}}</md-button>
+                		<md-button type="submit" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
               		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
                 </div>
@@ -116,8 +115,8 @@
 <div ng-if="type == 'chart-pie'">
 	<canvas
 		class="chart chart-pie"
-		chart-data="subdata.items"
-		chart-labels="subdata.header"
+		chart-data="subdata.points"
+		chart-labels="subdata.labels"
 		chart-click="onClick"
 		>
 	</canvas>
@@ -127,8 +126,8 @@
 <div ng-if="type == 'chart-doughnut'">
 	<canvas
 		class="chart chart-doughnut"
-		chart-data="subdata.items"
-		chart-labels="subdata.header"
+		chart-data="subdata.points"
+		chart-labels="subdata.labels"
 		chart-click="onClick"
 		>
 	</canvas>
@@ -161,7 +160,7 @@
 	      <tr md-row md-auto-select ng-repeat="row in subdata.items track by $index">
 	        <td md-cell style="text-align: center; padding: 20px;"><b>{{(query.page-1)*query.limit + $index +1}}</b></td>
 			<td md-cell style="text-align: center;" ng-repeat="field in row track by $index">
-				<span ng-if="!field.url">{{field}}</span>
+				<span ng-if="!url">{{field}}</span>
 			</td>
 		  </tr>
 	    </tbody>
@@ -212,6 +211,54 @@
 </div>
 
 <div ng-if="type == 'circos'" ng-controller="circosController">
-	<div align="center" style="font-size: 0.5em;" id="biocircos"></div>
+	<div align="center" style="font-size: 0.5em;" id="biocircos" ng-show="!sending"></div>
 </div>
 
+
+<md-input-container class="md-input-has-placeholder" ng-if="['select', 'text', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
+	<md-content ng-if="type != 'autocomplete'">
+		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
+		
+		<input ng-if="type != 'choice' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data.value" ng-value="{{data.default}}" type="{{type}}"/>
+		
+		<md-select ng-model="data.value" ng-if="type == 'select' && (!data.multiple || data.multiple == false)" ng-model-options="{trackBy: '$value'}" ng-change="onChange(data.value)">
+			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
+		</md-select>
+		<md-select multiple ng-model="data.value" ng-if="type == 'select' && data.multiple && data.multiple == true" ng-model-options="{trackBy: '$value'}">
+			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
+		</md-select>
+
+		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
+              	<legend>{{label}}</legend>
+                       <div ng-repeat="value in subdata track by $index" flex="50">
+                       <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
+							{{value}}
+                       </md-checkbox>
+                      </div>
+              </fieldset>
+		
+		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data.value" ng-checked="{{checked}}">
+			{{label}}
+		</md-checkbox>
+		
+	</md-content>
+	<md-content ng-if="type == 'autocomplete'" ng-controller="autocompleteController as actrl">
+		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
+		<md-autocomplete
+			  placeholder="{{data.label}}"
+	          md-selected-item="data.value"
+	          md-search-text="actrl.searchText"
+	          md-items="item in actrl.querySearch(actrl.searchText)"
+	          md-item-text="item"
+	          md-min-length="0"
+	          style="min-width: 600px"
+	        >
+	        <md-item-template>
+	          <span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item}}</span>
+	        </md-item-template>
+	        <md-not-found>
+	          No items matching "{{actrl.searchText}}" were found.
+	        </md-not-found>
+	      </md-autocomplete>
+	</md-content>
+</md-input-container>
