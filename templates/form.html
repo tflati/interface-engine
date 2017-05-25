@@ -3,8 +3,8 @@
 	<form ng-submit="send_query()">
 	
 		<div ng-repeat="field in form.fields track by $index">
-			<md-input-container class="md-input-has-placeholder">
-				<md-content class="md-padding" ng-if="field.type != 'autocomplete'">
+		<md-content class="md-padding">
+			<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'">
 					<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 					
 					<input ng-if="field.type != 'choice' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
@@ -35,8 +35,9 @@
 							{{value.label}}
 						</md-radio-button>
 					</md-radio-group>
-				</md-content>
-				<md-content class="md-padding" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
+				</md-input-container>
+				
+				<md-input-container class="md-input-has-placeholder" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
 					<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 					<md-autocomplete
 						  placeholder="{{field.label}}"
@@ -54,8 +55,8 @@
 				          No items matching "{{actrl.searchText}}" were found.
 				        </md-not-found>
 				      </md-autocomplete>
-				</md-content>
-			</md-input-container>
+			      </md-input-container>
+			</md-content>			
 		</div>
 		<md-button ng-click="send_query()" class="md-primary md-raised">{{form.submit.label}}</md-button>
 	</form>

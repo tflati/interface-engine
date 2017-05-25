@@ -3,16 +3,15 @@ app.controller("elementController", function($scope, $http, dataService, message
 	$scope.subdata = [];
 	$scope.sending = false;
 
-	$scope.globaldata = dataService.global;
-	$scope.$watch(function(){return dataService.global;}, function(newValue) {
-	        $scope.globaldata = newValue;
-	}, true);
+//	$scope.globaldata = dataService.global;
+//	$scope.$watch(function(){return dataService.global;}, function(newValue) {
+//	        $scope.globaldata = newValue;
+//	}, true);
 	
 	$scope.init = function(data){
 		
 		$scope.type = data.type;
 		$scope.stacked = data.stacked;
-		$scope.data = data.data;
 		$scope.label = data.label;
 		$scope.data_source = data.data;
 		$scope.numbered = data.numbered;
@@ -28,12 +27,18 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.type != "image")
 			$scope.update($scope.get_url());
 		
-		if($scope.data_source != undefined && $scope.data_source.key){
+		if($scope.data_source != undefined && $scope.data_source.key){			
 			$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
-				
 			    if (newValue != oldValue){
-			        console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to " + newValue + " (effective value="+dataService.global[$scope.data_source.key]+")");
-			        $scope.update($scope.get_url());
+			    	
+			    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to " + newValue + " (effective value="+dataService.global[$scope.data_source.key]+")");
+			    	
+			    	if(! $scope.data_source.url) {
+			    		$scope.data_source.value = newValue;
+			    	}
+			    	else {
+			        	$scope.update($scope.get_url());
+			    	}
 			    }
 			});
 		}
@@ -41,9 +46,9 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.data_source != undefined && $scope.data_source.onChange){
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
-				console.log("GLOBAL:", dataService, $scope.data_source);
+				console.log("[1] GLOBAL:", dataService, $scope.data_source);
 				dataService.global[listener.key] = $scope.data_source.value;
-				console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + $scope.data_source.value + " (real value: "+dataService.global[listener.key]+")");
+				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + $scope.data_source.value + " (real value: "+dataService.global[listener.key]+")");
 			}
 		}
 	};
@@ -53,9 +58,9 @@ app.controller("elementController", function($scope, $http, dataService, message
 		
 		var listener = $scope.data_source.onChange;
 		if(listener.action == "write") {
-			console.log("GLOBAL:", dataService);
+			console.log("[2] GLOBAL:", dataService);
 			dataService.global[listener.key] = newValue;
-			console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + newValue + " (real value: "+dataService.global[listener.key]+")");
+			console.log("[2] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + newValue + " (real value: "+dataService.global[listener.key]+")");
 		}
 	};
 	
@@ -151,16 +156,16 @@ app.controller("elementController", function($scope, $http, dataService, message
 	
 	$scope.onClick = function(evt){
 		
-		var value = $scope.subdata.header[evt[0]._index];
+		var value = $scope.subdata.items[evt[0]._index][0];
 		console.log("CLICK EVENT", evt, value);
 		
 		var listener = $scope.data_source.onClick;
 		if(listener.action == "write") {
-		$scope.$apply(function() {
-			console.log("GLOBAL:", dataService);
-			dataService.global[listener.key] = value;
-			console.log("CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + value + " (real value: "+dataService.global[listener.key]+")");
-		    });
+			$scope.$apply(function() {
+				console.log("[3] GLOBAL:", dataService);
+				dataService.global[listener.key] = value;
+				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + value + " (real value: "+dataService.global[listener.key]+")");
+			    });
 		}
 		
 //		var changeListener = $scope.data_source.onClick;

@@ -3,20 +3,20 @@
 </div>
 
 <div ng-if="type == 'paragraph' && inline != 'true'">
-	<p ng-bind-html="data"></p>
+	<p ng-bind-html="data_source.value"></p>
 </div>
 
-<span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data">
+<span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data_source.value">
 </span>
 
 <span ng-if="type == 'image'">
-	<img style="max-width:{{data.width || '100%'}}; vertical-align: middle;" ng-src="{{data.url}}"></img>
+	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
 <hr ng-if="type == 'divider'">
 
 <span ng-if='type == "icon"' style="vertical-align: sub; padding: 5px;">
-	<i class="fa {{data.icon}} {{data.modifiers}}" aria-label="{{data.title}}" title="{{data.title}}" style="color: {{data.color}}"></i>
+	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" aria-label="{{data_source.title}}" title="{{data_source.title}}" style="color: {{data_source.color}}"></i>
 </span>
 
 <div ng-if="type == 'bullet_list'">
@@ -217,14 +217,14 @@
 
 <md-input-container class="md-input-has-placeholder" ng-if="['select', 'text', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
 	<md-content ng-if="type != 'autocomplete'">
-		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
+		<label ng-if="type != 'checkbox'" ng-bind="data_source.label"></label>
 		
-		<input ng-if="type != 'choice' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data.value" ng-value="{{data.default}}" type="{{type}}"/>
+		<input ng-if="type != 'choice' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}" type="{{type}}"/>
 		
-		<md-select ng-model="data.value" ng-if="type == 'select' && (!data.multiple || data.multiple == false)" ng-model-options="{trackBy: '$value'}" ng-change="onChange(data.value)">
+		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-model-options="{trackBy: '$value'}" ng-change="onChange(data_source.value)">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
 		</md-select>
-		<md-select multiple ng-model="data.value" ng-if="type == 'select' && data.multiple && data.multiple == true" ng-model-options="{trackBy: '$value'}">
+		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value'}">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
 		</md-select>
 
@@ -237,7 +237,7 @@
                       </div>
               </fieldset>
 		
-		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data.value" ng-checked="{{checked}}">
+		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data_source.value" ng-checked="{{checked}}">
 			{{label}}
 		</md-checkbox>
 		
@@ -245,8 +245,8 @@
 	<md-content ng-if="type == 'autocomplete'" ng-controller="autocompleteController as actrl">
 		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
 		<md-autocomplete
-			  placeholder="{{data.label}}"
-	          md-selected-item="data.value"
+			  placeholder="{{data_source.label}}"
+	          md-selected-item="data_source.value"
 	          md-search-text="actrl.searchText"
 	          md-items="item in actrl.querySearch(actrl.searchText)"
 	          md-item-text="item"
