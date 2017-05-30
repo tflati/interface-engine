@@ -117,6 +117,7 @@
 		class="chart chart-pie"
 		chart-data="subdata.points"
 		chart-labels="subdata.labels"
+		chart-options="subdata.options"
 		chart-click="onClick"
 		>
 	</canvas>
@@ -128,6 +129,7 @@
 		class="chart chart-doughnut"
 		chart-data="subdata.points"
 		chart-labels="subdata.labels"
+		chart-options="subdata.options"
 		chart-click="onClick"
 		>
 	</canvas>
@@ -221,10 +223,10 @@
 		
 		<input ng-if="type != 'choice' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}" type="{{type}}"/>
 		
-		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-model-options="{trackBy: '$value'}" ng-change="onChange(data_source.value)">
-			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
+		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-change="onChange(data_source.value)" ng-model-options="{trackBy: '$value.id'}">
+			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span> <span style="color: grey">(ID: {{value.id}})</span></md-option>
 		</md-select>
-		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value'}">
+		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value.id'}">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
 		</md-select>
 

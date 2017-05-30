@@ -31,7 +31,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
 			    if (newValue != oldValue){
 			    	
-			    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to " + newValue + " (effective value="+dataService.global[$scope.data_source.key]+")");
+			    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[$scope.data_source.key]);
 			    	
 			    	if(! $scope.data_source.url) {
 			    		$scope.data_source.value = newValue;
@@ -48,19 +48,19 @@ app.controller("elementController", function($scope, $http, dataService, message
 			if(listener.action == "write") {
 				console.log("[1] GLOBAL:", dataService, $scope.data_source);
 				dataService.global[listener.key] = $scope.data_source.value;
-				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + $scope.data_source.value + " (real value: "+dataService.global[listener.key]+")");
+				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
 			}
 		}
 	};
 	
 	$scope.onChange = function(newValue){
-		console.log("NEW VALUE: ", newValue);
+		console.log("["+$scope.type+"] NEW VALUE: ", newValue);
 		
 		var listener = $scope.data_source.onChange;
 		if(listener.action == "write") {
 			console.log("[2] GLOBAL:", dataService);
-			dataService.global[listener.key] = newValue;
-			console.log("[2] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + newValue + " (real value: "+dataService.global[listener.key]+")");
+			dataService.global[listener.key] = newValue.id;
+			console.log("[2] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
 		}
 	};
 	
@@ -125,29 +125,53 @@ app.controller("elementController", function($scope, $http, dataService, message
 					$scope.subdata.points[j-1].push(item[j]);
 			}
 			
-			if($scope.type !== "chart-bar") {
-				$scope.subdata.points = $scope.subdata.points[0];
-				console.log("SIMPLIFYING DATA", response, $scope.subdata, $scope.subdata.points);
+			$scope.subdata.options = {
+				legend: { display: false },
+				tooltips: {
+				    callbacks: {
+				        title: function(tooltipItem, chartData) {
+					          console.log("TITLE", tooltipItem, chartData)
+				          return chartData.labels[tooltipItem[0].index].label + " (ID:"+chartData.labels[tooltipItem[0].index].id+")"
+				        },
+				        label: function(tooltipItem, chartData) {
+					          console.log("LABEL", tooltipItem, chartData)
+					          var key = chartData.datasets[0].label;
+					          if (key == undefined) key = chartData.labels[tooltipItem.index].label;
+					          return  key + ": " + chartData.datasets[0].data[tooltipItem.index];
+					        }
+				      }
+			    }
+			};
+			
+			if($scope.type != "chart-pie" && $scope.type != "chart-doughnut"){
+				$scope.subdata.options.scales = {
+			        xAxes: [{
+			          stacked: $scope.stacked,
+			          ticks: {
+		                  callback: function (label) {
+//							                  console.log("X AXIS", label);
+		                      return label.id;
+		                  }
+			          }
+			        }],
+			        yAxes: [{
+			          stacked: $scope.stacked,
+		        }]}
+			};
+			
+			if($scope.type == "chart-bar") {
+				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
+				 $scope.subdata.options.legend.display = $scope.subdata.series.length > 0;
+				
+				if($scope.stacked)
+					if($scope.data_source.max) {
+//						console.log("MAX VALUE", $scope.data_source.max);
+						$scope.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.data_source.max);
+				}
 			}
 			else {
-				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
-				$scope.subdata.options = {legend: { display: $scope.subdata.series.length > 0}};
-				if($scope.stacked)
-				{
-					$scope.subdata.options.scales = {
-				        xAxes: [{
-				          stacked: true,
-				        }],
-				        yAxes: [{
-				          stacked: true,
-			        }]};
-					
-					if($scope.data_source.max)
-						console.log("MAX VALUE", $scope.data_source.max);
-						$scope.subdata.options.scales.yAxes[0].ticks = {
-		                    max: parseFloat($scope.data_source.max),
-		                };
-				}
+				$scope.subdata.points = $scope.subdata.points[0];
+				console.log("SIMPLIFYING DATA", response, $scope.subdata, $scope.subdata.points);				
 			}
 		}
 		
@@ -163,8 +187,8 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(listener.action == "write") {
 			$scope.$apply(function() {
 				console.log("[3] GLOBAL:", dataService);
-				dataService.global[listener.key] = value;
-				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO " + value + " (real value: "+dataService.global[listener.key]+")");
+				dataService.global[listener.key] = value.id;
+				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
 			    });
 		}
 		
