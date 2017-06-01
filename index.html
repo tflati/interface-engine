@@ -53,6 +53,11 @@
 <script type="text/javascript" src="bower_components/d3/d3.min.js"></script>
 <script type="text/javascript" src="bower_components/phylotree/phylotree.js"></script>
 
+<!-- Venn -->
+<script src="bower_components/d3/d3.min.js"></script>
+<script src="bower_components/venn.js/venn.js"></script>
+<script src="bower_components/angular-venn/angular-venn.js"></script>
+
 <style>
 /* .md-table tbody tr { */
 /* 	transition: all 0.1s ease-in; */
@@ -106,8 +111,35 @@ th {
 }
 
 .header-logo {
-	max-height: 85px;
+	height: 85px;
 	width: auto;
+}
+
+.header-logo-container-menu {
+	margin-left: auto;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.header-logo-menu {
+	height: 45px;
+	width: auto;
+	padding: 0px 0px 0px 10px !important;
+	vertical-align: middle;
+}
+
+.auto-height {
+	height: auto;
+}
+
+.padding-v-small {
+	padding-top: 5px !important;
+	padding-bottom: 5px !important;
+}
+
+.padding-v-no {
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;
 }
 
 .full-card {
@@ -130,6 +162,15 @@ th {
 	font-size: 0.7em;
 }
 
+.full-page {
+	min-height: 100%;
+}
+
+.divider {
+	margin-top: 2px;
+	margin-bottom: 2px;
+}
+
 #footer {
 	background-color: #D7D7D7;
 	color: #6f6f6f;
@@ -137,11 +178,14 @@ th {
 	text-align: center;
 	padding: 1em;
 	margin-top: 2em;
-	
-/* 	bottom: 0; */
-/* 	position: absolute; */
-/* 	width: 100%; */
 }
+
+/* .footer-search { */
+/*  	bottom: 0; */
+/*  	position: absolute; */
+/*  	width: 100%; */
+/* } */
+
 md-toolbar {
 	padding: 15px;
 	min-height: auto;
@@ -228,7 +272,7 @@ hr {
 
 <script>
 
-			var app = angular.module( 'engine', [ 'ngMaterial', 'ngSanitize', 'chart.js', 'ngAnimate', 'md.data.table', 'toaster', 'angular-jqcloud', 'ngRoute' ] );
+			var app = angular.module( 'engine', [ 'ngMaterial', 'ngSanitize', 'chart.js', 'ngAnimate', 'md.data.table', 'toaster', 'angular-jqcloud', 'ngRoute', 'angular-venn'] );
 			
 // 			app.run(['$templateCache', function ( $templateCache ) {
 // 				    $templateCache.removeAll(); }]);
@@ -279,7 +323,7 @@ hr {
 			            info: function(configFileService){
 			                return configFileService.get_config_file();
 			            },
-			            page: function($route){
+			            pageTitle: function($route){
 			            	console.log("ASKED FOR ", $route.current.params.pageName);
 			            	
 			            	if ($route.current.params.pageName == undefined) $route.current.params.pageName = "main";
@@ -294,7 +338,7 @@ hr {
 			            info: function(configFileService){
 			                return configFileService.get_config_file();
 			            },
-			            page: function($route){
+			            pageTitle: function($route){
 			            	console.log("ASKED FOR SPECIAL CASE");
 			            	return undefined;
 			            }
@@ -327,47 +371,6 @@ hr {
 	<toaster-container toaster-options="{'position-class': 'toast-bottom-right'}"></toaster-container>
 	
 	<div ng-view></div>
-	
-<!-- 	<div ng-controller="pageController as ctrl" layout="column" ng-cloak> -->
-		
-<!-- 		<md-toolbar class="md-menu-toolbar" id="toolbar"> -->
-<!-- 		<div layout="row"> -->
-<!-- 			<div> -->
-<!-- 				<md-menu-bar> <md-menu ng-repeat="item in ctrl.info.menu"> -->
-<!-- 				<button ng-click="item.items ? $mdOpenMenu() : ctrl.goTo(item)"> -->
-<!-- 					{{item.name}}</button> -->
-<!-- 				<md-menu-content> <md-menu-item -->
-<!-- 					ng-repeat="subitem in item.items"> <md-button -->
-<!-- 					ng-click="ctrl.goTo(subitem)"> {{subitem.name}} </md-button> </md-menu-item> </md-menu-content> -->
-<!-- 				</md-menu> </md-menu-bar> -->
-<!-- 			</div> -->
-<!-- 		</div> -->
-<!-- 		</md-toolbar> -->
-
-<!-- 		<section layout="row" flex="100"> -->
-<!-- 			<md-card layout="row" class="full-card full-card-header"> -->
-<!-- 			    <img ng-src="{{ctrl.info.image.src}}" class="md-card-image header-image" style="max-height:{{ctrl.info.image.percentage_width}}px;"> -->
-<!-- 				<md-card-title layout="column"> -->
-<!-- 					<md-card-title-text layout="column"> -->
-<!-- 						<span class="md-headline" style="font-size: 2em;" ng-bind="ctrl.info.title"></span> -->
-<!-- 						<span class="md-subhead" ng-bind-html="ctrl.info.description"></span> -->
-							
-<!-- 						<md-card-title-media ng-if="ctrl.header.show_logos" layout="row" class="header-logo-container" flex="auto" layout-padding> -->
-<!-- 							<img class="header-logo" ng-repeat="logo in ctrl.info.logos" ng-src="{{logo.image}}"> -->
-<!-- 						</md-card-title-media> -->
-<!-- 					</md-card-title-text> -->
-<!-- 				</md-card-title> -->
-<!-- 			</md-card> -->
-<!-- 		</section> -->
-		
-<!-- 		<div ng-include="ctrl.page"></div> -->
-		
-<!-- 		<section> -->
-<!-- 			<div id="footer"> -->
-<!-- 			<p>Developed by Cineca</p> -->
-<!-- 			</div> -->
-<!-- 		</section> -->
-<!-- 	</div> -->
 </body>
 
 </html>

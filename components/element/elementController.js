@@ -56,6 +56,13 @@ app.controller("elementController", function($scope, $http, dataService, message
 				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
 			}
 		}
+		
+		if($scope.data_source.checked == true){
+			console.log("CHECKBOX", $scope.data_source.checked);
+			for(var i=0; i<$scope.data_source.values.length; i++)
+				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
+			
+		}
 	};
 	
 	$scope.exists = function(item, field){
