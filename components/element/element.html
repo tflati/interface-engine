@@ -13,7 +13,7 @@
 	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
-<hr ng-if="type == 'divider'">
+<hr ng-if="type == 'divider'" class="divider">
 
 <span ng-if='type == "icon"' style="vertical-align: sub; padding: 5px;">
 	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" aria-label="{{data_source.title}}" title="{{data_source.title}}" style="color: {{data_source.color}}"></i>
@@ -216,6 +216,9 @@
 	<div align="center" style="font-size: 0.5em;" id="biocircos" ng-show="!sending"></div>
 </div>
 
+<div class="container well" ng-if="type == 'venn'">
+	<div venn="subdata"></div>
+</div>
 
 <md-input-container class="md-input-has-placeholder" ng-if="['select', 'text', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
 	<md-content ng-if="type != 'autocomplete'">
@@ -232,11 +235,9 @@
 
 		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
               	<legend>{{label}}</legend>
-                       <div ng-repeat="value in subdata track by $index" flex="50">
-                       <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
-							{{value}}
-                       </md-checkbox>
-                      </div>
+	            	<md-checkbox ng-checked="exists(value, subdata)" ng-click="toggle(value, subdata)" ng-repeat="value in subdata track by $index">
+						{{value}}
+	                </md-checkbox>
               </fieldset>
 		
 		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data_source.value" ng-checked="{{checked}}">
@@ -248,15 +249,25 @@
 		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
 		<md-autocomplete
 			  placeholder="{{data_source.label}}"
-	          md-selected-item="data_source.value"
 	          md-search-text="actrl.searchText"
 	          md-items="item in actrl.querySearch(actrl.searchText)"
-	          md-item-text="item"
+	          md-item-text="item.label"
 	          md-min-length="0"
 	          style="min-width: 600px"
 	        >
 	        <md-item-template>
-	          <span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item}}</span>
+	        	<div ng-if="item.label" style="padding-bottom: 5px; display: table; width: 100%;">
+					<div style="display: table-cell; vertical-align: middle;" ng-if="item.img">
+						<img ng-src="{{item.img}}" style="vertical-align: middle; margin-right: 15px;">
+					</div>
+					<div style="overflow: hidden;">
+						<div ng-if="item.label" md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</div>
+						<div ng-if="item.extra"><p style="margin: 0px; color: grey">({{item.extra}})</p></div>
+					</div>
+				</div>
+				<div ng-if="!value.label">
+					<span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</span>
+				</div>
 	        </md-item-template>
 	        <md-not-found>
 	          No items matching "{{actrl.searchText}}" were found.

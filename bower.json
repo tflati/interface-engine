@@ -18,13 +18,17 @@
   "dependencies": {
     "angular-chart.js": "https://github.com/jtblin/angular-chart.js.git#^1.1.1",
     "angular-material-data-table": "http://github.com/daniel-nagy/md-data-table.git#^0.10.10",
-    "angular-material": "^1.1.1",
     "font-awesome": "^4.7.0",
     "angular-sanitize": "^1.6.1",
     "AngularJS-Toaster": "angularjs-toaster#^2.1.0",
     "angular-jqcloud": "^1.0.3",
     "phylotree": "^0.1.4",
     "angular-route": "^1.6.4",
-    "components-font-awesome": "^4.7.0"
+    "components-font-awesome": "^4.7.0",
+    "angular-material": "master",
+    "angular-venn": "*"
+  },
+  "resolutions": {
+    "angular": "1.6.4"
   }
 }

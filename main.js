@@ -1,9 +1,10 @@
-app.controller("pageController", function($http, $window, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, page){
+app.controller("pageController", function($http, $window, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle){
 
 	var self = this;
 	
-	console.log("PAGE CONTROLLER", info, page);
+	console.log("PAGE CONTROLLER", info, pageTitle);
 	
+	$scope.pageTitle = pageTitle;
 	$scope.page = 'templates/main.html';
 	$scope.info = info;
 	$scope.header = {show_logos: true};
@@ -17,8 +18,13 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 	$scope.get_current_page_data = function(){
 		if($scope.info.pages)
 			for(var i=0; i<$scope.info.pages.length; i++)
-				if($scope.info.pages[i].title == $scope.page.replace(".html", "").replace("templates/", ""))
+				if($scope.info.pages[i].title == $scope.pageTitle)
+				{
+//					console.log("CURRENT PAGE:", $scope.info.pages[i]);
 					return $scope.info.pages[i];
+				}
+		
+		return undefined;
 	};
 	
 	$scope.load_form = function(group, option){
@@ -71,6 +77,28 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		}
 	};
 	
+	$scope.inForm = function(){
+		
+//		var p = $scope.page.replace("templates/", "").replace(".html", "");
+//		console.log("IN_FORM", "Asking if in form or not", $scope.page, p);
+		return $scope.pageTitle == "form";
+//		console.log("IN_FORM", $scope.get_current_page_data(), $scope.get_current_page_data() == 'form');
+//		return $scope.get_current_page_data() == 'form';
+		
+//		var isForm = false;
+//		if( $scope.info.forms )
+//			for(var f=0; f<$scope.info.forms.length; f++)
+//			{
+//				var form = $scope.info.forms[f];
+//				if(form.name == p)
+//				{
+//					return true;
+//					break;
+//				}
+//			}
+//		return false;		
+	};
+	
 	$scope.goTo = function(item){
 		url = item.url
 		console.log("Want to go to " + url);
@@ -92,9 +120,12 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 				}
 			}
 		
+		$scope.pageTitle = url;
+		
 		if(isForm) {
 			console.log("Going to render form");
 			$scope.form_results = [];
+			
 			$scope.page = 'templates/form.html';
 			$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
 			$scope.header.show_logos = true;
@@ -108,7 +139,8 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 				$window.location.href = url;
 			}
 			else {
-				$scope.page = 'templates/'+url+'.html';
+//				 $scope.page = 'templates/'+url+'.html';
+				$scope.page = 'templates/main.html';
 				$location.url(url);
 				
 				$scope.showing = true;
@@ -177,17 +209,17 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
         });
     };
 
-	self.exists = function(item, field){
-	    if(field.value == undefined) return false;
-	    return field.value.indexOf(item) > -1;
-	};
+//	self.exists = function(item, field){
+//	    if(field.value == undefined) return false;
+//	    return field.value.indexOf(item) > -1;
+//	};
 	
-	self.toggle = function (item, field) {
-	    if(field.value == undefined) field.value = []                        
-	    var idx = field.value.indexOf(item);
-	    if (idx > -1) field.value.splice(idx, 1);
-	    else field.value.push(item);
-	};
+//	self.toggle = function (item, field) {
+//	    if(field.value == undefined) field.value = []                        
+//	    var idx = field.value.indexOf(item);
+//	    if (idx > -1) field.value.splice(idx, 1);
+//	    else field.value.push(item);
+//	};
 	
 	$scope.send_query = function(){
 		var args = [];
@@ -285,6 +317,6 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		);
 	};
 	
-	if(page != undefined) $scope.goTo({url: page});
+	if(pageTitle != undefined) $scope.goTo({url: pageTitle});
 }
 );

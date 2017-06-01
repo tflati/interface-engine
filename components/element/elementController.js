@@ -27,20 +27,25 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if($scope.type != "image")
 			$scope.update($scope.get_url());
 		
-		if($scope.data_source != undefined && $scope.data_source.key){			
-			$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
-			    if (newValue != oldValue){
-			    	
-			    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[$scope.data_source.key]);
-			    	
-			    	if(! $scope.data_source.url) {
-			    		$scope.data_source.value = newValue;
-			    	}
-			    	else {
-			        	$scope.update($scope.get_url());
-			    	}
-			    }
-			});
+		if($scope.data_source != undefined){
+			if($scope.data_source.key)
+				$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
+				    if (newValue != oldValue){
+				    	
+				    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[$scope.data_source.key]);
+				    	
+				    	if(! $scope.data_source.url) {
+				    		$scope.data_source.value = newValue;
+				    	}
+				    	else {
+				        	$scope.update($scope.get_url());
+				    	}
+				    }
+				});
+			
+			if(! $scope.data_source.url && $scope.data_source.values ) {
+				$scope.subdata = $scope.data_source.values;
+			}
 		}
 		
 		if($scope.data_source != undefined && $scope.data_source.onChange){
@@ -50,6 +55,33 @@ app.controller("elementController", function($scope, $http, dataService, message
 				dataService.global[listener.key] = $scope.data_source.value;
 				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
 			}
+		}
+	};
+	
+	$scope.exists = function(item, field){
+	    if(field.value == undefined) return false;
+	    return field.value.indexOf(item) > -1;
+	};
+	
+	$scope.toggle = function (item, field) {
+	    if(field.value == undefined) field.value = []                        
+	    var idx = field.value.indexOf(item);
+	    if (idx > -1) {
+	    	field.value.splice(idx, 1);
+	    	
+//	    	evt = []
+//		    evt[0]._index = idx;
+//		    $scope.onClick(evt);
+	    }
+	    else {
+	    	field.value.push(item);
+	    }
+	    
+	    var listener = $scope.data_source.onClick;
+		if(listener.action == "write") {
+			console.log("[3] GLOBAL:", dataService);
+			dataService.global[listener.key] = field.value.join("|");
+			console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", field.value, "real value: ",dataService.global[listener.key]);
 		}
 	};
 	
@@ -76,11 +108,16 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(!template) return url;
 		else {
 			var value = dataService.global[$scope.data_source.key];
+			if(value == undefined) return "";
+			
 			return url.replace(template, value);
 		}
 	};
 	
 	$scope.update = function(url, fx){
+		
+		console.log("PREAJAX TO", url, $scope.data_source);
+		
 		if(url == undefined) return;
 		if(url == "") return;
 		
@@ -172,6 +209,52 @@ app.controller("elementController", function($scope, $http, dataService, message
 			else {
 				$scope.subdata.points = $scope.subdata.points[0];
 				console.log("SIMPLIFYING DATA", response, $scope.subdata, $scope.subdata.points);				
+			}
+		}
+		else if($scope.type == 'venn')
+		{
+			if($scope.subdata.items)
+			{
+				console.log("VENN", $scope.subdata);
+				
+				formatted_data = [];
+				sizes = {};
+				for(var i=0; i<$scope.subdata.header.length; i++)
+				{
+					var name = $scope.subdata.header[i];
+					var size = $scope.subdata.items[0][i];
+					if (name.indexOf("|") !== -1) continue;
+					
+					sizes[name] = size;
+				}
+				
+				console.log("VENN", sizes);
+				
+				for(var i=0; i<$scope.subdata.header.length; i++)
+				{
+					var pieces = $scope.subdata.header[i].split("|");
+					var final_pieces = []
+					for(var j=0; j<pieces.length; j++)
+					{
+						final_pieces.push(pieces[j] + " ("+sizes[pieces[j]]+")");
+					}
+//					if (pieces.length == 1) pieces += " ("+$scope.subdata.items[0][i]+")";
+					
+					formatted_data.push({"sets": final_pieces, "size": $scope.subdata.items[0][i]});
+				}
+				console.log("VENN", formatted_data);
+				
+				$scope.subdata = formatted_data;
+				
+	//			[
+	//				{sets: ['Foo'], size: 12},
+	//				{sets: ['Bar'], size: 12},
+	//				{sets: ['Baz'], size: 12},
+	//				{sets: ['Foo','Bar'], size: 2},
+	//				{sets: ['Bar','Baz'], size: 2},
+	//				{sets: ['Foo','Baz'], size: 2},
+	//				{sets: ['Foo','Bar', 'Baz'], size: 1},
+	//			];
 			}
 		}
 		

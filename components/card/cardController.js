@@ -10,17 +10,17 @@ app.controller("cardController", function($scope, dataService){
 		$scope.type = data.type;
 		$scope.alignment = data.alignment;
 		$scope.width = data.width;
-		if($scope.width.endsWith("%")) $scope.width = $scope.width.substring(0, $scope.width.length - 1);
+//		if($scope.width.endsWith("%")) $scope.width = $scope.width.substring(0, $scope.width.length - 1);
+		$scope.compact = data.compact,
 		$scope.footer = data.footer;
 		$scope.elements = data.elements;		
 		$scope.show = true;
 		
 		if (data.show == "after_send"){
 			$scope.show = false;
+
 			$scope.$watch(function(){return $scope.form_results;}, function(newValue, oldValue) {
-		        if(newValue != oldValue){
-		        	$scope.show = true;
-		        }
+	        	$scope.show = $scope.form_results && $scope.form_results.items && $scope.form_results.items.length > 0;
 			}, true);
 		}
 		
