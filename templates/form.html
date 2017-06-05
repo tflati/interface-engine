@@ -1,6 +1,6 @@
 <section layout="row" style="padding: 0% 5% 0% 5%;" >
 
-	<md-card flex="75" ng-if="showing" style="height: 100%;">
+	<md-card flex="{{form.width || 75}}" ng-if="showing" style="height: 100%;">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Search</span>
@@ -11,7 +11,7 @@
 		<md-content class="md-padding">			
 			<form ng-submit="send_query()">
 				<div ng-repeat="field in form.fields track by $index">
-						<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'" style="min-width: 400px;">
+						<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'" style="min-width: 800px;">
 							<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 							
 							<input ng-if="field.type != 'choice' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
@@ -22,24 +22,23 @@
 										<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
 											<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
 										</div>
-										<div style="overflow: hidden;">
+										<div style="overflow: hidden; display: table-cell;">
 											<div ng-if="value.label">{{value.label}}</div>
 											<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
 										</div>
 									</div>
-									<div ng-if="!value.label">
-										<span>{{value}}</span>
-									</div>
+									<span ng-if="!value.label">{{value}}</span>
 								</md-option>
 							</md-select>
 							
-							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value.id'}">
+							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value'}">
 								<md-option ng-value="value" ng-repeat="value in field.values track by $index">
-									<div style="padding-bottom: 5px;">
+									<div ng-if="value.label" style="padding-bottom: 5px;">
 										<img ng-if="value.img" ng-src="{{value.img}}" style="vertical-align: middle;">
 										<div ng-if="value.label">{{value.label}}</div>
-										<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
+										<div ng-if="value.extra" style="margin: 0px; color: grey">({{value.extra}})</div>
 									</div>
+									<span ng-if="!value.label">{{value}}</span>
 								</md-option>
 							</md-select>
 		
@@ -70,9 +69,9 @@
 						          md-selected-item="field.value"
 						          md-search-text="actrl.searchText"
 						          md-items="item in actrl.querySearch(actrl.searchText)"
-						          md-item-text="item"
+						          md-item-text="item.label"
 						          md-min-length="0"
-						          style="min-width: 600px"
+						          style="min-width: 800px"
 						        >
 						        <md-item-template>
 						        	<img ng-if="item.img" ng-src="{{item.img}}" style="vertical-align: middle;">
@@ -93,7 +92,7 @@
 		</md-card-content>
 	</md-card>
 	
-	<md-card flex="75" style="max-height: 100%; height: 100%;" ng-if="!showing">
+	<md-card flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;" ng-if="!showing">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Query parameters</span>
@@ -111,6 +110,7 @@
 								({{field.value.extra}})
 							</span>
 						</div>
+						<span ng-if="!field.value.label">{{field.value}}</span>
 					</td>
 				</tr>
 			</table>

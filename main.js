@@ -209,17 +209,19 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
         });
     };
 
-//	self.exists = function(item, field){
-//	    if(field.value == undefined) return false;
-//	    return field.value.indexOf(item) > -1;
-//	};
+    /* MOVE TO FORM CONTROLLER */
+    $scope.exists = function(item, field){
+	    if(field.value == undefined) return false;
+	    return field.value.indexOf(item) > -1;
+	};
 	
-//	self.toggle = function (item, field) {
-//	    if(field.value == undefined) field.value = []                        
-//	    var idx = field.value.indexOf(item);
-//	    if (idx > -1) field.value.splice(idx, 1);
-//	    else field.value.push(item);
-//	};
+	/* MOVE TO FORM CONTROLLER */
+	$scope.toggle = function (item, field) {
+	    if(field.value == undefined) field.value = []                        
+	    var idx = field.value.indexOf(item);
+	    if (idx > -1) field.value.splice(idx, 1);
+	    else field.value.push(item);
+	};
 	
 	$scope.send_query = function(){
 		var args = [];

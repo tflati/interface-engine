@@ -57,7 +57,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			}
 		}
 		
-		if($scope.data_source.checked == true){
+		if($scope.data_source != undefined && $scope.data_source.checked == true){
 			console.log("CHECKBOX", $scope.data_source.checked);
 			for(var i=0; i<$scope.data_source.values.length; i++)
 				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
