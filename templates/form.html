@@ -95,17 +95,22 @@
 	<md-card flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;" ng-if="!showing">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
-		            <span class="md-headline">Query parameters</span>
+		            <span class="md-headline">Fusion events found</span>
 		    </md-card-title-text>
 		</md-card-title>
 		
 		<md-card-content class="padding-v-no">
 			<table cellspacing="0" cellpadding="10">
 				<tr ng-repeat="field in form.fields track by $index">
-					<td style="background-color: #e9e9e9;"><img ng-if="field.value.img" ng-src="{{field.value.img}}" style="vertical-align: middle;"></td>
-					<td style="background-color: #e9e9e9; white-space: nowrap; text-align: left !important;"><label style="font-weight: bold;" ng-bind="field.label"></label></td>
+					<td style="background-color: #e9e9e9;">
+						<img ng-if="field.value.img" ng-src="{{field.value.img}}" style="vertical-align: middle;">
+					</td>
+					<td style="background-color: #e9e9e9; white-space: nowrap; text-align: left !important;">
+						<label style="font-weight: bold;" ng-bind="field.label"></label>
+					</td>
 					<td style="text-align: left !important;">
-						<div ng-if="field.value.label">{{field.value.label}}
+						<div ng-if="field.value.label">
+							{{field.value.label}}
 							<span ng-if="field.value.extra" style="margin: 0px; color: grey">
 								({{field.value.extra}})
 							</span>
@@ -114,7 +119,7 @@
 					</td>
 				</tr>
 			</table>
-			<md-button ng-click="show_form()" class="md-primary md-raised" style="margin-top: 20px; margin-bottom: 20px;">Refine query</md-button>
+			<md-button ng-click="show_form()" class="md-primary md-raised" style="margin-top: 20px; margin-bottom: 20px;">Modify query</md-button>
 		</md-card-content>
 	</md-card>
 	
@@ -183,7 +188,12 @@
 			                		<i class="fa {{field.data.icon}} {{field.data.modifiers}}" aria-label="{{field.data.title}}" title="{{field.data.title}}" style="color: {{field.data.color}}"></i>
 			                	</span>
 			                	
-			                	<md-button ng-if='field.type == "button"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+			                	<md-button ng-if='field.type == "button"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+			                	
+			                	<md-button ng-if='field.type == "button_with_icon"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">
+			                		<span>{{field.label}}</span>
+			                		<img ng-if="field.icon" class="button-icon" title="{{field.icon}}" ng-src="{{field.icon}}">			                		
+			                	</md-button>
 			                	
 			              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
 			              		

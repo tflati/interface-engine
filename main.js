@@ -100,6 +100,9 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 	};
 	
 	$scope.goTo = function(item){
+		
+		$scope.showing = true;
+		
 		url = item.url
 		console.log("Want to go to " + url);
 		
@@ -229,9 +232,11 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		for(var i=0; i<$scope.form.fields.length; i++)
 		{
 			var field = $scope.form.fields[i];
+			console.log("FIELD", field);
+			
 			var value = field.value.id;
 			if (value == undefined) value = field.value;
-			console.log("VALUE", value)
+			console.log("VALUE", value);
 //			if (value == undefined || value == "") continue;
 //			else args.push(value);
 			

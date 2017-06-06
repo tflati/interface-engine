@@ -230,7 +230,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 				{
 					var name = $scope.subdata.header[i];
 					var size = $scope.subdata.items[0][i];
-					if (name.indexOf("|") !== -1) continue;
+					if (name.indexOf("\u2229") !== -1) continue;
 					
 					sizes[name] = size;
 				}
@@ -239,7 +239,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 				
 				for(var i=0; i<$scope.subdata.header.length; i++)
 				{
-					var pieces = $scope.subdata.header[i].split("|");
+					var pieces = $scope.subdata.header[i].split("\u2229");
 					var final_pieces = []
 					for(var j=0; j<pieces.length; j++)
 					{
