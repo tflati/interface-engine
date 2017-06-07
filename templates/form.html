@@ -1,3 +1,9 @@
+
+<section style="padding: 0% 5% 0% 5%;" >
+	<h1>Search</h1>
+	<h2 ng-bind="form.subtitle"></h2>
+</section>
+
 <section layout="row" style="padding: 0% 5% 0% 5%;" >
 
 	<md-card flex="{{form.width || 75}}" ng-if="showing" style="height: 100%;">
@@ -31,12 +37,16 @@
 								</md-option>
 							</md-select>
 							
-							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value'}">
+							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value.id'}">
 								<md-option ng-value="value" ng-repeat="value in field.values track by $index">
-									<div ng-if="value.label" style="padding-bottom: 5px;">
-										<img ng-if="value.img" ng-src="{{value.img}}" style="vertical-align: middle;">
-										<div ng-if="value.label">{{value.label}}</div>
-										<div ng-if="value.extra" style="margin: 0px; color: grey">({{value.extra}})</div>
+									<div ng-if="value.label" style="padding-bottom: 5px; display: table;">
+										<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
+											<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
+										</div>
+										<div style="overflow: hidden; display: table-cell;">
+											<div ng-if="value.label">{{value.label}}</div>
+											<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
+										</div>
 									</div>
 									<span ng-if="!value.label">{{value}}</span>
 								</md-option>
@@ -55,8 +65,8 @@
 								{{field.label}}
 							</md-checkbox>
 							
-							<md-radio-group>
-								<md-radio-button ng-click="load_form(field, value)" ng-if="field.type == 'choice' && field.subtype == 'radio'" ng-repeat="value in field.values track by $index" name="{{field.group_id}}" ng-model="field.value" ng-checked="{{value.selected}}" ng-value="value.label" type="radio" aria-label="Multi-choice">
+							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'">
+								<md-radio-button ng-click="load_form(field, value)" ng-repeat="value in field.values track by $index" name="{{field.group_id}}" ng-model="field.value" ng-checked="{{value.selected}}" ng-value="value.label" type="radio" aria-label="Multi-choice">
 									{{value.label}}
 								</md-radio-button>
 							</md-radio-group>

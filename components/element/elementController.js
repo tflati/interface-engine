@@ -98,7 +98,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		var listener = $scope.data_source.onChange;
 		if(listener.action == "write") {
 			console.log("[2] GLOBAL:", dataService);
-			dataService.global[listener.key] = newValue.id;
+			dataService.global[listener.key] = newValue.id || newValue;
 			console.log("[2] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
 		}
 	};
@@ -190,7 +190,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			if($scope.type != "chart-pie" && $scope.type != "chart-doughnut"){
 				$scope.subdata.options.scales = {
 			        xAxes: [{
-			          stacked: $scope.stacked,
+			          stacked: $scope.stacked && $scope.stacked == true ? true : false,
 			          ticks: {
 		                  callback: function (label) {
 //							                  console.log("X AXIS", label);
@@ -199,7 +199,8 @@ app.controller("elementController", function($scope, $http, dataService, message
 			          }
 			        }],
 			        yAxes: [{
-			          stacked: $scope.stacked,
+			          stacked: $scope.stacked && $scope.stacked == true ? true : false,
+			          ticks: {}
 		        }]}
 			};
 			
@@ -277,7 +278,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(listener.action == "write") {
 			$scope.$apply(function() {
 				console.log("[3] GLOBAL:", dataService);
-				dataService.global[listener.key] = value.id;
+				dataService.global[listener.key] = value.id || value;
 				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
 			    });
 		}

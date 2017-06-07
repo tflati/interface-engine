@@ -41,7 +41,8 @@
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
               <td style="width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
                 <span ng-switch-when="undefined">
-              		<span>{{field}}</span>
+                	<span ng-if="field.label">{{field.label}}</span>
+              		<span ng-if="!field.label">{{field}}</span>
               	</span>
               	
                 <div ng-switch-default>
