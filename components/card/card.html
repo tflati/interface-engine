@@ -27,7 +27,7 @@
 			</action>
 		</div>
 		
-		<element ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
+		<element layout="column" flex="100" ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 
 	</md-card-content>

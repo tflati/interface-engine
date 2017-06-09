@@ -113,7 +113,8 @@
 	</table>
 </div>
 
-<div ng-if="type == 'chart-pie'">
+<div flex="100" ng-if="type == 'chart-pie'">
+	<p ng-bind="title"></p>
 	<canvas
 		class="chart chart-pie"
 		chart-data="subdata.points"
@@ -277,3 +278,17 @@
 	      </md-autocomplete>
 	</md-content>
 </md-input-container>
+
+<div ng-if="type == 'multi'" layout-wrap layout="row" flex="100">
+	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
+	</element>
+</div>
+
+<!-- <section ng-if="subdata.length > 0" layout="column" flex="100" style="width:80%; margin-left: auto; margin-right: auto;"> -->
+
+<!-- 	<div layout="row" ng-repeat="row in get_current_page_data().elements track by $index"> -->
+<!-- 		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}"> -->
+<!-- 		</card> -->
+<!-- 	</div> -->
+
+<!-- </section> -->

@@ -12,12 +12,15 @@ app.controller("elementController", function($scope, $http, dataService, message
 		
 		$scope.type = data.type;
 		$scope.stacked = data.stacked;
+		$scope.showLegend = data.showLegend;
+		$scope.title = data.title;
 		$scope.label = data.label;
 		$scope.data_source = data.data;
 		$scope.numbered = data.numbered;
 		$scope.width = data.width;
 		$scope.height = data.height;
 		$scope.inline = data.inline;
+		$scope.subdata = data.subdata || [];
 		
 		console.log("ELEMENT METADATA: ", data);
 		
@@ -61,8 +64,12 @@ app.controller("elementController", function($scope, $http, dataService, message
 			console.log("CHECKBOX", $scope.data_source.checked);
 			for(var i=0; i<$scope.data_source.values.length; i++)
 				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
-			
 		}
+		
+		if(data.subdata)
+			$scope.convert();
+		
+		console.log("ELEMENT METADATA: ", data, $scope.subdata);
 	};
 	
 	$scope.exists = function(item, field){
@@ -152,6 +159,11 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(response.data.details) $scope.subdata = response.data.details;
 		else $scope.subdata = response.data;
 		
+		$scope.convert();		
+//		console.log("SCOPE ELEMENT DATA: ", $scope);
+	};
+	
+	$scope.convert = function(){
 		if($scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 			$scope.subdata.labels = []
 			$scope.subdata.points = []
@@ -216,7 +228,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			}
 			else {
 				$scope.subdata.points = $scope.subdata.points[0];
-				console.log("SIMPLIFYING DATA", response, $scope.subdata, $scope.subdata.points);				
+				console.log("SIMPLIFYING DATA", $scope.subdata, $scope.subdata.points);				
 			}
 		}
 		else if($scope.type == 'venn')
@@ -253,20 +265,10 @@ app.controller("elementController", function($scope, $http, dataService, message
 				console.log("VENN", formatted_data);
 				
 				$scope.subdata = formatted_data;
-				
-	//			[
-	//				{sets: ['Foo'], size: 12},
-	//				{sets: ['Bar'], size: 12},
-	//				{sets: ['Baz'], size: 12},
-	//				{sets: ['Foo','Bar'], size: 2},
-	//				{sets: ['Bar','Baz'], size: 2},
-	//				{sets: ['Foo','Baz'], size: 2},
-	//				{sets: ['Foo','Bar', 'Baz'], size: 1},
-	//			];
 			}
 		}
 		
-//		console.log("SCOPE ELEMENT DATA: ", $scope);
+		console.log("FINAL ELEMENT METADATA: ", $scope.type, $scope.subdata, $scope);
 	};
 	
 	$scope.onClick = function(evt){
