@@ -56,7 +56,7 @@
 			                	<legend>{{field.label}}</legend>
 				                        <div ng-repeat="value in field.values track by $index" flex="50">
 				                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
-		                          				{{value}}
+		                          				{{value.label}}
 				                        </md-checkbox>
 			                        </div>
 			                </fieldset>
@@ -84,11 +84,13 @@
 						          style="min-width: 800px"
 						        >
 						        <md-item-template>
-						        	<img ng-if="item.img" ng-src="{{item.img}}" style="vertical-align: middle;">
-						        	<span style="padding-bottom: 5px;" md-highlight-text="actrl.searchText" md-highlight-flags="^i">
-						          		{{item.label}}
-									</span>
-									<span ng-if="value.extra" style="margin: 0px; color: grey">({{value.extra}})</span>
+						        	<div ng-class="{'disabled': item.disabled}">
+							        	<img ng-if="item.img" ng-src="{{item.img}}" style="vertical-align: middle;" ng-class="{'img-disabled': item.disabled}">
+							        	<span style="padding-bottom: 5px;" md-highlight-text="actrl.searchText" md-highlight-flags="^i">
+							          		{{item.label}}
+										</span>
+										<span ng-if="item.extra" style="margin: 0px; color: grey">({{item.extra}})</span>
+									</div>
 						        </md-item-template>
 						        <md-not-found>
 						          No items matching "{{actrl.searchText}}" were found.

@@ -235,14 +235,17 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 			console.log("FIELD", field);
 			
 			if (angular.isArray(field.value)) {
+				subargs = []
 				for (var j=0; j<field.value.length; j++){
 					var value = field.value[j].id;
 					if (value == undefined) value = field.value[j];
 					console.log("VALUE", value);
 					
 					if (value == undefined || value == "undefined" || value == "") value = "ALL";
-					args.push(value);
+					subargs.push(value);
 				}
+				
+				args.push(subargs.join("+"));
 			}
 			else {
 				var value = field.value.id;

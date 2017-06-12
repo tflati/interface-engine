@@ -131,6 +131,14 @@ th {
 	vertical-align: middle;
 }
 
+.img-disabled {
+	filter: grayscale(100%);
+}
+
+.disabled {
+	color: grey
+}
+
 .auto-height {
 	height: auto;
 }
@@ -273,21 +281,23 @@ hr {
 }
 
 
-.md-dialog-backdrop:nth-of-type(even) {
+
+
+.md-dialog-backdrop:nth-of-type(odd) {
+    z-index: 80;
+}
+.md-dialog-container:nth-of-type(even) {
     z-index: 81;
 }
 
-.md-dialog-backdrop:nth-of-type(odd) {
-    z-index: 79;
-}
 
-.md-dialog-container:nth-of-type(even) {
+.md-dialog-backdrop:nth-of-type(even) {
     z-index: 82;
 }
-
 .md-dialog-container:nth-of-type(odd) {
-    z-index: 80;
+    z-index: 83;
 }
+
 
 </style>
 
