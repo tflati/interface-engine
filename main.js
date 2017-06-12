@@ -234,14 +234,24 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 			var field = $scope.form.fields[i];
 			console.log("FIELD", field);
 			
-			var value = field.value.id;
-			if (value == undefined) value = field.value;
-			console.log("VALUE", value);
-//			if (value == undefined || value == "") continue;
-//			else args.push(value);
-			
-			if (value == undefined || value == "undefined" || value == "") value = "ALL";
-			args.push(value);
+			if (angular.isArray(field.value)) {
+				for (var j=0; j<field.value.length; j++){
+					var value = field.value[j].id;
+					if (value == undefined) value = field.value[j];
+					console.log("VALUE", value);
+					
+					if (value == undefined || value == "undefined" || value == "") value = "ALL";
+					args.push(value);
+				}
+			}
+			else {
+				var value = field.value.id;
+				if (value == undefined) value = field.value;
+				console.log("VALUE", value);
+				
+				if (value == undefined || value == "undefined" || value == "") value = "ALL";
+				args.push(value);
+			}
 		}
 		
 		console.log("ARGS", args);

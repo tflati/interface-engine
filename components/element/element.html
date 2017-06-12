@@ -13,6 +13,11 @@
 	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
+<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-href="{{data_source.url}}">
+	<i class="fa {{data_source.icon}} {{data_source.modifiers}}"></i>
+	{{label}}
+</md-button>
+					
 <hr ng-if="type == 'divider'" class="divider">
 
 <span ng-if='type == "icon"' style="vertical-align: sub; padding: 5px;">
@@ -283,12 +288,3 @@
 	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>
-
-<!-- <section ng-if="subdata.length > 0" layout="column" flex="100" style="width:80%; margin-left: auto; margin-right: auto;"> -->
-
-<!-- 	<div layout="row" ng-repeat="row in get_current_page_data().elements track by $index"> -->
-<!-- 		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}"> -->
-<!-- 		</card> -->
-<!-- 	</div> -->
-
-<!-- </section> -->

@@ -1,7 +1,7 @@
 
 <section style="padding: 0% 5% 0% 5%;" >
-	<h1>Search</h1>
-	<h2 ng-bind="form.subtitle"></h2>
+	<h3>Search</h3>
+	<p ng-bind="form.subtitle"></p>
 </section>
 
 <section layout="row" style="padding: 0% 5% 0% 5%;" >
@@ -14,7 +14,7 @@
 		</md-card-title>
 		
 		<md-card-content>
-		<md-content class="md-padding">			
+		<md-content class="md-padding">
 			<form ng-submit="send_query()">
 				<div ng-repeat="field in form.fields track by $index">
 						<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'" style="min-width: 800px;">
@@ -105,7 +105,7 @@
 	<md-card flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;" ng-if="!showing">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
-		            <span class="md-headline">Fusion events found</span>
+		            <span class="md-headline">Results found</span>
 		    </md-card-title-text>
 		</md-card-title>
 		

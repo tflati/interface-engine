@@ -218,7 +218,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			
 			if($scope.type == "chart-bar") {
 				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
-				 $scope.subdata.options.legend.display = $scope.subdata.series.length > 0;
+				$scope.subdata.options.legend.display = $scope.subdata.series.length > 0;
 				
 				if($scope.stacked)
 					if($scope.data_source.max) {

@@ -1,5 +1,8 @@
 <section style="padding: 0% 5% 0% 5%;">
-	<p ng-bind-html="info.long_description"></p>
+	<p
+		ng-class="{'text-alignment-justify': info.long_description_alignment == 'justify', 'text-alignment-right': info.long_description_alignment == 'right', 'text-alignment-center': info.long_description_alignment == 'center'}"
+		ng-bind-html="info.long_description">
+	</p>
 </section>
 
 <div ng-if="sending" layout="row" layout-sm="column" layout-align="space-around">
