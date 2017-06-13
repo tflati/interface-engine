@@ -129,6 +129,10 @@ app.service("configFileService", function($http, messageService){
 	        // Make all the ajax calls here
 	        for(var key in self.ajax2forms)
 	        {
+	        	var affectedForms = self.ajax2forms[key]
+	        	for(var formId in affectedForms)
+	        		affectedForms[formId].sending = true;
+	        	
 	        	console.log("GETTING VALUES FOR SELECT: " + key);	                        		
 	    		$http.get(key).then(
 	    				function(response) {
@@ -141,7 +145,10 @@ app.service("configFileService", function($http, messageService){
 	
 							var affectedForms = self.ajax2forms[response.config.url]
 							for(var formId in affectedForms)
+							{
 								affectedForms[formId].values = response.data;
+								affectedForms[formId].sending = false;
+							}
 	//    	                        			console.log("form chosen after", self.ajax2forms[response.config.url]);
 	            			
 	            			// var selectField = self.form.fields[self.formIndex];	                        			
@@ -153,7 +160,10 @@ app.service("configFileService", function($http, messageService){
 	            			console.log("COULD NOT GET VALUES FOR SELECT FIELD", response);
 	            			var affectedForms = self.ajax2forms[response.config.url]
 							for(var formId in affectedForms)
+	            			{
 								affectedForms[formId].values = ["NOT AVAILABLE"];
+								affectedForms[formId].sending = false;
+	            			}
 	            		}
 	            );
 	        }

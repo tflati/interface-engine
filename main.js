@@ -248,11 +248,13 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 				args.push(subargs.join("+"));
 			}
 			else {
-				var value = field.value.id;
-				if (value == undefined) value = field.value;
+				var value = "ALL";
+				if (field.value && field.value.id) value = field.value.id;
+				else if (field.value) value = field.value;
+				
 				console.log("VALUE", value);
 				
-				if (value == undefined || value == "undefined" || value == "") value = "ALL";
+				// if (value == undefined || value == "undefined" || value == "") value = "ALL";
 				args.push(value);
 			}
 		}
@@ -305,37 +307,37 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 	
 //	self.ajax2forms = [];
 
-	$scope.load_data = function(url){
-		
-		$scope.data = [];
-		$http.get(url).then(function(response)
-        		{
-					console.log("SUCCESS IN GETTING DATA FROM " + url);
-					console.log(response.data);
-					$scope.data = response.data.details;
-				},
-				function myError(response) {
-					console.log(response);
-                	console.log("ERROR IN GETTING DATA FROM " + url);
-				}
-		);
-	};
-	
-	$scope.load_subdata = function(url){
-		
-		$scope.subdata = [];
-		$http.get(url).then(function(response)
-        		{
-					console.log("SUCCESS IN GETTING DATA FROM " + url);
-					console.log(response.data);
-					$scope.subdata = response.data.details;
-				},
-				function myError(response) {
-					console.log(response);
-                	console.log("ERROR IN GETTING DATA FROM " + url);
-				}
-		);
-	};
+//	$scope.load_data = function(url){
+//		
+//		$scope.data = [];
+//		$http.get(url).then(function(response)
+//        		{
+//					console.log("SUCCESS IN GETTING DATA FROM " + url);
+//					console.log(response.data);
+//					$scope.data = response.data.details;
+//				},
+//				function myError(response) {
+//					console.log(response);
+//                	console.log("ERROR IN GETTING DATA FROM " + url);
+//				}
+//		);
+//	};
+//	
+//	$scope.load_subdata = function(url){
+//		
+//		$scope.subdata = [];
+//		$http.get(url).then(function(response)
+//        		{
+//					console.log("SUCCESS IN GETTING DATA FROM " + url);
+//					console.log(response.data);
+//					$scope.subdata = response.data.details;
+//				},
+//				function myError(response) {
+//					console.log(response);
+//                	console.log("ERROR IN GETTING DATA FROM " + url);
+//				}
+//		);
+//	};
 	
 	if(pageTitle != undefined) $scope.goTo({url: pageTitle});
 }

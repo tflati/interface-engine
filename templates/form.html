@@ -75,12 +75,12 @@
 						<md-input-container class="md-input-has-placeholder" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
 							<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 							<md-autocomplete
+								  md-match-case-insensitive
 								  placeholder="{{field.label}}"
 						          md-selected-item="field.value"
 						          md-search-text="actrl.searchText"
 						          md-items="item in actrl.querySearch(actrl.searchText)"
 						          md-item-text="item.label"
-						          md-min-length="0"
 						          style="min-width: 800px"
 						        >
 						        <md-item-template>
@@ -93,7 +93,13 @@
 									</div>
 						        </md-item-template>
 						        <md-not-found>
-						          No items matching "{{actrl.searchText}}" were found.
+						          <div>
+						            <span ng-if="!field.sending">No items matching "{{actrl.searchText}}" were found.</span>
+						          	<span ng-if="field.sending">
+						          		<i class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
+						          		Loading data...						          		
+						          	</span>
+						          </div>
 						        </md-not-found>
 						      </md-autocomplete>
 						</md-input-container>
@@ -204,7 +210,12 @@
 			                	
 			                	<md-button ng-if='field.type == "button_with_icon"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">
 			                		<span>{{field.label}}</span>
-			                		<img ng-if="field.icon" class="button-icon" title="{{field.icon}}" ng-src="{{field.icon}}">			                		
+			                		<span ng-repeat="icon in field.icon">
+			                			<img ng-if="icon.type == 'img'" class="button-icon" title="{{icon.data.url}}" ng-src="{{icon.data.url}}">
+			                			<span ng-if='icon.type == "icon"' style="padding: 5px;">
+											<i class="fa {{icon.data.icon}} {{icon.data.modifiers}}" aria-label="{{icon.data.title}}" title="{{icon.data.title}}" style="color: {{icon.data.color}}"></i>
+										</span>
+			                		</span>
 			                	</md-button>
 			                	
 			              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>

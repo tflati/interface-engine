@@ -12,22 +12,13 @@
      		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
  		</div>
  		
-<!--  		<md-input-container style="min-width: 30%;"> -->
-<!--  				<label>Select</label> -->
-<!--    			<md-select -->
-<!--    				ng-model="option_value" -->
-<!--    				ng-change="update_value(option_value)" -->
-<!--    				> -->
-<!--    				<md-option ng-value="n" ng-repeat="n in range(1, 30)">Sample {{n}}</md-option> -->
-<!-- 			</md-select> -->
-<!-- 		</md-input-container> -->
-		
 		<div ng-if="actions" style="display: inline-block; width: auto; float: right;">
 			<action ng-controller="buttonController" ng-init="init(action)" ng-repeat="action in actions">
 			</action>
 		</div>
 		
-		<element layout="column" flex="100" ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
+		<!-- layout="{{card.layout ? card.layout : 'row'}}" -->
+		<element  ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 
 	</md-card-content>
