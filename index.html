@@ -290,7 +290,6 @@ hr {
     z-index: 81;
 }
 
-
 .md-dialog-backdrop:nth-of-type(even) {
     z-index: 82;
 }
@@ -299,11 +298,50 @@ hr {
 }
 
 
+
+
+
+
+.table-scroll thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-scroll tbody {
+    max-height: 300px;
+    overflow-y: auto;
+    display: block;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.table-scroll tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table-scroll td {
+    height: 47px;
+}
+
 </style>
 
 <script>
 
-			var app = angular.module( 'engine', [ 'ngMaterial', 'ngSanitize', 'chart.js', 'ngAnimate', 'md.data.table', 'toaster', 'angular-jqcloud', 'ngRoute', 'angular-venn'] );
+			var app = angular.module( 'engine',
+					[
+						'ngMaterial',
+						'ngSanitize',
+						'chart.js',
+						'ngAnimate',
+						'md.data.table',
+						'toaster',
+						'angular-jqcloud',
+						'ngRoute',
+						'angular-venn'
+					] );
 			
 // 			app.run(['$templateCache', function ( $templateCache ) {
 // 				    $templateCache.removeAll(); }]);

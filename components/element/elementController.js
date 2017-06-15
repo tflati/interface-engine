@@ -22,7 +22,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		$scope.inline = data.inline;
 		$scope.subdata = data.subdata || [];
 		
-		console.log("ELEMENT METADATA: ", data);
+		console.log("INIT ELEMENT METADATA: ", data, $scope.data_source);
 		
 		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
@@ -51,7 +51,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 			}
 		}
 		
-		if($scope.data_source != undefined && $scope.data_source.onChange){
+		if($scope.data_source && $scope.data_source.onChange){
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
 				console.log("[1] GLOBAL:", dataService, $scope.data_source);
@@ -60,8 +60,8 @@ app.controller("elementController", function($scope, $http, dataService, message
 			}
 		}
 		
-		if($scope.data_source != undefined && $scope.data_source.checked == true){
-			console.log("CHECKBOX", $scope.data_source.checked);
+		if($scope.data_source && $scope.data_source.checked == true){
+			console.log("INIT CHECKBOX", $scope.data_source.checked, $scope.data_source);
 			for(var i=0; i<$scope.data_source.values.length; i++)
 				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
 		}
@@ -69,15 +69,17 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(data.subdata)
 			$scope.convert();
 		
-		console.log("ELEMENT METADATA: ", data, $scope.subdata);
+		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.subdata);
 	};
 	
 	$scope.exists = function(item, field){
+//		console.log("EXISTS", item, field);
 	    if(field.value == undefined) return false;
 	    return field.value.indexOf(item) > -1;
 	};
 	
 	$scope.toggle = function (item, field) {
+//		console.log("TOGGLE", item, field);
 	    if(field.value == undefined) field.value = []                        
 	    var idx = field.value.indexOf(item);
 	    if (idx > -1) {
@@ -159,7 +161,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		if(response.data.details) $scope.subdata = response.data.details;
 		else $scope.subdata = response.data;
 		
-		$scope.convert();		
+		$scope.convert();
 //		console.log("SCOPE ELEMENT DATA: ", $scope);
 	};
 	

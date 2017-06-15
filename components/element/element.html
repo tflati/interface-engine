@@ -53,9 +53,11 @@
                 <div ng-switch-default>
                 	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
                 	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
-                		<md-button type="submit" class="md-raised md-primary">{{label}}</md-button>
+                		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
-              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
+              		<a download	ng-if='field.type == "download"' title="{{field.title}}" ng-href="{{field.url}}">
+              			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}
+              		</a>
                 </div>
                 
               </td>
@@ -118,7 +120,7 @@
 	</table>
 </div>
 
-<div flex="100" ng-if="type == 'chart-pie'">
+<div ng-if="type == 'chart-pie'">
 	<p ng-bind="title"></p>
 	<canvas
 		class="chart chart-pie"
@@ -158,16 +160,16 @@
 	<md-table-container>
 	  <table md-table ng-model="selected" md-progress="promise">
 	    <thead md-head>
-	      <th md-column style="text-align: center; padding-bottom:20px;">
-	      Line no.
-	      </th>
+<!-- 	      <th md-column style="text-align: center; padding-bottom:20px;"> -->
+<!-- 	      Line no. -->
+<!-- 	      </th> -->
 	      <th md-column style="text-align: center; padding-bottom:20px;" ng-repeat="col in subdata.header">
 	      	<span>{{col}}</span>
 	      </th>
 	    </thead>
 	    <tbody md-body>
 	      <tr md-row md-auto-select ng-repeat="row in subdata.items track by $index">
-	        <td md-cell style="text-align: center; padding: 20px;"><b>{{(query.page-1)*query.limit + $index +1}}</b></td>
+<!-- 	        <td md-cell style="text-align: center; padding: 20px;"><b>{{(query.page-1)*query.limit + $index +1}}</b></td> -->
 			<td md-cell style="text-align: center;" ng-repeat="field in row track by $index">
 				<span ng-if="!url">{{field}}</span>
 			</td>
@@ -255,6 +257,8 @@
 	<md-content ng-if="type == 'autocomplete'" ng-controller="autocompleteController as actrl">
 		<label ng-if="type != 'checkbox'" ng-bind="data.label"></label>
 		<md-autocomplete
+		      md-select-on-match
+			  md-match-case-insensitive
 			  placeholder="{{data_source.label}}"
 	          md-search-text="actrl.searchText"
 	          md-selected-item="actrl.selectedItem"

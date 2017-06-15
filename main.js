@@ -126,6 +126,7 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 		$scope.pageTitle = url;
 		
 		if(isForm) {
+			$scope.pageTitle = "form";
 			console.log("Going to render form");
 			$scope.form_results = [];
 			

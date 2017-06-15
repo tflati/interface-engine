@@ -60,9 +60,11 @@ app.controller("circosController", function($scope, $http){
 	                
 	                if(i<10) console.log(item);
 	                
-	                item.fusion = item.g1 + "--" + item.g2;
-	                item.g1name = item.g1;
-	                item.g2name = item.g2;
+	                if(!$scope.data_source.hide_names){
+		                item.fusion = item.g1 + "--" + item.g2;
+		                item.g1name = item.g1;
+		                item.g2name = item.g2;
+	                }
 	                delete item.g1
 	                delete item.g2
 	                
@@ -77,16 +79,17 @@ app.controller("circosController", function($scope, $http){
 	        }                              
 	        
 	        console.log("CIRCOS EVENTS", circos_events);
-	        circos_events = circos_events.slice(0, 30);
+	        circos_events = circos_events.slice(0, 50);
 	        
 	        self.circos.events[2] = circos_events;
+	        self.circos.events[1].LinkRadius = parseInt($scope.data_source.radius) || 60;
 	        
 	        BioCircos01 = new BioCircos(self.circos.events, self.circos.genome, {
 	            target : "biocircos",
-	            svgWidth : 600,
-	            svgHeight : 400,
-	            innerRadius: 160,
-	            outerRadius: 180,
+	            svgWidth : parseInt($scope.data_source.width) || 600,
+	            svgHeight : parseInt($scope.data_source.height) || 400,
+	            innerRadius: parseInt($scope.data_source.inner_radius) || 160,
+	            outerRadius: parseInt($scope.data_source.outer_radius) ||180,
 	            genomeFillColor: ["#FFFFCC", "#CCFFFF", "#FFCCCC", "#CCCC99","#0099CC", "#996699", "#336699", "#FFCC33","#66CC00"],
 	            LINKMouseEvent : true,
 	            LINKMouseClickDisplay : true,
