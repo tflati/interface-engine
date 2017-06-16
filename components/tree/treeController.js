@@ -19,7 +19,10 @@ app.controller("treeController", function($scope, $http){
 			
 			// console.log("TREE D3", error, newick, tree);
 			
-			var phylotree = tree(d3_phylotree_newick_parser(newick))
+			// var phylotree = tree(d3_phylotree_newick_parser(newick));
+			
+			var phylotree = tree(d3.layout.newick_parser(newick))
+			
 			
 //			console.log("[TREE]", phylotree);
 			

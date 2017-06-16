@@ -1,7 +1,7 @@
 <section style="padding: 0% 5% 0% 5%;">
-	<p
+	<p  ng-if="get_current_page_data().show_description == undefined || get_current_page_data().show_description == true"
 		ng-class="{'text-alignment-justify': info.long_description_alignment == 'justify', 'text-alignment-right': info.long_description_alignment == 'right', 'text-alignment-center': info.long_description_alignment == 'center'}"
-		ng-bind-html="info.long_description">
+		ng-bind-html="get_current_page_data().long_description || info.long_description">
 	</p>
 </section>
 

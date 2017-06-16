@@ -20,7 +20,7 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 			for(var i=0; i<$scope.info.pages.length; i++)
 				if($scope.info.pages[i].title == $scope.pageTitle)
 				{
-//					console.log("CURRENT PAGE:", $scope.info.pages[i]);
+					// console.log("CURRENT PAGE:", $scope.info.pages[i]);
 					return $scope.info.pages[i];
 				}
 		
