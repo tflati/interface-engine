@@ -189,13 +189,36 @@ app.controller("elementController", function($scope, $http, dataService, message
 				    callbacks: {
 				        title: function(tooltipItem, chartData) {
 					          console.log("TITLE", tooltipItem, chartData)
-				          return chartData.labels[tooltipItem[0].index].label + " (ID:"+chartData.labels[tooltipItem[0].index].id+")"
+					      var item = chartData.labels[tooltipItem[0].index];
+					          
+					      if(item.label) s = item.label;
+					      else s = item;
+					      
+					      if(item.id) s += " (ID:"+item.id+")";
+					      
+				          return s;
 				        },
 				        label: function(tooltipItem, chartData) {
 					          console.log("LABEL", tooltipItem, chartData)
-					          var key = chartData.datasets[0].label;
+					          var datasetIndex = tooltipItem.datasetIndex;
+					          
+					          var key = chartData.datasets[datasetIndex].label;
 					          if (key == undefined) key = chartData.labels[tooltipItem.index].label;
-					          return  key + ": " + chartData.datasets[0].data[tooltipItem.index];
+					          
+					          var value = chartData.datasets[datasetIndex].data[tooltipItem.index];
+					          
+					          var finalString = key + ": " + value;
+					          
+					          if ($scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
+					        	  var allData = chartData.datasets[datasetIndex].data;
+								  var total = 0;
+								  for (var i in allData) {total += allData[i];}
+						          var percentage = Math.round((value / total) * 100);
+						          
+						          finalString += " ("+percentage+"%)";
+					          }
+					          
+					          return finalString;
 					        }
 				      }
 			    }
@@ -279,7 +302,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 		console.log("CLICK EVENT", evt, value);
 		
 		var listener = $scope.data_source.onClick;
-		if(listener.action == "write") {
+		if(listener && listener.action == "write") {
 			$scope.$apply(function() {
 				console.log("[3] GLOBAL:", dataService);
 				dataService.global[listener.key] = value.id || value;
