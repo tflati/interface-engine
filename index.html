@@ -3,6 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
+<base href="/interface-engine/">
 <meta http-equiv="Cache-control" content="no-cache">
 <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
 
@@ -302,29 +303,29 @@ hr {
 
 
 
-.table-scroll thead {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-}
+/* .table-scroll thead { */
+/*     display: table; */
+/*     width: 100%; */
+/*     table-layout: fixed; */
+/* } */
 
-.table-scroll tbody {
-    max-height: 300px;
-    overflow-y: auto;
-    display: block;
-    width: 100%;
-    table-layout: fixed;
-}
+/* .table-scroll tbody { */
+/*     max-height: 300px; */
+/*     overflow-y: auto; */
+/*     display: block; */
+/*     width: 100%; */
+/*     table-layout: fixed; */
+/* } */
 
-.table-scroll tr {
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-}
+/* .table-scroll tr { */
+/*     display: table; */
+/*     table-layout: fixed; */
+/*     width: 100%; */
+/* } */
 
-.table-scroll td {
-    height: 47px;
-}
+/* .table-scroll td { */
+/*     height: 47px; */
+/* } */
 
 </style>
 
@@ -382,7 +383,6 @@ hr {
 			app.config(function ($routeProvider, $locationProvider) {
 				
 				console.log("ROUTING", $routeProvider, $locationProvider);
-				$locationProvider.hashPrefix('!');
 				
 			    $routeProvider.
 			    when("/:pageName?", {
@@ -413,6 +413,14 @@ hr {
 			            }
 			        }
 			    });
+			    
+// 			    $locationProvider.html5Mode(true);
+// 			    $locationProvider.html5Mode({
+// 		            enabled: true,
+// 		            requireBase: false
+// 		        });
+
+			    $locationProvider.hashPrefix("!").html5Mode(true);
 			});
 			
 			app.run([

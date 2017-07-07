@@ -166,6 +166,9 @@ app.controller("elementController", function($scope, $http, dataService, message
 	};
 	
 	$scope.convert = function(){
+		
+		console.log("CONVERTING ", $scope);
+		
 		if($scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 			$scope.subdata.labels = []
 			$scope.subdata.points = []
