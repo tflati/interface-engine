@@ -16,7 +16,7 @@ app.controller("autocompleteController", function($scope, $q, $filter){
 					function(item)
 					{
 						// console.log("FILTER item= vs query=", item, query);
-						return angular.lowercase(item.label).indexOf(angular.lowercase(query)) === 0;
+						return angular.lowercase(item.label).indexOf(angular.lowercase(query)) >= 0;
 					});
 			results = $filter('orderBy')(results);
 		}
