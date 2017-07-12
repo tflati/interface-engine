@@ -111,7 +111,7 @@
 		</md-card-content>
 	</md-card>
 	
-	<md-card ng-if="search_started" flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;">
+	<md-card ng-if="search_started" flex="{{form.width || 65}}" style="max-height: 100%; height: 100%; overflow-x: scroll;">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Results found</span>
@@ -142,7 +142,7 @@
 		</md-card-content>
 	</md-card>
 	
-	<div flex="25" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
+	<div flex="35" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
 		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
 		</card>
 	</div>

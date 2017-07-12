@@ -16,7 +16,7 @@
 			
 			<span flex></span>
 			<div ng-if="header.show_logos && inForm()">
-				<span ng-bind="info.title"></span>
+				<span ng-bind="info.title_short"></span>
 				<md-card-title-media class="header-logo-container-menu padding-v-no" layout-padding>
 				<img class="header-logo-menu" ng-repeat="logo in info.logos" ng-src="{{logo.image}}">
 			</md-card-title-media>
