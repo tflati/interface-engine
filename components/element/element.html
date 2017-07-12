@@ -44,20 +44,27 @@
 				</tr>
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td style="width: 100px; overflow-wrap: break-word;" md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
+              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
                 <span ng-switch-when="undefined">
                 	<span ng-if="field.label">{{field.label}}</span>
               		<span ng-if="!field.label">{{field}}</span>
               	</span>
               	
                 <div ng-switch-default>
+                
+<!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
+					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label"></p>
+                
                 	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+                	
                 	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
                 		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
+                	
               		<a download	ng-if='field.type == "download"' title="{{field.title}}" ng-href="{{field.url}}">
               			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}
               		</a>
+              		
                 </div>
                 
               </td>

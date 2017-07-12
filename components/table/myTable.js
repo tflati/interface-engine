@@ -8,6 +8,9 @@ app.directive("myTable", function() {
 		},
 		controller: function MyDataTableController($scope, $attrs, $timeout, $http) {
 			
+			$scope.formData.results = {};
+			$scope.during_call = false;
+			
 			$scope.tableUrl = $scope.formData.submit.url;
 			if( ! $scope.tableUrl.endsWith("/") ) $scope.tableUrl = $scope.tableUrl  + "/";
 			
@@ -33,7 +36,7 @@ app.directive("myTable", function() {
 			
 			$scope.paginatorCallback = function (page, pageSize, options){
 				
-				$scope.formData.results = [];
+				$scope.formData.results.hits = [];
 				
 				var args = {};
 				for(var i=0; i<$scope.formData.fields.length; i++)
@@ -82,7 +85,10 @@ app.directive("myTable", function() {
 				for (var key in args) { postArguments[key] = args[key]; }
 				console.log("ARGS SENT VIA POST", postArguments);
 				
+				$scope.during_call = true;
 				return $http.post($scope.tableUrl, postArguments).then(function(result){
+					
+					$scope.during_call = false;
 					
 						//set row table property
 						if($scope.t_property['column-keys'].length == 0){
