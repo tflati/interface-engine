@@ -1,13 +1,12 @@
 {
-  "name": "bdi",
-  "homepage": "https://github.com/tflati/bdi",
+  "name": "interface-engine",
+  "homepage": "https://github.com/tflati/interface-engine",
+  "authors": [
+    "tflati <tflati@di.uniroma1.it>"
+  ],
   "description": "",
   "main": "",
-  "authors": [
-    "Tiziano Flati"
-  ],
-  "license": "CC-BY-SA",
-  "private": true,
+  "license": "MIT",
   "ignore": [
     "**/.*",
     "node_modules",
@@ -16,21 +15,20 @@
     "tests"
   ],
   "dependencies": {
-    "angular-material-data-table": "http://github.com/daniel-nagy/md-data-table.git#^0.10.10",
+    "jquery": "3.2.1",
+    "angular": "1.5",
+    "angular-sanitize": "1.5",
+    "angular-aria": "1.5",
+    "angular-messages": "1.5",
+    "angular-route": "1.5",
+    "AngularJS-Toaster": "^2.1.0",
     "font-awesome": "^4.7.0",
-    "angular-sanitize": "^1.6.1",
-    "AngularJS-Toaster": "angularjs-toaster#^2.1.0",
-    "angular-jqcloud": "^1.0.3",
-    "phylotree": "^0.1.4",
-    "angular-route": "^1.6.4",
-    "components-font-awesome": "^4.7.0",
-    "angular-material": "master",
     "angular-chart.js": "^1.1.1",
-    "angular-animate": "^1.6.4",
-    "angular": "^1.6.4",
-    "angular-venn": "*"
-  },
-  "resolutions": {
-    "angular": "1.6.4"
+    "md-data-table": "^2.2.0",
+    "angular-venn": "*",
+    "components-font-awesome": "^4.7.0",
+    "phylotree": "^0.1.6",
+    "angular-jqcloud": "^1.0.3",
+    "angular-material": "1.1.4"
   }
 }

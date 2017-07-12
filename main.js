@@ -1,4 +1,4 @@
-app.controller("pageController", function($http, $window, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle){
+app.controller("pageController", function($http, $window, $rootScope, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle){
 
 	var self = this;
 	
@@ -227,83 +227,123 @@ app.controller("pageController", function($http, $window, $scope, $mdDialog, $ti
 	    else field.value.push(item);
 	};
 	
+	$rootScope.search_started = false;
 	$scope.send_query = function(){
-		var args = [];
-		console.log($scope.form)
-		for(var i=0; i<$scope.form.fields.length; i++)
-		{
-			var field = $scope.form.fields[i];
-			console.log("FIELD", field);
-			
-			if (angular.isArray(field.value)) {
-				subargs = []
-				for (var j=0; j<field.value.length; j++){
-					var value = field.value[j].id;
-					if (value == undefined) value = field.value[j];
-					console.log("VALUE", value);
-					
-					if (value == undefined || value == "undefined" || value == "") value = "ALL";
-					subargs.push(value);
-				}
-				
-				args.push(subargs.join("+"));
-			}
-			else {
-				var value = "ALL";
-				if (field.value && field.value.id) value = field.value.id;
-				else if (field.value) value = field.value;
-				
-				console.log("VALUE", value);
-				
-				// if (value == undefined || value == "undefined" || value == "") value = "ALL";
-				args.push(value);
-			}
-		}
 		
-		console.log("ARGS", args);
+		$rootScope.search_started = true;
+		console.log("Want to make a new search!");
 		
-		if( ! $scope.form.submit.url.endsWith("/") ) $scope.form.submit.url = $scope.form.submit.url  + "/";
-		
-		if($scope.form.submit.type == "POST")
-		{
-			$scope.sending = true;
-			
-			console.log("SENDING AJAX VIA POST", args);
-			$http.post($scope.form.submit.url, args)
-			.then(function(response) {
-				$scope.sending = false;
-				console.log("QUERY POST SUCCESS", response);
-				$scope.form_results = response.data;
-				
-			}, function(response){
-				$scope.sending = false;
-				console.log("ERROR WHILE SENDING QUERY...", response);
-			});
-		}
-		else
-		{
-			$scope.sending = true;
-			
-			var url = $scope.form.submit.url + args.join("/") + "/";
-			
-			console.log("SENDING AJAX VIA GET", args, url);
-			$http.get(url)
-			.then(function(response) {
-				console.log("QUERY GET SUCCESS", response);
-				$scope.form_results = response.data;
-				
-				$scope.sending = false;
-				$scope.showing = false;
-				
-			}, function(response){
-				$scope.sending = false;
-				console.log("ERROR WHILE SENDING QUERY...", response);
-			});
-		}
+//		if($scope.form.submit.type == "POST")
+//		{
+//			var args = {};
+//			console.log($scope.form)
+//			for(var i=0; i<$scope.form.fields.length; i++)
+//			{
+//				var field = $scope.form.fields[i];
+//				console.log("FIELD", field);
+//				
+//				if (angular.isArray(field.value)) {
+//					subargs = []
+//					for (var j=0; j<field.value.length; j++){
+//						var value = field.value[j].id;
+//						if (value == undefined) value = field.value[j];
+//						console.log("VALUE", value);
+//						
+//						if (value == undefined || value == "undefined" || value == "") value = "ALL";
+//						subargs.push(value);
+//					}
+//					
+//					args[field.key] = subargs;
+//				}
+//				else {
+//					var value = "ALL";
+//					if (field.value && field.value.id) value = field.value.id;
+//					else if (field.value) value = field.value;
+//					
+//					console.log("VALUE", value);
+//					
+//					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
+//					args[field.key] = value;
+//				}
+//			}
+//			
+//			console.log("ARGS SENT VIA POST", args);
+//			
+//			$scope.sending = true;
+//			
+//			args["offset"] = 0;
+//			args["limit"] = 10;
+//			
+//			console.log("SENDING AJAX VIA POST", args);
+//			$http.post($scope.form.submit.url, args)
+//			.then(function(response) {
+//				$scope.sending = false;
+//				console.log("QUERY POST SUCCESS", response);
+//				$scope.form_results = response.data;
+//				
+//			}, function(response){
+//				$scope.sending = false;
+//				console.log("ERROR WHILE SENDING QUERY...", response);
+//			});
+//		}
+//		else
+//		{
+//			var args = [];
+//			console.log($scope.form)
+//			for(var i=0; i<$scope.form.fields.length; i++)
+//			{
+//				var field = $scope.form.fields[i];
+//				console.log("FIELD", field);
+//				
+//				if (angular.isArray(field.value)) {
+//					subargs = []
+//					for (var j=0; j<field.value.length; j++){
+//						var value = field.value[j].id;
+//						if (value == undefined) value = field.value[j];
+//						console.log("VALUE", value);
+//						
+//						if (value == undefined || value == "undefined" || value == "") value = "ALL";
+//						subargs.push(value);
+//					}
+//					
+//					args.push(subargs.join("+"));
+//				}
+//				else {
+//					var value = "ALL";
+//					if (field.value && field.value.id) value = field.value.id;
+//					else if (field.value) value = field.value;
+//					
+//					console.log("VALUE", value);
+//					
+//					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
+//					args.push(value);
+//				}
+//			}
+//			
+//			console.log("ARGS SENT VIA GET", args);
+//			
+//			$scope.sending = true;
+//			
+//			var url = $scope.form.submit.url + args.join("/") + "/";
+//			
+//			console.log("SENDING AJAX VIA GET", args, url);
+//			$http.get(url)
+//			.then(function(response) {
+//				console.log("QUERY GET SUCCESS", response);
+//				$scope.form_results = response.data;
+//				
+//				$scope.sending = false;
+//				$scope.showing = false;
+//				
+//			}, function(response){
+//				$scope.sending = false;
+//				console.log("ERROR WHILE SENDING QUERY...", response);
+//			});
+//		}
 	};
 	
 	$scope.show_form = function(){
-		$scope.showing = true;
+		$rootScope.search_started = false;
 	};
 	
 //	self.ajax2forms = [];

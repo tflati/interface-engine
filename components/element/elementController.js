@@ -11,6 +11,7 @@ app.controller("elementController", function($scope, $http, dataService, message
 	$scope.init = function(data){
 		
 		$scope.type = data.type;
+		$scope.key = data.key;
 		$scope.stacked = data.stacked;
 		$scope.showLegend = data.showLegend;
 		$scope.title = data.title;

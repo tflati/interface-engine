@@ -3,9 +3,9 @@
 	<p ng-bind="form.subtitle"></p>
 </section>
 
-<section layout="row" style="padding: 0% 5% 0% 5%;" >
+<section layout="row" style="padding: 0% 5% 0% 5%;">
 
-	<md-card flex="{{form.width || 75}}" ng-if="showing" style="height: 100%;">
+	<md-card ng-if="!search_started" flex="{{form.width || 75}}" style="height: 100%;">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Search</span>
@@ -111,7 +111,7 @@
 		</md-card-content>
 	</md-card>
 	
-	<md-card flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;" ng-if="!showing">
+	<md-card ng-if="search_started" flex="{{form.width || 75}}" style="max-height: 100%; height: 100%; overflow-x: scroll;">
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Results found</span>
@@ -143,7 +143,7 @@
 	</md-card>
 	
 	<div flex="25" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
-		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
+		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
 		</card>
 	</div>
 	
@@ -158,79 +158,81 @@
 <!-- </section> -->
 
 <section style="padding: 0% 5% 0% 5%;">
-	<div ng-if="sending" style="text-align: center; color: cadetblue;">
-        	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-    </div>
+<!-- 	<div ng-if="sending" style="text-align: center; color: cadetblue;"> -->
+<!--         	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> -->
+<!--     </div> -->
 
 <!-- style="max-width: 100px;" -->
 <!-- style="max-height: 500px; display: block; overflow-y: scroll;" -->
 <!-- style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" -->
 
-	<md-card ng-if="form_results.items" class="full-card">
+	<div ng-if="search_started && !form.results" style="text-align: center; color: cadetblue;">
+      	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+    </div>
+	<md-card ng-if="search_started" class="full-card" style="max-height: unset;">
 		<md-card-title style="text-align: center;">
-			<span>{{form_results.items.length}}</span>
-			<span>&nbsp;result</span><span ng-if="form_results.items.length > 1">s</span>
+			<span>{{form.results.total}}</span>
+			<span ng-if="form.results.total > 0">&nbsp;result</span><span ng-if="form.results.total > 1">s</span>
 		</md-card-title>
 		<md-card-content>
-			<table class="table-scroll" md-table md-row-selectmultiple >
-				<thead md-head>
-		        	<tr md-row>
-		            	<th sortable-header style="word-break: break-word; max-width: 100px; overflow-wrap: break-word;" md-column ng-repeat="col in form_results.header track by $index">
-		            	<span>{{col}}</span>
-		            </th>
-					</tr>
-				</thead>
-				<tbody md-body>
-			        <tr ng-if="!sending" md-row md-auto-select ng-repeat="row in form_results.items track by $index">
-			        	<td md-cell ng-switch="field.type" ng-repeat="field in row track by $index">
-			              	<span ng-switch-when="undefined" style="text-overflow: ellipsis;">
-			              		<span>{{field}}</span>
-			              	</span>
+<!-- 			<table class="table-scroll" md-table md-row-selectmultiple > -->
+<!-- 				<thead md-head> -->
+<!-- 		        	<tr md-row> -->
+<!-- 		            	<th sortable-header style="word-break: break-word; max-width: 100px; overflow-wrap: break-word;" md-column ng-repeat="col in form_results.header track by $index"> -->
+<!-- 		            	<span>{{col}}</span> -->
+<!-- 		            </th> -->
+<!-- 					</tr> -->
+<!-- 				</thead> -->
+<!-- 				<tbody md-body> -->
+<!-- 			        <tr ng-if="!sending" md-row md-auto-select ng-repeat="row in form_results.items track by $index"> -->
+<!-- 			        	<td md-cell ng-switch="field.type" ng-repeat="field in row track by $index"> -->
+<!-- 			              	<span ng-switch-when="undefined" style="text-overflow: ellipsis;"> -->
+<!-- 			              		<span>{{field}}</span> -->
+<!-- 			              	</span> -->
 			              	
-			                <div ng-switch-default>
-			                	<img ng-if='field.type == "image"' ng-src="{{field.data.url}}">
+<!-- 			                <div ng-switch-default> -->
+<!-- 			                	<img ng-if='field.type == "image"' ng-src="{{field.data.url}}"> -->
 			                	
-			                	<span ng-if='field.type == "text"'>
-			                		{{field.data.label}}
-			                		<span class="pedix" ng-if="field.data.pedix">
-			                			<a target="_blank" ng-if='field.data.pedix.type == "linkable_image"' ng-href="{{field.data.pedix.data.url}}">
-					                		<img class="pedix-image" title="{{field.data.pedix.data.image_title}}" ng-src="{{field.data.pedix.data.image_url}}">			                		
-					                	</a>
-			                		</span>
-			                	</span>
+<!-- 			                	<span ng-if='field.type == "text"'> -->
+<!-- 			                		{{field.data.label}} -->
+<!-- 			                		<span class="pedix" ng-if="field.data.pedix"> -->
+<!-- 			                			<a target="_blank" ng-if='field.data.pedix.type == "linkable_image"' ng-href="{{field.data.pedix.data.url}}"> -->
+<!-- 					                		<img class="pedix-image" title="{{field.data.pedix.data.image_title}}" ng-src="{{field.data.pedix.data.image_url}}">			                		 -->
+<!-- 					                	</a> -->
+<!-- 			                		</span> -->
+<!-- 			                	</span> -->
 			                	
-			                	<a ng-if='field.type == "linkable_image"' ng-href="{{field.data.url}}" target="_blank">
-			                		<img title="{{field.data.image_title}}" ng-src="{{field.data.image_url}}">			                		
-			                	</a>
+<!-- 			                	<a ng-if='field.type == "linkable_image"' ng-href="{{field.data.url}}" target="_blank"> -->
+<!-- 			                		<img title="{{field.data.image_title}}" ng-src="{{field.data.image_url}}">			                		 -->
+<!-- 			                	</a> -->
 			                	
-			                	<span ng-if='field.type == "icon"'>
-			                		<i class="fa {{field.data.icon}} {{field.data.modifiers}}" aria-label="{{field.data.title}}" title="{{field.data.title}}" style="color: {{field.data.color}}"></i>
-			                	</span>
+<!-- 			                	<span ng-if='field.type == "icon"'> -->
+<!-- 			                		<i class="fa {{field.data.icon}} {{field.data.modifiers}}" aria-label="{{field.data.title}}" title="{{field.data.title}}" style="color: {{field.data.color}}"></i> -->
+<!-- 			                	</span> -->
 			                	
-			                	<md-button ng-if='field.type == "button"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+<!-- 			                	<md-button ng-if='field.type == "button"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button> -->
 			                	
-			                	<md-button ng-if='field.type == "button_with_icon"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary">
-			                		<span>{{field.label}}</span>
-			                		<span ng-repeat="icon in field.icon">
-			                			<img ng-if="icon.type == 'img'" class="button-icon" title="{{icon.data.url}}" ng-src="{{icon.data.url}}">
-			                			<span ng-if='icon.type == "icon"' style="padding: 5px;">
-											<i class="fa {{icon.data.icon}} {{icon.data.modifiers}}" aria-label="{{icon.data.title}}" title="{{icon.data.title}}" style="color: {{icon.data.color}}"></i>
-										</span>
-			                		</span>
-			                	</md-button>
+<!-- 			                	<md-button ng-if='field.type == "button_with_icon"' ng-style="{'background-color': field.color}" ng-click="show_dialog($event, field.card)" class="md-raised md-primary"> -->
+<!-- 			                		<span>{{field.label}}</span> -->
+<!-- 			                		<span ng-repeat="icon in field.icon"> -->
+<!-- 			                			<img ng-if="icon.type == 'img'" class="button-icon" title="{{icon.data.url}}" ng-src="{{icon.data.url}}"> -->
+<!-- 			                			<span ng-if='icon.type == "icon"' style="padding: 5px;"> -->
+<!-- 											<i class="fa {{icon.data.icon}} {{icon.data.modifiers}}" aria-label="{{icon.data.title}}" title="{{icon.data.title}}" style="color: {{icon.data.color}}"></i> -->
+<!-- 										</span> -->
+<!-- 			                		</span> -->
+<!-- 			                	</md-button> -->
 			                	
-			              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a>
+<!-- 			              		<a download	ng-if='field.type == "download"' ng-href="{{field.url}}"><img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}</a> -->
 			              		
-			              		<a ng-if='field.type == "link"' target="_blank" ng-href="{{field.data.url}}" ng-bind-html="field.data.label"></a>
-			                </div>
-						</td>
-<!-- 						<td style="max-width: 100px; overflow-wrap: break-word;" md-cell ng-repeat="field in row track by $index"> -->
-<!--                         	<md-button  ng-if='field.type == "button"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button> -->
-<!--                         	<span ng-if='field.type != "button"' style="text-overflow: ellipsis;">{{field}}</span> -->
-<!--                       	</td> -->
-					</tr>
-				</tbody>
-			</table>
+<!-- 			              		<a ng-if='field.type == "link"' target="_blank" ng-href="{{field.data.url}}" ng-bind-html="field.data.label"></a> -->
+<!-- 			                </div> -->
+<!-- 						</td> -->
+<!-- 					</tr> -->
+<!-- 				</tbody> -->
+<!-- 			</table> -->
+
+			<my-table form-data="form"></my-table>
+			
 		</md-card-content>
 	</md-card>
 </section>

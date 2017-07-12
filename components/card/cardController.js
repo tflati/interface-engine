@@ -1,9 +1,10 @@
-app.controller("cardController", function($scope, dataService){
+app.controller("cardController", function($scope, $rootScope, dataService){
 	
 	$scope.sending = false;
 	
 	$scope.init = function(data){
 		
+		console.log("CARD SCOPE", data, $scope);
 		console.log("CARD DATA", data);
 		$scope.title = data.title;
 		$scope.subtitle = data.subtitle;
@@ -17,10 +18,11 @@ app.controller("cardController", function($scope, dataService){
 		$scope.show = true;
 		
 		if (data.show == "after_send"){
-			$scope.show = false;
+			$scope.show = $rootScope.search_started;
 
-			$scope.$watch(function(){return $scope.form_results;}, function(newValue, oldValue) {
-	        	$scope.show = $scope.form_results && $scope.form_results.items && $scope.form_results.items.length > 0;
+			$scope.$watch(function(){return $rootScope.search_started;}, function(newValue, oldValue) {
+				console.log("SEARCH STARTED WATCH", $rootScope.search_started);
+				$scope.show = newValue;
 			}, true);
 		}
 		
