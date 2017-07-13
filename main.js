@@ -129,6 +129,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 			$scope.pageTitle = "form";
 			console.log("Going to render form");
 			$scope.form_results = [];
+			$rootScope.search_started = false;
 			
 			$scope.page = 'templates/form.html';
 			$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
