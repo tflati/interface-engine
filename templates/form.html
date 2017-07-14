@@ -9,6 +9,16 @@
 		<md-card-title class="padding-v-small">
 			<md-card-title-text>
 		            <span class="md-headline">Search</span>
+		            
+		            <div ng-if="form.tooltip" style="display: inline-block;">
+			            <div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
+			            	<i class="fa fa-question-circle fa-2x" style="color: orange"></i>
+							<div ng-dropover-contents class="tooltip-container">
+						      <div ng-bind-html="form.tooltip" class="custom-tooltip"></div>
+						    </div>
+					    </div>
+					</div>
+		            
 		    </md-card-title-text>
 		</md-card-title>
 		

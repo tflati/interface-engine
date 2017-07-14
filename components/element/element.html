@@ -42,12 +42,12 @@
 						<span ng-switch-when="undefined">{{field}}</span>
 						<div ng-switch-default>
 							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
-							<div ng-dropover-contents class="tooltip-container">
-						      <div ng-bind="field.tooltip" class="custom-tooltip"></div>
-						    </div>
-							<p ng-if='field.type == "text"' ng-bind-html="field.label">
-							</p>
-						</div>
+								<div ng-dropover-contents class="tooltip-container">
+							      <div ng-bind="field.tooltip" class="custom-tooltip"></div>
+							    </div>
+								<p ng-if='field.type == "text"' ng-bind-html="field.label">
+								</p>
+							</div>
 					</th>
 				</tr>
 			</thead>
@@ -253,7 +253,7 @@
 		<input ng-if="type != 'choice' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}" type="{{type}}"/>
 		
 		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-change="onChange(data_source.value)" ng-model-options="{trackBy: '$value.id'}">
-			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span> <span style="color: grey">(ID: {{value.id}})</span></md-option>
+			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option>
 		</md-select>
 		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value.id'}">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
