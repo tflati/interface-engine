@@ -57,10 +57,27 @@
 <script src="bower_components/venn.js/venn.js"></script>
 <script src="bower_components/angular-venn/angular-venn.js"></script>
 
+<!-- ngDropover -->
+<script src="bower_components/ngDropover/dist/ngdropover.js"></script>
+
 <style>
 /* .md-table tbody tr { */
 /* 	transition: all 0.1s ease-in; */
 /* } */
+
+.tooltip-container {
+	z-index: 9999;
+}
+.custom-tooltip {
+	background-color: #616161;
+	color: white;
+	border-radius: 10px;
+	max-width: 300px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	padding-left: 30px;
+	padding-right: 30px;
+}
 
 .md-row {
 	height: 48px;
@@ -300,9 +317,6 @@ hr {
 	color: lightgray;
 }
 
-
-
-
 .md-dialog-backdrop:nth-of-type(odd) {
     z-index: 80;
 }
@@ -360,7 +374,8 @@ hr {
 						'angular-jqcloud',
 						'ngRoute',
 						'ngMdIcons',
-						'angular-venn'
+						'angular-venn',
+						'ngDropover'
 					] );
 			
 // 			app.run(['$templateCache', function ( $templateCache ) {
