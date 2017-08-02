@@ -419,6 +419,9 @@ hr {
 				console.log("ROUTING", $routeProvider, $locationProvider);
 				
 			    $routeProvider.
+			    when("/popup", {
+			    	templateUrl: "components/card/popup.html"
+			    }).
 			    when("/:pageName?", {
 			        templateUrl: "homepage.html",
 			        controller: "pageController",
@@ -430,6 +433,7 @@ hr {
 			            	console.log("ASKED FOR ", $route.current.params.pageName);
 			            	
 			            	if ($route.current.params.pageName == undefined) $route.current.params.pageName = "main";
+			            	
 			            	return $route.current.params.pageName;
 			            }
 			        }
@@ -448,11 +452,11 @@ hr {
 			        }
 			    });
 			    
-// 			    $locationProvider.html5Mode(true);
-// 			    $locationProvider.html5Mode({
-// 		            enabled: true,
-// 		            requireBase: false
-// 		        });
+			    $locationProvider.html5Mode(true);
+			    $locationProvider.html5Mode({
+		            enabled: true,
+		            requireBase: false
+		        });
 
 			    $locationProvider.hashPrefix("!").html5Mode(true);
 			});
@@ -468,7 +472,25 @@ hr {
 				      if(current != undefined) currentPath = current.originalPath;
 				      var nextPath = next.originalPath;
 
+// 					  var currentPath = "N/A";
+// 					  var nextPath = "N/A";
+				 	  
+				      console.log("Current", current);
+				 	  console.log("Next", next);
+				 	  console.log("Event", event);
 				      console.log('Starting to leave %s to go to %s', currentPath, nextPath, $route);
+				    });
+				    
+				    $rootScope.$on("$routeChangeSuccess", function(event){
+				    	console.log("ROUTE CHANGE SUCCESS", event);
+				    });
+				    
+				    $rootScope.$on("$routeChangeError", function(event){
+				    	console.log("ROUTE CHANGE ERROR", event);
+				    });
+				    
+				    $rootScope.$on("$routeUpdate", function(event){
+				    	console.log("ROUTE UPDATE", event);
 				    });
 				  }
 				]);

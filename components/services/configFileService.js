@@ -1,4 +1,4 @@
-app.service("configFileService", function($http, messageService){
+app.service("configFileService", function($http, messageService, dataService){
 	
 	var self = this;
 	
@@ -54,6 +54,7 @@ app.service("configFileService", function($http, messageService){
 		        for(var f=0; f<self.info.forms.length; f++)
 		        {
 		        	var form = self.info.forms[f];
+		        	dataService.global[form.name] = form;
 		        	
 		            for(var i=0; i<form.fields.length; i++)
 		            {

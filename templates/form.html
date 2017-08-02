@@ -237,7 +237,12 @@
 <!-- 					</tr> -->
 <!-- 				</tbody> -->
 <!-- 			</table> -->
-
+			
+			<div ng-if="form.results.total > 0" style="margin: 10px 0px 10px 0px">
+				<element  ng-repeat="element in form.post_elements" ng-controller="elementController" ng-init="init(element)">
+				</element>
+			</div>
+			
 			<my-table form-data="form"></my-table>
 			
 		</md-card-content>

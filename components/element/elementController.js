@@ -1,4 +1,4 @@
-app.controller("elementController", function($scope, $http, dataService, messageService){
+app.controller("elementController", function($scope, $http, $window, $mdDialog, dataService, messageService){
 	
 	$scope.subdata = [];
 	$scope.sending = false;
@@ -10,7 +10,11 @@ app.controller("elementController", function($scope, $http, dataService, message
 	
 	$scope.init = function(data){
 		
+		console.log("INITIALIZING", data.type, data);
+		
 		$scope.type = data.type;
+		$scope.action = data.action;
+		$scope.card = data.card;
 		$scope.key = data.key;
 		$scope.stacked = data.stacked;
 		$scope.showLegend = data.showLegend;
@@ -302,16 +306,139 @@ app.controller("elementController", function($scope, $http, dataService, message
 	
 	$scope.onClick = function(evt){
 		
-		var value = $scope.subdata.items[evt[0]._index][0];
-		console.log("CLICK EVENT", evt, value);
+		console.log("CLICKED!", evt, $scope);
 		
-		var listener = $scope.data_source.onClick;
-		if(listener && listener.action == "write") {
-			$scope.$apply(function() {
-				console.log("[3] GLOBAL:", dataService);
-				dataService.global[listener.key] = value.id || value;
-				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
-			    });
+		if($scope.data_source && $scope.data_source.action == "send")
+		{
+			var form = dataService.global[$scope.data_source.source];
+			console.log("DATA SOURCE", $scope.data_source.source, dataService.global, form);
+			
+			var args = {};
+			for(var i=0; i<form.fields.length; i++)
+			{
+				var field = form.fields[i];
+				console.log("FIELD", field);
+				
+				if (angular.isArray(field.value)) {
+					subargs = []
+					for (var j=0; j<field.value.length; j++){
+						var value = field.value[j].id;
+						if (value == undefined) value = field.value[j];
+						console.log("VALUE", value);
+						
+						if (value == undefined || value == "undefined" || value == "") value = "ALL";
+						subargs.push(value);
+					}
+					
+					args[field.key] = subargs;
+				}
+				else {
+					var value = "ALL";
+					if (field.value && field.value.id) value = field.value.id;
+					else if (field.value) value = field.value;
+					
+					if (field.type == "checkbox") value = field.value;
+					
+					console.log("VALUE", value);
+					
+					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
+					args[field.key] = value;
+				}
+			}
+			
+			console.log("BUTTON ARGS SENT VIA POST", args);
+			
+			$scope.doing_ajax = true; 
+			$http.post($scope.data_source.onClick, args)
+				 .then(
+					function(result){
+						
+						$scope.doing_ajax = false;
+						
+						console.log("BUTTON CLICK OK", result);
+						
+						var a = document.createElement("a");
+					    document.body.appendChild(a);
+					    a.style = "display: none";
+					    var data = result.data.content;
+					    
+				        var url = window.URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "octet/stream"}));
+				        
+				        a.href = url;
+				        a.download = result.data.filename;
+				        a.click();
+				        window.URL.revokeObjectURL(url);
+					},
+					function(response){
+						$scope.doing_ajax = false;
+						console.log("BUTTON CLICK FAILED", result);
+					}
+				 );
+		}
+		else if($scope.action == "window") {
+			console.log("Opening a new window with data", $scope.card);
+			
+			$scope.inputData = $scope.card;
+			$window.parentScope = $scope;
+			var popup = $window.open("http://localhost/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+		}
+		else if($scope.action == "dialog") {
+			
+			var card = $scope.card;
+	        
+			console.log("I would like to open a dialog.", $scope);
+			
+	        $mdDialog.show({
+	        	multiple: true,
+	        	locals: {data: card},
+	            controller: function DialogController($scope, $mdDialog, data) {
+	                $scope.row = [data];
+	                $scope.closeDialog = function() {
+	                  $mdDialog.hide();
+	                };
+	                
+	                $scope.show_dialog = function(evt, card){
+	                    
+	                    console.log(evt, card);
+	                    
+	                    $mdDialog.show({
+	                    	multiple: true,
+	                    	locals: {data: card},
+	                        controller: function DialogController($scope, $mdDialog, data) {
+	                            $scope.row = [data];
+	                            $scope.closeDialog = function() {
+	                              $mdDialog.hide();
+	                            };
+	                          },
+	                        templateUrl: 'templates/dialog.html',
+	                        parent: angular.element(document.body),
+	                        targetEvent: evt,
+	                        clickOutsideToClose:true
+	                    });
+	                };
+	              },
+	            templateUrl: 'templates/dialog.html',
+	            parent: angular.element(document.body),
+	            targetEvent: evt,
+	            clickOutsideToClose:true
+	        });
+	        
+	        console.log("Dialog opened.", $scope);
+		}
+		else
+		{
+			console.log("CLICK", evt);
+			var value = $scope.subdata.items[evt[0]._index][0];
+			console.log("CLICK EVENT", evt, value);
+			
+			var listener = $scope.data_source.onClick;
+			if(listener && listener.action == "write") {
+				$scope.$apply(function() {
+					console.log("[3] GLOBAL:", dataService);
+					dataService.global[listener.key] = value.id || value;
+					console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
+				    });
+			}
 		}
 		
 //		var changeListener = $scope.data_source.onClick;

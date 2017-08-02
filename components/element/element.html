@@ -13,11 +13,12 @@
 	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
-<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-href="{{data_source.url}}">
+<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-click="onClick()">
 	<i class="fa {{data_source.icon}} {{data_source.modifiers}}"></i>
 	{{label}}
+	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
-					
+
 <hr ng-if="type == 'divider'" class="divider">
 
 <span ng-if='type == "icon"' style="padding: 5px;">
@@ -61,11 +62,11 @@
                 <div ng-switch-default>
                 
 <!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
-					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label">
-						<md-tooltip>Ciao</md-tooltip>
-					</p>
+					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label"></p>
                 
-                	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="show_dialog($event, field.card)" class="md-raised md-primary">{{field.label}}</md-button>
+<!--                 	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="onClick()" class="md-raised md-primary">{{field.label}}</md-button> -->
+                	
+                	<element ng-controller="elementController" ng-if='field.type == "button" && (field.action == "window" || field.action == "dialog")' ng-init="init(field)"></element>
                 	
                 	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
                 		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>

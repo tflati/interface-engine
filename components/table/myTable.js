@@ -62,6 +62,8 @@ app.directive("myTable", function() {
 						if (field.value && field.value.id) value = field.value.id;
 						else if (field.value) value = field.value;
 						
+						if (field.type == "checkbox") value = field.value;
+						
 						console.log("VALUE", value);
 						
 						// if (value == undefined || value == "undefined" || value == "") value = "ALL";
