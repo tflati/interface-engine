@@ -1,4 +1,4 @@
-app.controller("elementController", function($scope, $http, $window, $mdDialog, dataService, messageService){
+app.controller("elementController", function($scope, $sce, $http, $window, $mdDialog, dataService, messageService){
 	
 	$scope.subdata = [];
 	$scope.sending = false;
@@ -32,7 +32,7 @@ app.controller("elementController", function($scope, $http, $window, $mdDialog, 
 		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
 		
-		if($scope.type != "image")
+		if($scope.type != "image" && $scope.type != "iframe")
 			$scope.update($scope.get_url());
 		
 		if($scope.data_source != undefined){
@@ -450,4 +450,8 @@ app.controller("elementController", function($scope, $http, $window, $mdDialog, 
 //			});
 //		}
 	};
+	
+	$scope.trustSrc = function(src) {
+	    return $sce.trustAsResourceUrl(src);
+	  }
 });

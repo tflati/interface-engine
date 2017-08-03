@@ -13,6 +13,9 @@
 	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
+<iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}">
+</iframe>
+
 <md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-click="onClick()">
 	<i class="fa {{data_source.icon}} {{data_source.modifiers}}"></i>
 	{{label}}

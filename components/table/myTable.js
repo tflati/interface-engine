@@ -90,6 +90,8 @@ app.directive("myTable", function() {
 				$scope.during_call = true;
 				return $http.post($scope.tableUrl, postArguments).then(function(result){
 					
+					console.log("TABLE RESULT", result);
+					
 					$scope.during_call = false;
 					
 						//set row table property

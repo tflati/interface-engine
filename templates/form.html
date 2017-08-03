@@ -138,13 +138,18 @@
 						<label style="font-weight: bold;" ng-bind="field.label"></label>
 					</td>
 					<td style="text-align: left !important;">
-						<div ng-if="field.value.label">
+						<span ng-if="field.value.length > 0" ng-repeat="subfield in field.value">
+							{{subfield.label}}<span ng-if="subfield.extra" style="margin: 0px; color: grey">
+								({{subfield.extra}})
+							</span><span ng-if="!$last">,</span>
+						</span>
+						<div ng-if="!field.value.length && field.value.label">
 							{{field.value.label}}
 							<span ng-if="field.value.extra" style="margin: 0px; color: grey">
 								({{field.value.extra}})
 							</span>
 						</div>
-						<span ng-if="!field.value.label">{{field.value}}</span>
+						<span ng-if="!field.value.length && !field.value.label">{{field.value}}</span>
 					</td>
 				</tr>
 			</table>
