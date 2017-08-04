@@ -36,20 +36,48 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$scope.update($scope.get_url());
 		
 		if($scope.data_source != undefined){
-			if($scope.data_source.key)
-				$scope.$watch(function(){return dataService.global[$scope.data_source.key];}, function(newValue, oldValue) {
+			
+			var keys = [];
+			if($scope.data_source.key) keys.push($scope.data_source.key);
+			for(index in $scope.data_source.templates){
+				var template = $scope.data_source.templates[index];
+				console.log("TEMPLATE", template);
+				
+				if(template.key && keys.indexOf(template.key) == -1) keys.push(template.key);
+				
+//				var value = template.key + "_value";
+//				if(value && keys.indexOf(value) == -1) keys.push(value);
+				
+				// if(template.value_of && keys.indexOf(template.value_of) == -1) keys.push(template.value_of);
+//				if(template.value_of && keys.indexOf(template.value_of) == -1) keys.push(template.value_of);
+			}
+			
+			console.log("KEYS", keys);
+			
+			for(index in keys)
+			{
+				var key = keys[index];
+				console.log("KEY", key);
+				
+				$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
 				    if (newValue != oldValue){
 				    	
-				    	console.log("Variable " + $scope.data_source.key+ " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[$scope.data_source.key]);
+				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
 				    	
-				    	if(! $scope.data_source.url) {
+				    	if(! $scope.data_source.url ) {
 				    		$scope.data_source.value = newValue;
 				    	}
 				    	else {
-				        	$scope.update($scope.get_url());
+				    		
+				    		if($scope.data && $scope.data.onChange != "nothing")
+				    			$scope.update($scope.get_url());
+				    		
+				    		if($scope.data_source && $scope.data_source.onChange != "nothing")
+				    			$scope.update($scope.get_url());
 				    	}
 				    }
 				});
+			}
 			
 			if(! $scope.data_source.url && $scope.data_source.values ) {
 				$scope.subdata = $scope.data_source.values;
@@ -119,19 +147,40 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.get_url = function(){
 		
+		console.log("GET_URL", $scope);
+		
 		if ( $scope.data_source == undefined ) {
 			console.log("[STRANGE]", $scope);
 			return "";
 		}
-		var template = $scope.data_source.template;
+		var templates = $scope.data_source.templates;
 		
 		var url = $scope.data_source.url;
-		if(!template) return url;
+		if(!templates) return url;
 		else {
-			var value = dataService.global[$scope.data_source.key];
-			if(value == undefined) return "";
 			
-			return url.replace(template, value);
+//			if($scope.data_source.key) value = dataService.global[$scope.data_source.key];
+			
+			var finalUrl = url;
+			for (index in templates)
+			{
+				var template = templates[index];
+				
+				var value = undefined;
+				if(template.key) value = dataService.global[template.key];
+				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
+				if(value == undefined) continue;
+				
+				if(value.label) value = value.label;
+				
+				console.log("TEMPLATE REPLACEMENT", template, value);
+				
+				finalUrl = finalUrl.replace(template.template, value);
+			}
+			
+			console.log("GET_URL", url, finalUrl);
+			
+			return finalUrl;
 		}
 	};
 	
@@ -196,7 +245,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				tooltips: {
 				    callbacks: {
 				        title: function(tooltipItem, chartData) {
-					          console.log("TITLE", tooltipItem, chartData)
+//					          console.log("TITLE", tooltipItem, chartData)
 					      var item = chartData.labels[tooltipItem[0].index];
 					          
 					      if(item.label) s = item.label;
@@ -207,7 +256,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				          return s;
 				        },
 				        label: function(tooltipItem, chartData) {
-					          console.log("LABEL", tooltipItem, chartData)
+//					          console.log("LABEL", tooltipItem, chartData)
 					          var datasetIndex = tooltipItem.datasetIndex;
 					          
 					          var key = chartData.datasets[datasetIndex].label;
@@ -375,6 +424,14 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					}
 				 );
 		}
+		else if($scope.action == "link") {
+			
+			var url = $scope.get_url();
+			
+			console.log("Opening a new window through link", $scope, url);
+			
+			$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
+		}
 		else if($scope.action == "window") {
 			console.log("Opening a new window with data", $scope.card);
 			
@@ -435,7 +492,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if(listener && listener.action == "write") {
 				$scope.$apply(function() {
 					console.log("[3] GLOBAL:", dataService);
-					dataService.global[listener.key] = value.id || value;
+					// dataService.global[listener.value] = value.id || value;
+					// dataService.global[listener.key] = listener.value;
+					dataService.global[listener.key] = listener.value;
+					dataService.global[listener.key + "_value"] = value.id || value;
+					
 					console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
 				    });
 			}

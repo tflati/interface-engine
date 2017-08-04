@@ -1,4 +1,4 @@
-app.controller("autocompleteController", function($scope, $q, $filter){
+app.controller("autocompleteController", function($scope, $q, $filter, dataService){
 	
 	var self = this;
 	
@@ -26,4 +26,8 @@ app.controller("autocompleteController", function($scope, $q, $filter){
 		
 		return results;
 	};
+	
+	self.selectedItemChange = function (item) {
+	      dataService.global[$scope.field.data.onChange.key] = item.label;
+    };
 });

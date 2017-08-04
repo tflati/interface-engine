@@ -1,23 +1,22 @@
 
 <section style="padding: 0% 5% 0% 5%;" >
-	<p ng-bind="form.subtitle"></p>
+	<p ng-bind="form.long_description"></p>
 </section>
 
 <section layout="row" style="padding: 0% 5% 0% 5%;">
 
 	<md-card ng-if="!search_started" flex="{{form.width || 75}}" style="height: 100%;">
-		<md-card-title class="padding-v-small">
+		<md-card-title>
 			<md-card-title-text>
-		            <span class="md-headline">Search</span>
+		            <span class="md-headline" ng-bind="form.title || 'Search'"></span>
+		            <span class="md-subhead" ng-bind="form.subtitle"></span>
 		            
-		            <div ng-if="form.tooltip" style="display: inline-block;">
-			            <div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
-			            	<i class="fa fa-question-circle fa-2x" style="color: orange"></i>
-							<div ng-dropover-contents class="tooltip-container">
-						      <div ng-bind-html="form.tooltip" class="custom-tooltip"></div>
-						    </div>
+		            <div ng-if="form.tooltip" style="display: inline-block;" ng-dropover ng-dropover-options="{'triggerEvent':'hover'}">
+		            	<i class="fa fa-question-circle fa-2x" style="color: orange"></i>
+						<div ng-dropover-contents class="tooltip-container">
+					      <div ng-bind-html="form.tooltip" class="custom-tooltip"></div>
 					    </div>
-					</div>
+				    </div>
 		            
 		    </md-card-title-text>
 		</md-card-title>
@@ -90,6 +89,7 @@
 						          md-selected-item="field.value"
 						          md-search-text="actrl.searchText"
 						          md-items="item in actrl.querySearch(actrl.searchText)"
+						          md-selected-item-change="actrl.selectedItemChange(item)"
 						          md-item-text="item.label"
 						          md-min-length="0"
 						          style="min-width: 800px"
@@ -138,18 +138,18 @@
 						<label style="font-weight: bold;" ng-bind="field.label"></label>
 					</td>
 					<td style="text-align: left !important;">
-						<span ng-if="field.value.length > 0" ng-repeat="subfield in field.value">
+						<span ng-if="angular.isArray(field.value)" ng-repeat="subfield in field.value">
 							{{subfield.label}}<span ng-if="subfield.extra" style="margin: 0px; color: grey">
 								({{subfield.extra}})
 							</span><span ng-if="!$last">,</span>
 						</span>
-						<div ng-if="!field.value.length && field.value.label">
+						<div ng-if="!angular.isArray(field.value) && field.value.label">
 							{{field.value.label}}
 							<span ng-if="field.value.extra" style="margin: 0px; color: grey">
 								({{field.value.extra}})
 							</span>
 						</div>
-						<span ng-if="!field.value.length && !field.value.label">{{field.value}}</span>
+						<span ng-if="!angular.isArray(field.value) && !field.value.label">{{field.value}}</span>
 					</td>
 				</tr>
 			</table>
@@ -248,7 +248,8 @@
 				</element>
 			</div>
 			
-			<my-table form-data="form"></my-table>
+			<my-table ng-if="!form.results.type || form.results.type == 'table'" form-data="form"></my-table>
+			<pre ng-if="form.results.type == 'pre'" ng-bind="form.results.hits"></pre>
 			
 		</md-card-content>
 	</md-card>

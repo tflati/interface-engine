@@ -232,6 +232,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 	$scope.send_query = function(){
 		
 		$rootScope.search_started = true;
+		$scope.form.results = [];
 		console.log("Want to make a new search!");
 	};
 	
