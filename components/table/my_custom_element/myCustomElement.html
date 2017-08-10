@@ -21,7 +21,7 @@
 -->
 
 <span ng-repeat="elem in myElement">
-	<div ng-include="elem.type + '.html'" style="display: inline-block;"></div>
+	<div style="width: {{elem.width || '100%'}}" ng-include="elem.type + '.html'" style="display: inline-block;"></div>
 </span>
 
 <!-- TEXT -->
@@ -90,3 +90,15 @@
 	</md-button>
 </script>
 
+<!-- CHIPS -->
+<script type="text/ng-template" id="chips.html">
+	<md-chips ng-model="elem.items" readonly="true" md-removable="false">
+      <md-chip-template>
+        <span>
+          <strong>{{$chip.key}}</strong>:
+          <em>{{$chip.value}}</em>
+        </span>
+      </md-chip-template>
+    </md-chips>
+</script>
+<!-- <md-chip ng-repeat="e in elem.items">{{e.label}}</md-chip> -->

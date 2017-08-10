@@ -10,7 +10,7 @@
 </span>
 
 <span ng-if="type == 'image'">
-	<img style="max-width:{{data_source.width || '100%'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
+	<img style="max-width:{{data_source.width || '100%'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
 <iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}">
@@ -75,7 +75,7 @@
                 		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
                 	
-              		<a download	ng-if='field.type == "download"' title="{{field.title}}" ng-href="{{field.url}}">
+              		<a download	ng-if='field.type == "download"' title="{{field.title}}" ng-href="{{field.url}}" target="_blank">
               			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}
               		</a>
               		
@@ -308,6 +308,8 @@
 	      </md-autocomplete>
 	</md-content>
 </md-input-container>
+
+<md-chip ng-if="type == 'chip'">{{subdata.label}}</md-chip>
 
 <div ng-if="type == 'multi'" layout-wrap layout="row" flex="100">
 	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
