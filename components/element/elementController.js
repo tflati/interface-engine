@@ -21,6 +21,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.title = data.title;
 		$scope.label = data.label;
 		$scope.data_source = data.data;
+		$scope.items = data.items;
 		$scope.numbered = data.numbered;
 		$scope.width = data.width;
 		$scope.height = data.height;

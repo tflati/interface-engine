@@ -65,6 +65,10 @@
 /* 	transition: all 0.1s ease-in; */
 /* } */
 
+.moccasin {
+	background-color: moccasin !important;
+}
+
 .tooltip-container {
 	z-index: 9999;
 }
@@ -100,9 +104,9 @@ table {
 	border-spacing: 0;
 }
 
-td {
-	text-align: center !important;
-}
+/* td { */
+/* 	text-align: center !important; */
+/* } */
 
 th {
 	text-align: center !important;
@@ -221,6 +225,14 @@ tr:hover {
 .divider {
 	margin-top: 2px;
 	margin-bottom: 2px;
+}
+
+.spacer {
+	height: 1em;
+}
+
+.md-chips{
+  box-shadow: 0 0px !important;
 }
 
 #footer {
@@ -505,6 +517,21 @@ hr {
 		<!-- Custom table -->
 		<script src="components/table/myTable.js" type="text/javascript"></script> 
 		<script src="components/table/my_custom_element/myCustomElement.js" type="text/javascript"></script>
+		
+		<script>
+		
+		app.directive('customChip', function(){
+			  return {
+			    restrict: 'A',
+			    link: function(scope, elem, attrs) {
+			      var color = scope.$chip.color;
+			      var mdChip = elem.parent().parent();
+			      mdChip.addClass(color);
+			    }
+			  }
+			});
+		
+		</script>
 </head>
 
 <body style="margin: 0px;" ng-app="engine" md-theme="big-data-theme">

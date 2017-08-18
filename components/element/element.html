@@ -2,6 +2,8 @@
 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
 </div>
 
+<div ng-if="type == 'text'" ng-bind-html="label"></div>
+
 <div ng-if="type == 'paragraph' && inline != 'true'">
 	<p ng-bind-html="data_source.value"></p>
 </div>
@@ -13,6 +15,17 @@
 	<img style="max-width:{{data_source.width || '100%'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 </span>
 
+<div ng-if="type == 'chips'">
+	<md-chips ng-model="items" readonly="true" md-removable="false" style="display: inline-block;">
+      <md-chip-template custom-chip>
+        <span>
+          <span ng-if="$chip.key"><strong>{{$chip.key}}</strong>:</span>
+          <em>{{$chip.value}}</em>
+        </span>
+      </md-chip-template>
+    </md-chips>
+</div>
+
 <iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}">
 </iframe>
 
@@ -23,6 +36,8 @@
 </md-button>
 
 <hr ng-if="type == 'divider'" class="divider">
+
+<div ng-if="type == 'spacer'" class="spacer"></div>
 
 <span ng-if='type == "icon"' style="padding: 5px;">
 	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" aria-label="{{data_source.title}}" title="{{data_source.title}}" style="color: {{data_source.color}}"></i>
@@ -36,7 +51,7 @@
 	</ul>
 </div>
 
-<div ng-if="type == 'table'" style="max-height: 300px; overflow: auto;">
+<div ng-if="type == 'table'" style="overflow: auto;">
 
 	<table md-table md-row-select multiple>
 		<tbody md-body>
@@ -52,6 +67,7 @@
 								<p ng-if='field.type == "text"' ng-bind-html="field.label">
 								</p>
 							</div>
+						</div>
 					</th>
 				</tr>
 			</thead>
@@ -64,6 +80,12 @@
               	
                 <div ng-switch-default>
                 
+<!--                 	flex="{{element.width || '100'}}" -->
+                	<div ng-if="field.type == 'multi'" layout="{{field.layout || 'column'}}" layout-align="{{field.align || 'start start'}}">
+						<element ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
+						</element>
+					</div>
+					
 <!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
 					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label"></p>
                 
@@ -75,7 +97,7 @@
                 		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
                 	
-              		<a download	ng-if='field.type == "download"' title="{{field.title}}" ng-href="{{field.url}}" target="_blank">
+              		<a download	ng-if='field.type == "download"' title="{{field.title}}" href="{{field.url}}" target="_blank">
               			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}
               		</a>
               		
@@ -250,7 +272,7 @@
 	<div venn="subdata"></div>
 </div>
 
-<md-input-container class="md-input-has-placeholder" ng-if="['select', 'text', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
+<md-input-container class="md-input-has-placeholder" ng-if="['select', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
 	<md-content ng-if="type != 'autocomplete'">
 		<label ng-if="type != 'checkbox'" ng-bind="data_source.label"></label>
 		
@@ -311,7 +333,7 @@
 
 <md-chip ng-if="type == 'chip'">{{subdata.label}}</md-chip>
 
-<div ng-if="type == 'multi'" layout-wrap layout="row" flex="100">
+<div ng-if="type == 'multi'" layout-align="start center" layout-wrap layout="row" flex="100">
 	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>
