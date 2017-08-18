@@ -270,8 +270,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					          if ($scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 					        	  var allData = chartData.datasets[datasetIndex].data;
 								  var total = 0;
-								  for (var i in allData) {total += allData[i];}
-						          var percentage = Math.round((value / total) * 100);
+								  for (var i in allData) {total += parseFloat(allData[i]);}
+								  var fraction = (value / total) * 100;
+								  
+						          // var percentage = Math.round(fraction);
+								  var percentage = fraction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping:false})
+						          
+						          console.log(total, value, fraction, percentage);
 						          
 						          finalString += " ("+percentage+"%)";
 					          }
