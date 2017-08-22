@@ -1,4 +1,4 @@
-app.service("configFileService", function($http, messageService, dataService){
+app.service("configFileService", function($http, $q, messageService, dataService){
 	
 	var self = this;
 	

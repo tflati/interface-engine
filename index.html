@@ -21,6 +21,7 @@
 <script type="text/javascript" src="bower_components/angular-material-icons/angular-material-icons.js"></script>
 <script type="text/javascript" src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script type="text/javascript" src="bower_components/angular-route/angular-route.js"></script>
+<script type="text/javascript" src="bower_components/angular-cookies/angular-cookies.js"></script>
 
 <!-- Paginated table -->
 <script type="text/javascript" src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -391,7 +392,8 @@ hr {
 						'ngRoute',
 						'ngMdIcons',
 						'angular-venn',
-						'ngDropover'
+						'ngDropover',
+						'ngCookies'
 					] );
 			
 // 			app.run(['$templateCache', function ( $templateCache ) {
@@ -437,8 +439,8 @@ hr {
 			    $routeProvider.
 			    when("/popup", {
 			    	templateUrl: "components/card/popup.html"
-			    }).
-			    when("/:pageName?", {
+			    })
+			    .when("/:pageName?", {
 			        templateUrl: "homepage.html",
 			        controller: "pageController",
 			        resolve: {
@@ -448,25 +450,26 @@ hr {
 			            pageTitle: function($route){
 			            	console.log("ASKED FOR ", $route.current.params.pageName);
 			            	
-			            	if ($route.current.params.pageName == undefined) $route.current.params.pageName = "main";
+			            	// if ($route.current.params.pageName == undefined) $route.current.params.pageName = "main";
 			            	
 			            	return $route.current.params.pageName;
 			            }
 			        }
-			    }).
-			    otherwise({
-			    	templateUrl: "homepage.html",
-			        controller: "pageController",
-			        resolve: {
-			            info: function(configFileService){
-			                return configFileService.get_config_file();
-			            },
-			            pageTitle: function($route){
-			            	console.log("ASKED FOR SPECIAL CASE");
-			            	return undefined;
-			            }
-			        }
-			    });
+			    })
+// 			    .otherwise({
+// 			    	templateUrl: "homepage.html",
+// 			        controller: "pageController",
+// 			        resolve: {
+// 			            info: function(configFileService){
+// 			                return configFileService.get_config_file();
+// 			            },
+// 			            pageTitle: function($route){
+// 			            	console.log("ASKED FOR SPECIAL CASE");
+// 			            	return undefined;
+// 			            }
+// 			        }
+// 			    })
+			    ;
 			    
 			    $locationProvider.html5Mode(true);
 			    $locationProvider.html5Mode({

@@ -1,8 +1,10 @@
-app.controller("pageController", function($http, $window, $rootScope, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle){
+app.controller("pageController", function($http, $window, $rootScope, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle, dataService){
 
 	var self = this;
 	
 	console.log("PAGE CONTROLLER", info, pageTitle);
+
+	$scope.dataService = dataService;
 	
 	$scope.pageTitle = pageTitle;
 	$scope.page = 'templates/main.html';
@@ -117,7 +119,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 					isForm = true;
 					$scope.form = form;
 					
-					console.log($scope.form);
+					console.log("FORM", $scope.form);
 					
 					break;
 				}
@@ -125,28 +127,40 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 		
 		$scope.pageTitle = url;
 		
+		$location.url(url);
+		
 		if(isForm) {
-			$scope.pageTitle = "form";
-			console.log("Going to render form");
-			$scope.form_results = [];
-			$rootScope.search_started = false;
 			
-			$scope.page = 'templates/form.html';
-			$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
-			$scope.header.show_logos = true;
+			var canSee = $scope.form.visibility == "public" || !$scope.form.visibility ||
+						($scope.form.visibility == "restricted" && dataService.loggedIn)
+			
+			// Check visibility permission
+			if(canSee)
+			{
+				$scope.pageTitle = "form";
+				console.log("Going to render form " + url);
+				$scope.form_results = [];
+				$rootScope.search_started = false;
+				
+				$scope.page = 'templates/form.html';
+				$scope.info.image.percentage_width = $scope.info.image.percentage_width_original / 2;
+				$scope.header.show_logos = true;
+			}
+			else
+			{
+				$scope.page = 'templates/restricted.html';
+			}
 		}
 		else {
-			if(url == "home") url = "main";
+			// if(url == "home") url = "main";
 			
-			console.log("Going to render page");
+			console.log("Going to render page " + url);
 			
 			if(url.startsWith("http://")) {
 				$window.location.href = url;
 			}
 			else {
-//				 $scope.page = 'templates/'+url+'.html';
 				$scope.page = 'templates/main.html';
-				$location.url(url);
 				
 				$scope.showing = true;
 				

@@ -6,7 +6,7 @@ app.directive("myTable", function() {
 		scope: {
 			formData: "="
 		},
-		controller: function MyDataTableController($scope, $attrs, $timeout, $http) {
+		controller: function MyDataTableController($scope, $attrs, $timeout, $http, $cookies, dataService) {
 			
 			$scope.formData.results = {};
 			$scope.during_call = false;
@@ -92,67 +92,80 @@ app.directive("myTable", function() {
 					
 					console.log("TABLE RESULT", result);
 					
+					dataService.username = $cookies.get('username');
+					dataService.loggedIn = $cookies.get('logged_in');
+					dataService.loggedToken = $cookies.get('login_token');
+					
+					console.log("COOKIE UPDATE", dataService.loggedIn, dataService.loggedToken);
+					
 					$scope.during_call = false;
 					
-						//set row table property
-						if($scope.t_property['column-keys'].length == 0){
+					$scope.formData.results = result.data;
+					
+					if(!result.data.structure) return {
+						results: [],
+						totalResultCount: 0
+					};
+					
+					//set row table property
+					if($scope.t_property['column-keys'].length == 0){
+						
+						//$scope.t_property['table-row-id-key'] = result.data.structure.primary_key;
+						
+						for(var i = 0; i < result.data.structure.field_list.length; i++){
+							//set column array
+							$scope.t_property['column-keys'].push(result.data.structure.field_list[i].label);
 							
-							//$scope.t_property['table-row-id-key'] = result.data.structure.primary_key;
-							
-							for(var i = 0; i < result.data.structure.field_list.length; i++){
-								//set column array
-								$scope.t_property['column-keys'].push(result.data.structure.field_list[i].label);
-								
-								//set filter array
-								if(result.data.structure.field_list[i].filters.list.length){
-									$scope.filter_list.push(
-										{
-											"label":result.data.structure.field_list[i].label,
-											"title":result.data.structure.field_list[i].filters.title,
-											"filters":result.data.structure.field_list[i].filters.list
-										}
-									);
-								}
+							//set filter array
+							if(result.data.structure.field_list[i].filters.list.length){
+								$scope.filter_list.push(
+									{
+										"label":result.data.structure.field_list[i].label,
+										"title":result.data.structure.field_list[i].filters.title,
+										"filters":result.data.structure.field_list[i].filters.list
+									}
+								);
 							}
-							
-							$scope.t_column = result.data.structure.field_list;
-							console.log("TABLE SCOPE", $scope);
 						}
 						
-						/*
-						//update id list
-						var dim_hits = result.data.hits.length;
-						var dim_list_id = Object.keys($scope.t_id).length;
-						
-						var count = 0;
-						for (var property in $scope.t_id) {
-							if(count >= dim_hits){
-								//$scope.t_id[property] = "";
-								delete $scope.t_id[property];
-							}
-							else{
-								$scope.t_id[property] = result.data.hits[count][result.data.structure.primary_key];
-							}
-							count++;	
+						$scope.t_column = result.data.structure.field_list;
+						console.log("TABLE SCOPE", $scope);
+					}
+					
+					/*
+					//update id list
+					var dim_hits = result.data.hits.length;
+					var dim_list_id = Object.keys($scope.t_id).length;
+					
+					var count = 0;
+					for (var property in $scope.t_id) {
+						if(count >= dim_hits){
+							//$scope.t_id[property] = "";
+							delete $scope.t_id[property];
 						}
-							
-						if(dim_list_id < dim_hits){
-							var diff = dim_hits - dim_list_id;
-							var start_index = dim_hits - diff;
-							for(var i = start_index; i < result.data.hits.length; i++){
-								$scope.t_id[result.data.hits[i][result.data.structure.primary_key]] = result.data.hits[i][result.data.structure.primary_key];
-							}
-						}*/
-						
-						//save the result of the call
-						$scope.table_data = result.data;
-						$scope.formData.results = result.data;
-						
-						return {
-							results: result.data.hits,
-							totalResultCount: result.data.total
+						else{
+							$scope.t_id[property] = result.data.hits[count][result.data.structure.primary_key];
 						}
-					});
+						count++;	
+					}
+						
+					if(dim_list_id < dim_hits){
+						var diff = dim_hits - dim_list_id;
+						var start_index = dim_hits - diff;
+						for(var i = start_index; i < result.data.hits.length; i++){
+							$scope.t_id[result.data.hits[i][result.data.structure.primary_key]] = result.data.hits[i][result.data.structure.primary_key];
+						}
+					}*/
+					
+					//save the result of the call
+					$scope.table_data = result.data;
+					$scope.formData.results = result.data;
+					
+					return {
+						results: result.data.hits,
+						totalResultCount: result.data.total
+					}
+				});
 			};
 			
 			$scope.getLoadResultsCallback =  function (loadPageCallback){

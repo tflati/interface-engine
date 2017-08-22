@@ -5,7 +5,10 @@ app.filter('pretty', function() {
   }
 });
 
-app.service("dataService", function() {
+app.service("dataService", function($cookies) {
 
     this.global = {};
+    this.username = $cookies.get('username');
+    this.loggedIn = $cookies.get('logged_in');
+    this.loginToken = $cookies.get('login_token');
 });

@@ -30,6 +30,7 @@
     "phylotree": "^0.1.6",
     "angular-jqcloud": "^1.0.3",
     "angular-material": "1.1.4",
-    "ngDropover": "ngdropover#^1.1.4"
+    "ngDropover": "ngdropover#^1.1.4",
+    "angular-cookies": "1.5.11"
   }
 }

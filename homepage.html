@@ -15,11 +15,33 @@
           </md-menu-bar>
 			
 			<span flex></span>
-			<div ng-if="header.show_logos && inForm()">
-				<span ng-bind="info.title_short"></span>
-				<md-card-title-media class="header-logo-container-menu padding-v-no" layout-padding>
-				<img class="header-logo-menu" ng-repeat="logo in info.logos" ng-src="{{logo.image}}">
-			</md-card-title-media>
+			<div>
+				<div style="display: inline-block;">
+					<md-button ng-if="!dataService.loggedIn" class="md-primary md-raised" style="text-decoration: none;" ng-click="goTo({url: 'login'})">
+						<i class="fa fa-key"></i>
+						Login
+					</md-button>
+					<md-button ng-if="!dataService.loggedIn" class="md-primary md-raised" style="text-decoration: none;" ng-click="goTo({url: 'register'})">
+						<i class="fa fa-user-plus"></i>
+						Register
+					</md-button>
+					
+					<md-button ng-if="dataService.loggedIn" style="text-decoration: none;" ng-click="goTo({url: 'user'})">
+						<i class="fa fa-user"></i>
+						{{dataService.username}}
+					</md-button>
+					
+					<md-button ng-if="dataService.loggedIn" class="md-accent md-raised" style="text-decoration: none;" ng-click="goTo({url: 'logout'})">
+						<i class="fa fa-sign-out"></i>
+						Logout
+					</md-button>					
+				</div>
+				<div ng-if="header.show_logos && inForm()" style="display: inline-block;">
+					<span ng-bind="info.title_short"></span>
+					<md-card-title-media class="header-logo-container-menu padding-v-no" layout-padding>
+						<img class="header-logo-menu" ng-repeat="logo in info.logos" ng-src="{{logo.image}}">
+					</md-card-title-media>
+				</div>
 			</div>
 		</div>
 	</md-toolbar>
