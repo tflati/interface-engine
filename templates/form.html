@@ -138,7 +138,7 @@
 						<label style="font-weight: bold;" ng-bind="field.label"></label>
 					</td>
 					<td style="text-align: left !important;">
-						<span ng-if="angular.isArray(field.value)" ng-repeat="subfield in field.value">
+						<span ng-if="angular.isArray(field.value)" ng-repeat="subfield in field.value track by $index">
 							{{subfield.label}}<span ng-if="subfield.extra" style="margin: 0px; color: grey">
 								({{subfield.extra}})
 							</span><span ng-if="!$last">,</span>
