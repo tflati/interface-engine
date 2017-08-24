@@ -92,11 +92,7 @@ app.directive("myTable", function() {
 					
 					console.log("TABLE RESULT", result);
 					
-					dataService.username = $cookies.get('username');
-					dataService.loggedIn = $cookies.get('logged_in');
-					dataService.loggedToken = $cookies.get('login_token');
-					
-					console.log("COOKIE UPDATE", dataService.loggedIn, dataService.loggedToken);
+					dataService.login();
 					
 					$scope.during_call = false;
 					
