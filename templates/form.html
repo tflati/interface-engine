@@ -28,7 +28,8 @@
 						<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'" style="min-width: 800px;">
 							<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 							
-							<input ng-if="field.type != 'choice' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
+							<input ng-if="field.type != 'choice' && field.type != 'textarea' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
+							<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{placeholder}}" ng-model="field.value" ng-value="{{field.default}}"></textarea>
 							
 							<md-select ng-model="field.value" ng-if="field.type == 'select' && (!field.multiple || field.multiple == false)" ng-model-options="{trackBy: '$value.id'}">
 								<md-option ng-value="value" ng-repeat="value in field.values track by $index">

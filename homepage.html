@@ -15,7 +15,7 @@
           </md-menu-bar>
 			
 			<span flex></span>
-			<div>
+			<div ng-if="info.login">
 				<div style="display: inline-block;">
 					<md-button ng-if="!dataService.loggedIn" class="md-primary md-raised" style="text-decoration: none;" ng-click="goTo({url: 'login'})">
 						<i class="fa fa-key"></i>
