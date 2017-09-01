@@ -13,6 +13,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		console.log("INITIALIZING", data.type, data);
 		
 		$scope.type = data.type;
+		$scope.disabled = data.disabled;
 		$scope.action = data.action;
 		$scope.card = data.card;
 		$scope.key = data.key;
@@ -192,7 +193,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if(url == undefined) return;
 		if(url == "") return;
 		
-		if(!url.endsWith("/")) url += "/";
+		if(url.slice(-1) != "/") url += "/";
 		
 		console.log("AJAX TO", url, $scope.data_source);
 		$scope.sending = true;
@@ -203,7 +204,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			function myError(response) {
 				$scope.sending = false;
             	console.log("ERROR IN GETTING DATA FROM " + url, response);
-            	messageService.showMessage('Errore durante il recupero dei dati da '+response.config.url+'. ' + 'Error code: ' + response.status, "error");
+//            	messageService.showMessage('Errore durante il recupero dei dati da '+response.config.url+'. ' + 'Error code: ' + response.status, "error");
 			}
 		);
 	};

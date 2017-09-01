@@ -12,7 +12,7 @@ app.directive("myTable", function() {
 			$scope.during_call = false;
 			
 			$scope.tableUrl = $scope.formData.submit.url;
-			if( ! $scope.tableUrl.endsWith("/") ) $scope.tableUrl = $scope.tableUrl  + "/";
+			if( $scope.tableUrl.slice(-1) != "/" ) $scope.tableUrl = $scope.tableUrl  + "/";
 			
 			$scope.filter_visibility = false;
 			

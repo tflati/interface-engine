@@ -25,7 +25,8 @@ app.service("configFileService", function($http, $q, messageService, dataService
 		
 		return $http.get('config.json').then(function(response) {
 			
-			messageService.showMessage('File di configurazione caricato correttamente.');
+			console.log("File di configurazione caricato correttamente.");
+//			messageService.showMessage('File di configurazione caricato correttamente.');
 			console.log("FILE CONFIG OK");
 			
 	        self.info = response.data;
@@ -70,7 +71,7 @@ app.service("configFileService", function($http, $q, messageService, dataService
 		            	{
 		            		field.checked = true;
 		            	}
-		            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.startsWith("http")))
+		            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.indexOf("http") == 0))
 		            	{
 		            		var ajaxForms = self.ajax2forms[field.values];
 		            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
@@ -174,8 +175,8 @@ app.service("configFileService", function($http, $q, messageService, dataService
 	        return self.info;
 	        
 		}, function(response){
-			console.log(response);
-			messageService.showMessage('Impossibile trovare il file di configurazione. (message: "' + response.statusText + '", code: '+response.status+')', "error", "Error");
+			console.log(response, 'Impossibile trovare il file di configurazione. (message: "' + response.statusText + '", code: '+response.status+')');
+//			messageService.showMessage('Impossibile trovare il file di configurazione. (message: "' + response.statusText + '", code: '+response.status+')', "error", "Error");
 			
 			return undefined;
 		});

@@ -6,6 +6,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 
 	$scope.dataService = dataService;
 	
+	if(pageTitle == undefined) pageTitle = "main";
 	$scope.pageTitle = pageTitle;
 	$scope.page = 'templates/main.html';
 	$scope.info = info;
@@ -156,7 +157,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 			
 			console.log("Going to render page " + url);
 			
-			if(url.startsWith("http://")) {
+			if(url.indexOf("http://") == 0) {
 				$window.location.href = url;
 			}
 			else {

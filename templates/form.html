@@ -25,13 +25,16 @@
 		<md-content class="md-padding">
 			<form ng-submit="send_query()">
 				<div ng-repeat="field in form.fields track by $index">
+				
 						<md-input-container class="md-input-has-placeholder" ng-if="field.type != 'autocomplete'" style="min-width: 800px;">
 							<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 							
-							<input ng-if="field.type != 'choice' && field.type != 'textarea' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}"/>
-							<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{placeholder}}" ng-model="field.value" ng-value="{{field.default}}"></textarea>
+							<p ng-if="field.type == 'paragraph'" ng-bind-html="field.value"></p>
 							
-							<md-select ng-model="field.value" ng-if="field.type == 'select' && (!field.multiple || field.multiple == false)" ng-model-options="{trackBy: '$value.id'}">
+							<input ng-if="field.type != 'choice' && field.type != 'paragraph' && field.type != 'textarea' && field.type != 'select' && field.type != 'autocomplete' && field.type != 'checkbox'" placeholder="{{field.placeholder}}" ng-model="field.value" ng-value="{{field.default}}" type="{{field.type}}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}"/>
+							<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{placeholder}}" ng-model="field.value" ng-value="{{field.default}}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}"></textarea>
+							
+							<md-select ng-model="field.value" ng-if="field.type == 'select' && (!field.multiple || field.multiple == false)" ng-model-options="{trackBy: '$value.id'}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 								<md-option ng-value="value" ng-repeat="value in field.values track by $index">
 									<div ng-if="value.label" style="padding-bottom: 5px; display: table;">
 										<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
@@ -46,7 +49,7 @@
 								</md-option>
 							</md-select>
 							
-							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value.id'}">
+							<md-select multiple ng-model="field.value" ng-if="field.type == 'select' && field.multiple && field.multiple == true" ng-model-options="{trackBy: '$value.id'}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 								<md-option ng-value="value" ng-repeat="value in field.values track by $index">
 									<div ng-if="value.label" style="padding-bottom: 5px; display: table;">
 										<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
@@ -61,7 +64,7 @@
 								</md-option>
 							</md-select>
 		
-							<fieldset ng-if="field.type == 'checkbox' && field.values != undefined">
+							<fieldset ng-if="field.type == 'checkbox' && field.values != undefined" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 			                	<legend>{{field.label}}</legend>
 				                        <div ng-repeat="value in field.values track by $index" flex="50">
 				                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
@@ -70,18 +73,18 @@
 			                        </div>
 			                </fieldset>
 							
-							<md-checkbox ng-if="field.type == 'checkbox' && !field.values" ng-model="field.value" ng-checked="{{field.checked}}">
+							<md-checkbox ng-if="field.type == 'checkbox' && !field.values" ng-model="field.value" ng-checked="{{field.checked}}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 								{{field.label}}
 							</md-checkbox>
 							
-							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'">
+							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 								<md-radio-button ng-click="load_form(field, value)" ng-repeat="value in field.values track by $index" name="{{field.group_id}}" ng-model="field.value" ng-checked="{{value.selected}}" ng-value="value.label" type="radio" aria-label="Multi-choice">
 									{{value.label}}
 								</md-radio-button>
 							</md-radio-group>
 						</md-input-container>
 							
-						<md-input-container class="md-input-has-placeholder" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl">
+						<md-input-container class="md-input-has-placeholder" ng-if="field.type == 'autocomplete'" ng-controller="autocompleteController as actrl" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 							<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
 							<md-autocomplete
 								  md-select-on-match
@@ -150,7 +153,7 @@
 								({{field.value.extra}})
 							</span>
 						</div>
-						<span ng-if="!angular.isArray(field.value) && !field.value.label">{{field.value}}</span>
+						<span ng-if="!angular.isArray(field.value) && !field.value.label" ng-bind-html="field.value"></span>
 					</td>
 				</tr>
 			</table>

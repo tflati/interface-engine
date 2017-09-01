@@ -16,7 +16,6 @@ app.controller("cardController", function($scope, $window, $rootScope){
 		$scope.type = data.type;
 		$scope.alignment = data.alignment;
 		$scope.width = data.width;
-//		if($scope.width.endsWith("%")) $scope.width = $scope.width.substring(0, $scope.width.length - 1);
 		$scope.compact = data.compact,
 		$scope.footer = data.footer;
 		$scope.elements = data.elements;
