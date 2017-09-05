@@ -174,6 +174,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				if(value == undefined) continue;
 				
 				if(value.label) value = value.label;
+				if(angular.isString(value)) value = value.replace("/", "");
 				
 				console.log("TEMPLATE REPLACEMENT", template, value);
 				
@@ -188,12 +189,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.update = function(url, fx){
 		
-		console.log("PREAJAX TO", url, $scope.data_source);
-		
 		if(url == undefined) return;
 		if(url == "") return;
 		
+		console.log("PREAJAX TO", url, $scope.data_source);
+		
 		if(url.slice(-1) != "/") url += "/";
+		url = url.replace(/#/g, "_SHARP_");
 		
 		console.log("AJAX TO", url, $scope.data_source);
 		$scope.sending = true;
@@ -498,14 +500,14 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			var listener = $scope.data_source.onClick;
 			if(listener && listener.action == "write") {
 				$scope.$apply(function() {
-					console.log("[3] GLOBAL:", dataService);
+					console.log("[4] GLOBAL:", dataService);
 					// dataService.global[listener.value] = value.id || value;
 					// dataService.global[listener.key] = listener.value;
-					dataService.global[listener.key] = listener.value;
+					dataService.global[listener.key] = listener.value || value.id || value;
 					dataService.global[listener.key + "_value"] = value.id || value;
 					
-					console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ",dataService.global[listener.key]);
-				    });
+					console.log("[4] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ", dataService.global[listener.key], dataService.global);
+			    });
 			}
 		}
 		

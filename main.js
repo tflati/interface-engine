@@ -18,6 +18,8 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 	$scope.form;
 	$scope.form_results = [];
 
+	$scope.isArray = angular.isArray;
+	
 	$scope.get_current_page_data = function(){
 		if($scope.info.pages)
 			for(var i=0; i<$scope.info.pages.length; i++)
@@ -157,7 +159,8 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 			
 			console.log("Going to render page " + url);
 			
-			if(url.indexOf("http://") == 0) {
+			// ABSOLUTE URL
+			if(url.indexOf("/") == 0) {
 				$window.location.href = url;
 			}
 			else {

@@ -71,7 +71,7 @@ app.service("configFileService", function($http, $q, messageService, dataService
 		            	{
 		            		field.checked = true;
 		            	}
-		            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.indexOf("http") == 0))
+		            	else if(field.type === "select" || field.type === "autocomplete" || (field.type === "checkbox" && field.values != undefined && field.values.indexOf("/") == 0))
 		            	{
 		            		var ajaxForms = self.ajax2forms[field.values];
 		            		if( !ajaxForms ) {ajaxForms = []; self.ajax2forms[field.values] = ajaxForms;}
@@ -135,11 +135,11 @@ app.service("configFileService", function($http, $q, messageService, dataService
 	        	for(var formId in affectedForms)
 	        		affectedForms[formId].sending = true;
 	        	
-	        	console.log("GETTING VALUES FOR SELECT: " + key);	                        		
+	        	console.log("GETTING VALUES FOR SELECT: " + key);
 	    		$http.get(key).then(
 	    				function(response) {
-	            			console.log("RESPONSE", response);
-	            			console.log("FORMS AFFECTED", self.ajax2forms[response.config.url]);
+//	            			console.log("RESPONSE", response);
+	            			console.log("FORMS AFFECTED", response.config.url, self.ajax2forms[response.config.url]);
 	//    	                        			console.log("ajax2forms", self.ajax2forms);
 	//    	                        			console.log("self", self);
 	//    	                        			console.log("url", response.config.url);

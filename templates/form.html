@@ -3,7 +3,7 @@
 	<p ng-bind="form.long_description"></p>
 </section>
 
-<section layout="row" style="padding: 0% 5% 0% 5%;">
+<section layout="column" style="padding: 0% 5% 0% 5%;">
 
 	<md-card ng-if="!search_started" flex="{{form.width || 75}}" style="height: 100%;">
 		<md-card-title>
@@ -142,29 +142,24 @@
 						<label style="font-weight: bold;" ng-bind="field.label"></label>
 					</td>
 					<td style="text-align: left !important;">
-						<span ng-if="angular.isArray(field.value)" ng-repeat="subfield in field.value track by $index">
+						<span ng-if="isArray(field.value)" ng-repeat="subfield in field.value track by $index">
 							{{subfield.label}}<span ng-if="subfield.extra" style="margin: 0px; color: grey">
 								({{subfield.extra}})
 							</span><span ng-if="!$last">,</span>
 						</span>
-						<div ng-if="!angular.isArray(field.value) && field.value.label">
+						<div ng-if="!isArray(field.value) && field.value.label">
 							{{field.value.label}}
 							<span ng-if="field.value.extra" style="margin: 0px; color: grey">
 								({{field.value.extra}})
 							</span>
 						</div>
-						<span ng-if="!angular.isArray(field.value) && !field.value.label" ng-bind-html="field.value"></span>
+						<span ng-if="!isArray(field.value) && !field.value.label" ng-bind-html="field.value"></span>
 					</td>
 				</tr>
 			</table>
 			<md-button ng-click="show_form()" class="md-primary md-raised" style="margin-top: 20px; margin-bottom: 20px;">Modify query</md-button>
 		</md-card-content>
 	</md-card>
-	
-	<div flex="35" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
-		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
-		</card>
-	</div>
 	
 </section>
 
@@ -261,5 +256,10 @@
 			
 		</md-card-content>
 	</md-card>
+	
+	<div flex="100" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
+		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
+		</card>
+	</div>
 	
 </section>
