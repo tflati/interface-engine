@@ -3,17 +3,10 @@
 </div>
 
 <div ng-if="type == 'text'" ng-bind-html="label"></div>
+<p ng-if="type == 'paragraph' && inline != 'true'" ng-bind-html="data_source.value"></p>
+<span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data_source.value" style="vertical-align: middle;"></span>
 
-<div ng-if="type == 'paragraph' && inline != 'true'">
-	<p ng-bind-html="data_source.value"></p>
-</div>
-
-<span style="vertical-align: middle;" ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data_source.value">
-</span>
-
-<span ng-if="type == 'image'">
-	<img style="max-width:{{data_source.width || '100%'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
-</span>
+<img ng-if="type == 'image'" style="max-width:{{data_source.width || '100%'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 
 <div ng-if="type == 'chips'">
 	<md-chips ng-model="items" readonly="true" md-removable="false" style="display: inline-block;">
@@ -26,8 +19,7 @@
     </md-chips>
 </div>
 
-<iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}">
-</iframe>
+<iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}"></iframe>
 
 <md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-click="onClick()">
 	<i class="fa {{data_source.icon}} {{data_source.modifiers}}"></i>
@@ -280,23 +272,28 @@
 
 		<textarea ng-if="type == 'textarea'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}"></textarea>
 		
+		<!-- Select simple -->
 		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-change="onChange(data_source.value)" ng-model-options="{trackBy: '$value.id'}">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option>
 		</md-select>
+		
+		<!-- Select multiple -->
 		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value.id'}">
 			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
 		</md-select>
-
-		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
-              	<legend>{{label}}</legend>
-	            	<md-checkbox ng-checked="exists(value, subdata)" ng-click="toggle(value, subdata)" ng-repeat="value in subdata track by $index">
-						{{value}}
-	                </md-checkbox>
-              </fieldset>
 		
+		<!-- Checkbox (simple) -->
 		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data_source.value" ng-checked="{{checked}}">
 			{{label}}
 		</md-checkbox>
+		
+		<!-- Checkbox (group) -->
+		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
+			<legend>{{label}}</legend>
+         	<md-checkbox ng-checked="exists(value, subdata)" ng-click="toggle(value, subdata)" ng-repeat="value in subdata track by $index">
+			{{value}}
+            </md-checkbox>
+        </fieldset>
 		
 	</md-content>
 	<md-content ng-if="type == 'autocomplete'" ng-controller="autocompleteController as actrl">

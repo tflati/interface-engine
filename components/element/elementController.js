@@ -3,16 +3,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.subdata = [];
 	$scope.sending = false;
 
-//	$scope.globaldata = dataService.global;
-//	$scope.$watch(function(){return dataService.global;}, function(newValue) {
-//	        $scope.globaldata = newValue;
-//	}, true);
-	
 	$scope.init = function(data){
 		
 		console.log("INITIALIZING", data.type, data);
 		
 		$scope.type = data.type;
+		$scope.variable_value = data.variable_value;
 		$scope.disabled = data.disabled;
 		$scope.action = data.action;
 		$scope.card = data.card;
@@ -29,7 +25,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.inline = data.inline;
 		$scope.subdata = data.subdata || [];
 		
-		console.log("INIT ELEMENT METADATA: ", data, $scope.data_source);
+		console.log("INIT ELEMENT METADATA: ", data, $scope.data_source, $scope.subdata);
 		
 		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
@@ -41,42 +37,50 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			var keys = [];
 			if($scope.data_source.key) keys.push($scope.data_source.key);
+			
 			for(index in $scope.data_source.templates){
+				
 				var template = $scope.data_source.templates[index];
-				console.log("TEMPLATE", template);
+				console.log("TEMPLATE2", $scope.type, data, template);
 				
 				if(template.key && keys.indexOf(template.key) == -1) keys.push(template.key);
-				
-//				var value = template.key + "_value";
-//				if(value && keys.indexOf(value) == -1) keys.push(value);
-				
-				// if(template.value_of && keys.indexOf(template.value_of) == -1) keys.push(template.value_of);
-//				if(template.value_of && keys.indexOf(template.value_of) == -1) keys.push(template.value_of);
 			}
 			
-			console.log("KEYS", keys);
+			console.log("KEYS", $scope.type, data, keys);
 			
 			for(index in keys)
 			{
 				var key = keys[index];
-				console.log("KEY", key);
+				
+				console.log("ADDING WATCH", key, dataService.global[key], $scope);
+				
+				if(data.data && data.data.variable_value)
+					$scope.replace();
+				
+//				$scope.$watch(function(){return dataService.global["total_fusion_events_per_cell_line"];}, function(newValue, oldValue) {
+//					if (newValue != oldValue){
+//						console.log("MANUAL WATCH", newValue, oldValue, $scope);
+//						$scope.replace();
+//					}
+//				});
 				
 				$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
+					console.log("WATCH", key, newValue, oldValue, $scope);
+					
 				    if (newValue != oldValue){
 				    	
 				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
 				    	
+			    		$scope.replace();
+				    	
 				    	if(! $scope.data_source.url ) {
 				    		$scope.data_source.value = newValue;
 				    	}
-				    	else {
-				    		
-				    		if($scope.data && $scope.data.onChange != "nothing")
-				    			$scope.update($scope.get_url());
-				    		
-				    		if($scope.data_source && $scope.data_source.onChange != "nothing")
-				    			$scope.update($scope.get_url());
-				    	}
+				    	else if( ($scope.data && $scope.data.onChange != "nothing") ||
+				    			 ($scope.data_source && $scope.data_source.onChange != "nothing"))
+				    	{
+				    		$scope.update($scope.get_url());
+			    		}
 				    }
 				});
 			}
@@ -95,7 +99,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			}
 		}
 		
-		if($scope.data_source && $scope.data_source.checked == true){
+		if($scope.data_source && $scope.data_source.checked == true) {
 			console.log("INIT CHECKBOX", $scope.data_source.checked, $scope.data_source);
 			for(var i=0; i<$scope.data_source.values.length; i++)
 				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
@@ -104,7 +108,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if(data.subdata)
 			$scope.convert();
 		
-		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.subdata);
+		if(data.data && data.data.variable_value)
+			$scope.replace();
+		
+		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.data_source, $scope.subdata);
 	};
 	
 	$scope.exists = function(item, field){
@@ -159,7 +166,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		var url = $scope.data_source.url;
 		if(!templates) return url;
-		else {
+		else if(url != undefined){
 			
 //			if($scope.data_source.key) value = dataService.global[$scope.data_source.key];
 			
@@ -185,6 +192,35 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			return finalUrl;
 		}
+	};
+	
+	$scope.replace = function(){
+		
+		console.log("REPLACEMENT IN VALUE [0]", $scope);
+		
+		$scope.data_source.value = $scope.data_source.variable_value;
+		var templates = $scope.data_source.templates;
+		for (index in templates)
+		{
+			var template = templates[index];
+			
+			console.log("TEMPLATE REPLACEMENT IN VALUE [1]", $scope.data_source.value, template, template.key, $scope.data_source.value, dataService.global[template.key], dataService.global);
+			
+			var value = undefined;
+			if(template.key) value = dataService.global[template.key];
+			if(value == undefined) {
+				console.log("TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
+				continue;
+			}
+			
+			if(value.label) value = value.label;
+			if(angular.isString(value)) value = value.replace("/", "");
+
+			console.log("TEMPLATE REPLACEMENT IN VALUE [2]", $scope.data_source.value, template, value);
+			
+			$scope.data_source.value = $scope.data_source.value.replace(template.template, value);
+		}
+		console.log("REPLACED", $scope.variable_value, $scope.data_source.value);
 	};
 	
 	$scope.update = function(url, fx){
@@ -221,11 +257,46 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		$scope.convert();
 //		console.log("SCOPE ELEMENT DATA: ", $scope);
+		
+		if($scope.data_source.onFinish){
+			
+			console.log("ON FINISH [1]", $scope);
+			
+			for(var i in $scope.data_source.onFinish)
+			{
+				var condition = $scope.data_source.onFinish[i];
+				
+				console.log("ON FINISH [2]", $scope, condition);
+				
+				var value = "";
+				if (condition.property == "length")
+					value = $scope.subdata.items.length;
+				
+				console.log("WATCH", "CHANGING GLOBAL VALUE", condition.key, value);
+				dataService.global[condition.key] = value;
+			}
+			
+			console.log("ON FINISH [3]", $scope, condition, dataService.global);
+		}
 	};
 	
 	$scope.convert = function(){
 		
 		console.log("CONVERTING ", $scope);
+		
+		if($scope.subdata)
+			for(index in $scope.subdata){
+				d = $scope.subdata[index];
+				
+				if($scope.type == "select")
+					console.log("SELECT", $scope.data_source.value, d);
+				
+				if (d.id == $scope.data_source.value || d == $scope.data_source.value)
+				{
+					$scope.data_source.value = d;
+					break;
+				}
+			}
 		
 		if($scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 			$scope.subdata.labels = []

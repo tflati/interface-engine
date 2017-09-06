@@ -1,5 +1,5 @@
 <md-card ng-show="show">
-	<md-card-title ng-class="{'padding-v-small': compact}">
+	<md-card-title ng-if="title || subtitle" ng-class="{'padding-v-small': compact}">
 		<md-card-title-text>
 	            <span class="md-headline" ng-if="title" ng-bind-html="title"></span>
 	            <span class="md-subhead" ng-if="subtitle" ng-bind-html="subtitle"></span>

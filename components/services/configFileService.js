@@ -51,6 +51,8 @@ app.service("configFileService", function($http, $q, messageService, dataService
 	// 								}
 	// 						);
 	        
+//	        dataService.global["total_fusion_events_per_cell_line"] = "UNKNOWN";
+	        
 	        if(self.info.forms)
 		        for(var f=0; f<self.info.forms.length; f++)
 		        {
