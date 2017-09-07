@@ -55,12 +55,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				console.log("ADDING WATCH", key, dataService.global[key], $scope);
 				
 				if(data.data && data.data.variable_value)
-					$scope.replace();
+					$scope.replaceTemplates();
 				
 //				$scope.$watch(function(){return dataService.global["total_fusion_events_per_cell_line"];}, function(newValue, oldValue) {
 //					if (newValue != oldValue){
 //						console.log("MANUAL WATCH", newValue, oldValue, $scope);
-//						$scope.replace();
+//						$scope.replaceTemplates();
 //					}
 //				});
 				
@@ -71,16 +71,17 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    	
 				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
 				    	
-			    		$scope.replace();
-				    	
-				    	if(! $scope.data_source.url ) {
-				    		$scope.data_source.value = newValue;
-				    	}
-				    	else if( ($scope.data && $scope.data.onChange != "nothing") ||
+//				    	if(! $scope.data_source.url ) {
+//				    		$scope.data_source.value = newValue;
+//				    	}
+//				    	else
+				    		if( ($scope.data && $scope.data.onChange != "nothing") ||
 				    			 ($scope.data_source && $scope.data_source.onChange != "nothing"))
 				    	{
 				    		$scope.update($scope.get_url());
 			    		}
+				    	
+				    	$scope.replaceTemplates();
 				    }
 				});
 			}
@@ -109,7 +110,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$scope.convert();
 		
 		if(data.data && data.data.variable_value)
-			$scope.replace();
+			$scope.replaceTemplates();
 		
 		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.data_source, $scope.subdata);
 	};
@@ -194,9 +195,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 	};
 	
-	$scope.replace = function(){
+	$scope.replaceTemplates = function(){
 		
-		console.log("REPLACEMENT IN VALUE [0]", $scope);
+		if($scope.data_source.url) return;
+		
+		console.log($scope.type, $scope.data_source, "REPLACEMENT IN VALUE [0]", $scope);
 		
 		$scope.data_source.value = $scope.data_source.variable_value;
 		var templates = $scope.data_source.templates;
@@ -204,23 +207,24 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		{
 			var template = templates[index];
 			
-			console.log("TEMPLATE REPLACEMENT IN VALUE [1]", $scope.data_source.value, template, template.key, $scope.data_source.value, dataService.global[template.key], dataService.global);
+			console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.data_source.value, template, template.key, $scope.data_source.value, dataService.global[template.key], dataService.global);
 			
 			var value = undefined;
 			if(template.key) value = dataService.global[template.key];
 			if(value == undefined) {
-				console.log("TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
+				console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
 				continue;
 			}
 			
 			if(value.label) value = value.label;
+			else if(value.id) value = value.id;
 			if(angular.isString(value)) value = value.replace("/", "");
 
-			console.log("TEMPLATE REPLACEMENT IN VALUE [2]", $scope.data_source.value, template, value);
+			console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [2]", $scope.data_source.value, template, value);
 			
 			$scope.data_source.value = $scope.data_source.value.replace(template.template, value);
 		}
-		console.log("REPLACED", $scope.variable_value, $scope.data_source.value);
+		console.log($scope.type, $scope.data_source, "REPLACED", $scope.data_source.variable_value, $scope.data_source.value);
 	};
 	
 	$scope.update = function(url, fx){
@@ -284,12 +288,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log("CONVERTING ", $scope);
 		
+		// For the select component
 		if($scope.subdata)
 			for(index in $scope.subdata){
 				d = $scope.subdata[index];
-				
-				if($scope.type == "select")
-					console.log("SELECT", $scope.data_source.value, d);
 				
 				if (d.id == $scope.data_source.value || d == $scope.data_source.value)
 				{
@@ -490,8 +492,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					    document.body.appendChild(a);
 					    a.style = "display: none";
 					    var data = result.data.content;
+					    // data = data.replace(/\\n/g, "\n");
 					    
-				        var url = window.URL.createObjectURL(new Blob([JSON.stringify(data)], {type: "octet/stream"}));
+				        var url = window.URL.createObjectURL(new Blob([data], {type: "octet/stream"}));
 				        
 				        a.href = url;
 				        a.download = result.data.filename;
@@ -500,7 +503,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					},
 					function(response){
 						$scope.doing_ajax = false;
-						console.log("BUTTON CLICK FAILED", result);
+						console.log("BUTTON CLICK FAILED", response);
 					}
 				 );
 		}
@@ -572,8 +575,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if(listener && listener.action == "write") {
 				$scope.$apply(function() {
 					console.log("[4] GLOBAL:", dataService);
-					// dataService.global[listener.value] = value.id || value;
-					// dataService.global[listener.key] = listener.value;
+//					dataService.global[listener.key] = listener.value || value;
 					dataService.global[listener.key] = listener.value || value.id || value;
 					dataService.global[listener.key + "_value"] = value.id || value;
 					

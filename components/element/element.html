@@ -3,15 +3,15 @@
 </div>
 
 <div ng-if="type == 'text'" ng-bind-html="label"></div>
-<p ng-if="type == 'paragraph' && inline != 'true'" ng-bind-html="data_source.value"></p>
+<p    ng-if="type == 'paragraph' && inline != 'true'" ng-bind-html="data_source.value"></p>
 <span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data_source.value" style="vertical-align: middle;"></span>
 
-<img ng-if="type == 'image'" style="max-width:{{data_source.width || '100%'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
+<img ng-if="type == 'image'" style="width:{{data_source.width || 'auto'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
 
 <div ng-if="type == 'chips'">
 	<md-chips ng-model="items" readonly="true" md-removable="false" style="display: inline-block;">
       <md-chip-template custom-chip>
-        <span>
+        <span style="color: {{$chip.color}}">
           <span ng-if="$chip.key"><strong>{{$chip.key}}</strong>:</span>
           <em>{{$chip.value}}</em>
         </span>
@@ -19,10 +19,12 @@
     </md-chips>
 </div>
 
+<md-chip ng-if="type == 'chip'">{{subdata.label}}</md-chip>
+
 <iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}"></iframe>
 
 <md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none;" ng-click="onClick()">
-	<i class="fa {{data_source.icon}} {{data_source.modifiers}}"></i>
+	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" style="color: {{data_source.color}}"></i>
 	{{label}}
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
@@ -330,9 +332,8 @@
 	</md-content>
 </md-input-container>
 
-<md-chip ng-if="type == 'chip'">{{subdata.label}}</md-chip>
-
-<div ng-if="type == 'multi'" layout-align="start center" layout-wrap layout="row" flex="100">
-	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
+<!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
+<div ng-if="type == 'multi'" layout="row" layout-align="start center">
+	<element ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

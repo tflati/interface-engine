@@ -28,6 +28,7 @@ app.controller("autocompleteController", function($scope, $q, $filter, dataServi
 	};
 	
 	self.selectedItemChange = function (item) {
+		if( $scope.field.data )
 	      dataService.global[$scope.field.data.onChange.key] = item.label;
     };
 });

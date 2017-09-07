@@ -540,7 +540,7 @@ hr {
 			  return {
 			    restrict: 'A',
 			    link: function(scope, elem, attrs) {
-			      var color = scope.$chip.color;
+			      var color = scope.$chip.background_color;
 			      var mdChip = elem.parent().parent();
 			      mdChip.addClass(color);
 			    }

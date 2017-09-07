@@ -18,7 +18,7 @@ app.controller("cloudController", function($scope, $http){
 				for(var i=0;i<newValue.items.length; i++)
 				{
 					var item = newValue.items[i];
-					aux.push({"text": item[0], "weight": item[1]});
+					aux.push({"text": item[0], "weight": item[1], "html": {title: "Importance: " + item[1]}});
 				}
 				
 				$scope.subdata = aux;
