@@ -140,18 +140,6 @@
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
 				<td md-cell style="font-weight: bold;"><span>{{($index+1) + '.'}}</span></td>
 				<td md-cell><span>{{item}}</span></td>
-				<td ng-if="module_info.info" md-cell>
-					<md-button class="md-primary md-raised" style="text-decoration: none;" ng-href="{{module_info.info + 'http://localhost/rnaseq/data/bams/' + item}}">
-								<span class="fa fa-bar-chart fa-lg"></span>
-								<span style="">See stats</span>
-					</md-button>
-				</td>
-				<td ng-if="module_info.explore" md-cell>
-					<md-button class="md-primary md-raised" style="text-decoration: none;" ng-href="{{module_info.explore + 'http://localhost/rnaseq/data/bams/' + item}}">
-								<span class="fa fa-braille fa-lg"></span>
-								<span style="">See file</span>
-					</md-button>
-				</td>
 			</tr>
 		</tbody>
 	</table>

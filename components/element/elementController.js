@@ -520,7 +520,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			$scope.inputData = $scope.card;
 			$window.parentScope = $scope;
-			var popup = $window.open("http://localhost/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+			var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 		}
 		else if($scope.action == "dialog") {
 			
