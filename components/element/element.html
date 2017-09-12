@@ -126,8 +126,16 @@
 					<th md-column ng-repeat="label in subdata.labels"><span>{{label}}</span></th>
 				</tr>
 			</thead>
-			<tr md-row md-auto-select ng-repeat="label in subdata.header track by $index">
-				<td md-cell style="font-weight: bold;"><span>{{label}}</span></td>
+			<tr md-row md-auto-select ng-repeat="item in subdata.header track by $index">
+				<td md-cell style="font-weight: bold;">
+					<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
+						<div ng-show="item.tooltip" ng-dropover-contents class="tooltip-container">
+					      <div ng-bind="item.tooltip" class="custom-tooltip"></div>
+					    </div>
+						<span ng-if='item.type == "text"' ng-bind-html="item.label"></span>
+						<span ng-if='item.type != "text"' ng-bind-html="item"></span>
+					</div>
+				</td>
 				<td md-cell style="text-align: right;"><span>{{subdata.items[0][$index]}}</span></td>
 			</tr>
 		</tbody>
