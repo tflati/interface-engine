@@ -7,6 +7,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log("INITIALIZING", data.type, data);
 		
+//		$scope.field = data;
+		
 		$scope.type = data.type;
 		$scope.variable_value = data.variable_value;
 		$scope.disabled = data.disabled;
@@ -75,7 +77,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //				    		$scope.data_source.value = newValue;
 //				    	}
 //				    	else
-				    		if( ($scope.data && $scope.data.onChange != "nothing") ||
+				    		if( ($scope.data_source && $scope.data_source.onChange != "nothing") ||
 				    			 ($scope.data_source && $scope.data_source.onChange != "nothing"))
 				    	{
 				    		$scope.update($scope.get_url());
@@ -242,7 +244,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		if(fx == undefined) fx = $scope.onDataReceived;
 		
-		$http.get(url).then(fx,
+		var promise = $http.get(url);
+		promise.then(fx,
 			function myError(response) {
 				$scope.sending = false;
             	console.log("ERROR IN GETTING DATA FROM " + url, response);
@@ -254,10 +257,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.onDataReceived = function(response)
 	{
 		$scope.sending = false;
-		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope.data_source);
+		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope, $scope.data_source);
 		
 		if(response.data.details) $scope.subdata = response.data.details;
 		else $scope.subdata = response.data;
+		
+//		$scope.field.values = $scope.subdata; // ADDED
 		
 		$scope.convert();
 //		console.log("SCOPE ELEMENT DATA: ", $scope);

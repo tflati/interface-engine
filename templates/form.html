@@ -23,6 +23,15 @@
 		
 		<md-card-content>
 		<md-content class="md-padding">
+			
+<!-- 			<h1>Form with elements</h1> -->
+<!-- 			<form ng-submit="send_query()"> -->
+<!-- 				<element ng-repeat="field in form.fields track by $index" ng-controller="elementController" ng-init="init(field)"> -->
+<!-- 				</element> -->
+<!-- 				<md-button ng-click="send_query()" class="md-primary md-raised">{{form.submit.label}}</md-button> -->
+<!-- 			</form> -->
+			
+<!-- 			<h1>Standard form</h1> -->
 			<form ng-submit="send_query()">
 				<div ng-repeat="field in form.fields track by $index">
 				
@@ -77,8 +86,8 @@
 								{{field.label}}
 							</md-checkbox>
 							
-							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
-								<md-radio-button ng-click="load_form(field, value)" ng-repeat="value in field.values track by $index" name="{{field.group_id}}" ng-model="field.value" ng-checked="{{value.selected}}" ng-value="value.label" type="radio" aria-label="Multi-choice">
+							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.value">
+								<md-radio-button ng-click="load_form(field, value)" ng-repeat="value in field.values track by $index" name="{{field.group_id}}" ng-value="value.value" type="radio" aria-label="Multi-choice">
 									{{value.label}}
 								</md-radio-button>
 							</md-radio-group>

@@ -84,7 +84,12 @@ app.directive("myTable", function() {
 						'filter':$scope.filter_list
 					};
 				
-				for (var key in args) { var value = args[key]; if (!angular.isArray(value)) value = value.replace(/#/g, "_SHARP_"); postArguments[key] = value; }
+				for (var key in args) {
+					var value = args[key];
+					if (angular.isString(value))
+						value = value.replace(/#/g, "_SHARP_");
+					postArguments[key] = value;
+				}
 				console.log("ARGS SENT VIA POST", postArguments);
 				
 				$scope.during_call = true;

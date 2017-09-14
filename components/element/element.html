@@ -1,6 +1,6 @@
-<div ng-if="sending" style="text-align: center; color: cadetblue;">
-	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-</div>
+<!-- <div ng-if="sending" style="text-align: center; color: cadetblue;"> -->
+<!-- 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> -->
+<!-- </div> -->
 
 <div ng-if="type == 'text'" ng-bind-html="label"></div>
 <p    ng-if="type == 'paragraph' && inline != 'true'" ng-bind-html="data_source.value"></p>
@@ -294,36 +294,55 @@
         </fieldset>
 		
 	</md-content>
-	<md-content ng-if="type == 'autocomplete'" ng-controller="autocompleteController as actrl">
-		<label ng-if="type != 'checkbox'" ng-bind="data_source.label"></label>
+	<md-content ng-if="type == 'autocomplete'" class="md-input-has-placeholder" ng-controller="autocompleteController as actrl" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
+		<label ng-bind="data_source.label"></label>
+		
+		<div ng-if="sending" style="text-align: center; color: cadetblue;">
+			<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+		</div>
+		
 		<md-autocomplete
 		      md-select-on-match
 			  md-match-case-insensitive
 			  placeholder="{{data_source.label}}"
 	          md-search-text="actrl.searchText"
-	          md-selected-item="actrl.selectedItem"
+	          md-selected-item="data_source.value"
+	          md-selected-item-change="actrl.selectedItemChange(item)"
 	          md-items="item in actrl.querySearch(actrl.searchText)"
 	          md-item-text="item.label"
 	          md-min-length="0"
-	          style="min-width: 600px"
+	          style="min-width: 800px"
 	        >
 	        <md-item-template>
-	        	<div ng-if="item.label" style="padding-bottom: 5px; display: table; width: 100%;">
-					<div style="display: table-cell; vertical-align: middle;" ng-if="item.img">
-						<img ng-src="{{item.img}}" style="vertical-align: middle; margin-right: 15px;">
-					</div>
-					<div style="overflow: hidden;">
-						<div ng-if="item.label" md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</div>
-						<div ng-if="item.extra"><p style="margin: 0px; color: grey">({{item.extra}})</p></div>
-					</div>
+	        
+	        	<div ng-class="{'disabled': item.disabled}">
+		        	<img ng-if="item.img" ng-src="{{item.img}}" style="vertical-align: middle;" ng-class="{'img-disabled': item.disabled}">
+		        	<span style="padding-bottom: 5px;" md-highlight-text="actrl.searchText" md-highlight-flags="^i">
+		          		{{item.label}}
+					</span>
+					<span ng-if="item.extra" style="margin: 0px; color: grey">({{item.extra}})</span>
 				</div>
-				<div ng-if="!value.label">
-					<span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</span>
-				</div>
+	        
+<!-- 	        	<div ng-if="item.label" style="padding-bottom: 5px; display: table; width: 100%;"> -->
+<!-- 					<div style="display: table-cell; vertical-align: middle;" ng-if="item.img"> -->
+<!-- 						<img ng-src="{{item.img}}" style="vertical-align: middle; margin-right: 15px;"> -->
+<!-- 					</div> -->
+<!-- 					<div style="overflow: hidden;"> -->
+<!-- 						<div ng-if="item.label" md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</div> -->
+<!-- 						<div ng-if="item.extra"><p style="margin: 0px; color: grey">({{item.extra}})</p></div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div ng-if="!value.label"> -->
+<!-- 					<span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</span> -->
+<!-- 				</div> -->
 	        </md-item-template>
 	        <md-not-found>
-	          No items matching "{{actrl.searchText}}" were found.
-	        </md-not-found>
+				<span ng-if="!sending">No items matching "{{actrl.searchText}}" were found. {{field.values.length}}</span>
+	         	<span ng-if="sending">
+	         		<i class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
+	         		Loading data...
+	         	</span>
+	       </md-not-found>
 	      </md-autocomplete>
 	</md-content>
 </md-input-container>
