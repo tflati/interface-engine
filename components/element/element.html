@@ -51,10 +51,10 @@
 		<tbody md-body>
 			<thead md-head>
 				<tr md-row md-auto-select>
-					<th ng-switch="field.type" style="min-width: 100px; overflow-wrap: break-word; padding-right: 10px;" md-cell md-column ng-repeat="field in subdata.header track by $index">
+					<th ng-switch="field.type" style="text-align: {{alignment}}; min-width: 200px; overflow-wrap: break-word; padding-right: 10px;" md-cell md-column ng-repeat="field in subdata.header track by $index">
 						<span ng-switch-when="undefined">{{field}}</span>
 						<div ng-switch-default>
-							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
+							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position': 'top-center', 'verticalOffset': 10}">
 								<div ng-dropover-contents class="tooltip-container">
 							      <div ng-bind="field.tooltip" class="custom-tooltip"></div>
 							    </div>
@@ -161,6 +161,7 @@
 		chart-labels="subdata.labels"
 		chart-options="subdata.options"
 		chart-click="onClick"
+		chart-colors="subdata.colors"
 		>
 	</canvas>
 </div>

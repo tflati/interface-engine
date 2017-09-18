@@ -14,6 +14,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.disabled = data.disabled;
 		$scope.action = data.action;
 		$scope.card = data.card;
+		$scope.alignment = data.alignment;
 		$scope.key = data.key;
 		$scope.stacked = data.stacked;
 		$scope.showLegend = data.showLegend;
@@ -72,18 +73,17 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    if (newValue != oldValue){
 				    	
 				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
+				    	$scope.data_source.value = newValue.label; // MODIFIED
 				    	
 //				    	if(! $scope.data_source.url ) {
 //				    		$scope.data_source.value = newValue;
 //				    	}
 //				    	else
-				    		if( ($scope.data_source && $scope.data_source.onChange != "nothing") ||
-				    			 ($scope.data_source && $scope.data_source.onChange != "nothing"))
-				    	{
+				    	if($scope.data_source && $scope.data_source.onChange != "nothing" )
 				    		$scope.update($scope.get_url());
-			    		}
 				    	
-				    	$scope.replaceTemplates();
+				    	if($scope.data_source.templates)
+				    		$scope.replaceTemplates();
 				    }
 				});
 			}
@@ -183,7 +183,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
 				if(value == undefined) continue;
 				
-				if(value.label) value = value.label;
+				console.log("GET URL", $scope.data_source.type, value);
+				
+				if(value.label) value = value.id; // MODIFIED
 				if(angular.isString(value)) value = value.replace("/", "");
 				
 				console.log("TEMPLATE REPLACEMENT", template, value);
@@ -373,6 +375,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			        xAxes: [{
 			          stacked: $scope.stacked && $scope.stacked == true ? true : false,
 			          ticks: {
+			        	  maxRotation: 90,
 		                  callback: function (label) {
 //							                  console.log("X AXIS", label);
 		                      return label.id;
@@ -580,9 +583,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if(listener && listener.action == "write") {
 				$scope.$apply(function() {
 					console.log("[4] GLOBAL:", dataService);
-//					dataService.global[listener.key] = listener.value || value;
-					dataService.global[listener.key] = listener.value || value.id || value;
-					dataService.global[listener.key + "_value"] = value.id || value;
+//					dataService.global[listener.key] = listener.value || value.id || value;
+//					dataService.global[listener.key + "_value"] = value.id || value;
+					dataService.global[listener.key] = value;
 					
 					console.log("[4] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ", dataService.global[listener.key], dataService.global);
 			    });
