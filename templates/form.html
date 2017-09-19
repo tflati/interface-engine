@@ -77,13 +77,13 @@
 			                	<legend>{{field.label}}</legend>
 				                        <div ng-repeat="value in field.values track by $index" flex="50">
 				                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
-		                          				{{value.label}}
+		                          			<span ng-bind="value.label"></span>
 				                        </md-checkbox>
 			                        </div>
 			                </fieldset>
 							
 							<md-checkbox ng-if="field.type == 'checkbox' && !field.values" ng-model="field.value" ng-checked="{{field.checked}}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
-								{{field.label}}
+								<span ng-bind-html="field.label"></span>
 							</md-checkbox>
 							
 							<md-radio-group ng-if="field.type == 'choice' && field.subtype == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.value">
@@ -148,7 +148,7 @@
 						<img ng-if="field.value.img" ng-src="{{field.value.img}}" style="vertical-align: middle;">
 					</td>
 					<td style="background-color: #e9e9e9; white-space: nowrap; text-align: left !important;">
-						<label style="font-weight: bold;" ng-bind="field.label"></label>
+						<label style="font-weight: bold;" ng-bind-html="field.label"></label>
 					</td>
 					<td style="text-align: left !important;">
 						<span ng-if="isArray(field.value)" ng-repeat="subfield in field.value track by $index">
