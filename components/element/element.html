@@ -66,7 +66,7 @@
 				</tr>
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index">
+              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index" style="text-align: {{field.text_align}};">
                 <span ng-switch-when="undefined">
                 	<span ng-if="field.label">{{field.label}}</span>
               		<span ng-if="!field.label">{{field}}</span>
@@ -79,6 +79,10 @@
 						<element ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
 						</element>
 					</div>
+					
+					<span ng-if='field.type == "icon"' style="padding: 5px;">
+						<i class="fa {{field.data_source.icon}} {{field.data_source.modifiers}}" aria-label="{{field.data_source.title}}" title="{{field.data_source.title}}" style="color: {{field.data_source.color}}"></i>
+					</span>
 					
 <!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
 					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label"></p>
