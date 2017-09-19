@@ -335,7 +335,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					      if(item.label) s = item.label;
 					      else s = item;
 					      
-					      if(item.id) s += " (ID:"+item.id+")";
+					      // if(item.id) s += " (ID:"+item.id+")";
 					      
 				          return s;
 				        },
