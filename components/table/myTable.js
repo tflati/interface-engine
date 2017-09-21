@@ -64,6 +64,7 @@ app.directive("myTable", function() {
 						
 						if (field.type == "checkbox") {
 							value = field.value ? field.value : false;
+							if(value.value) value = value.value;
 						}
 						
 						console.log("VALUE", value);

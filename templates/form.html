@@ -75,11 +75,11 @@
 		
 							<fieldset ng-if="field.type == 'checkbox' && field.values != undefined" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
 			                	<legend>{{field.label}}</legend>
-				                        <div ng-repeat="value in field.values track by $index" flex="50">
-				                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
-		                          			<span ng-bind="value.label"></span>
-				                        </md-checkbox>
-			                        </div>
+		                        <div ng-repeat="value in field.values track by $index" flex="50">
+		                        <md-checkbox ng-checked="exists(value, field)" ng-click="toggle(value, field)">
+                          			<span ng-bind="value.label"></span>
+		                        </md-checkbox>
+	                        </div>
 			                </fieldset>
 							
 							<md-checkbox ng-if="field.type == 'checkbox' && !field.values" ng-model="field.value" ng-checked="{{field.checked}}" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">

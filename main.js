@@ -231,20 +231,33 @@ app.controller(
 
 					/* MOVE TO FORM CONTROLLER */
 					$scope.exists = function(item, field) {
-						if (field.value == undefined)
-							return false;
+						if (field.value == undefined) return false;
+						
+						if(field.exclusive) return field.value == item;
 						return field.value.indexOf(item) > -1;
 					};
 
 					/* MOVE TO FORM CONTROLLER */
 					$scope.toggle = function(item, field) {
-						if (field.value == undefined)
-							field.value = []
-						var idx = field.value.indexOf(item);
-						if (idx > -1)
-							field.value.splice(idx, 1);
-						else
-							field.value.push(item);
+						
+						if(field.exclusive) {
+							if (field.value == item) field.value = undefined;
+							else field.value = item;
+//							if (field.value == undefined) field.value = ""
+//							if (field.value == item.value)
+//								field.value = item.value;
+//							else {
+//								field.value = item.value;
+//							}
+						}
+						else {
+							if (field.value == undefined) field.value = []
+							var idx = field.value.indexOf(item);
+							if (idx > -1)
+								field.value.splice(idx, 1);
+							else
+								field.value.push(item);
+						}
 					};
 
 					$rootScope.search_started = false;

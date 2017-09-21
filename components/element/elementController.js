@@ -331,7 +331,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				        title: function(tooltipItem, chartData) {
 //					          console.log("TITLE", tooltipItem, chartData)
 					      var item = chartData.labels[tooltipItem[0].index];
-					          
+					      
 					      if(item.label) s = item.label;
 					      else s = item;
 					      
