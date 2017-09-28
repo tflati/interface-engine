@@ -1,4 +1,4 @@
-app.service("configFileService", function($http, $q, messageService, dataService){
+app.service("configFileService", function($http, $q, messageService, dataService, Analytics){
 	
 	var self = this;
 	
@@ -30,6 +30,12 @@ app.service("configFileService", function($http, $q, messageService, dataService
 			console.log("FILE CONFIG OK");
 			
 	        self.info = response.data;
+	        
+	        console.log(Analytics);
+	        Analytics.configuration.accounts[0].tracker = self.info.analytics_tracking_ID;
+	        Analytics.registerScriptTags();
+	        Analytics.registerTrackers();
+	        
 	        self.info.image.percentage_width_original = self.info.image.percentage_width;
 	        console.log(self.info);
 	        
@@ -57,7 +63,7 @@ app.service("configFileService", function($http, $q, messageService, dataService
 		        for(var f=0; f<self.info.forms.length; f++)
 		        {
 		        	var form = self.info.forms[f];
-		        	dataService.global[form.name] = form;
+		        	dataService.global[form.pageID] = form;
 		        	
 		            for(var i=0; i<form.fields.length; i++)
 		            {
@@ -114,12 +120,12 @@ app.service("configFileService", function($http, $q, messageService, dataService
 									if(subform.value && value.label == subform.value)
 									{
 										// console.log("\tsubform's name="+subform.value+" equals name of option="+value);
-										value.url = subform.name;
+										value.url = subform.pageID;
 										value.form = subform;
 									}
 									else if(subform.index && c == subform.index)
 									{
-										value.url = subform.name;
+										value.url = subform.pageID;
 										value.form = subform;
 									}
 								}

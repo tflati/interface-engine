@@ -54,13 +54,13 @@
 					<th ng-switch="field.type" style="text-align: {{alignment}}; min-width: 200px; overflow-wrap: break-word; padding-right: 10px;" md-cell md-column ng-repeat="field in subdata.header track by $index">
 						<span ng-switch-when="undefined">{{field}}</span>
 						<div ng-switch-default>
-							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position': 'top-center', 'verticalOffset': 10}">
-								<div ng-dropover-contents class="tooltip-container">
-							      <div ng-bind="field.tooltip" class="custom-tooltip"></div>
-							    </div>
-								<p ng-if='field.type == "text"' ng-bind-html="field.label">
+<!-- 							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position': 'top-center', 'verticalOffset': 10}"> -->
+<!-- 								<div ng-dropover-contents class="tooltip-container"> -->
+<!-- 							      <div ng-bind="field.tooltip" class="custom-tooltip"></div> -->
+<!-- 							    </div> -->
+								<p title="{{field.tooltip}}" ng-if='field.type == "text"' ng-bind-html="field.label">
 								</p>
-							</div>
+<!-- 							</div> -->
 						</div>
 					</th>
 				</tr>

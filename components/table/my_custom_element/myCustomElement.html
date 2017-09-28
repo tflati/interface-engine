@@ -39,7 +39,6 @@
 	</div>
 	<!-- pedix -->
 	<sub ng-if="elem.pedix">
-		<md-tooltip>{{elem.title}}</md-tooltip>
 		<div ng-repeat="elem in elem.pedix" ng-include="elem.type + '.html'"  style="display: inline-block"></div>
 	</sub>
 </script>
@@ -58,7 +57,6 @@
 	</div>
 	<!-- pedix -->
 	<sub ng-if="elem.pedix">
-		<md-tooltip>{{elem.title}}</md-tooltip>
 		<div ng-repeat="elem in elem.pedix" ng-include="elem.type + '.html'" style="display: inline-block"></div>
 	</sub>	
 </script>
@@ -67,8 +65,7 @@
 <script type="text/ng-template" id="image.html">
 	<div ng-if="elem.url" style="display: inline-block">
 		<a target="{{elem.target}}" ng-href="{{elem.url}}">
-			<md-tooltip>{{elem.title}}</md-tooltip>
-			<img ng-src="{{elem.img_src}}" height="{{elem.height}}" width="{{elem.width}}" style="vertical-align: middle;">	
+			<img title="{{elem.title}}" ng-src="{{elem.img_src}}" height="{{elem.height}}" width="{{elem.width}}" style="vertical-align: middle;">	
 		</a>
 	</div>
 	<div  ng-if="!elem.url" style="display: inline-block">
@@ -76,22 +73,24 @@
 	</div>
 	<!-- pedix -->
 	<sub ng-if="elem.pedix">
-		<md-tooltip>{{elem.title}}</md-tooltip>
 		<div ng-repeat="elem in elem.pedix" ng-include="elem.type + '.html'"  style="display: inline-block"></div>
 	</sub>
 </script>
 
 <!-- BUTTON -->
 <!-- <md-tooltip>{{elem.title}}</md-tooltip> -->
+<!-- <div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position':'top-center', 'verticalOffset': '-5'}"> -->
+<!-- 	<div ng-dropover-contents class="tooltip-container"> -->
+<!-- 		<div ng-bind-html="elem.title" class="custom-tooltip-small"></div> -->
+<!-- 	</div> -->
+<!-- 	<md-button ng-style="{'background-color': elem.color}" class="md-raised md-primary" ng-click="onClick($event, elem)"> -->
+<!-- 			<div ng-repeat="elem in elem.items track by $index" ng-include="elem.type + '.html'" ng-style="{display: 'inline-block', 'margin-left': ($first ? '0px' : '5px')}"></div> -->
+<!-- 	</md-button> -->
+<!-- </div> -->
 <script type="text/ng-template" id="button.html">
-<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position':'top-center', 'verticalOffset': '-5'}">
-	<div ng-dropover-contents class="tooltip-container">
-		<div ng-bind-html="elem.title" class="custom-tooltip-small"></div>
-	</div>
-	<md-button ng-style="{'background-color': elem.color}" class="md-raised md-primary" ng-click="onClick($event, elem)">
+	<md-button title="{{elem.title}}" ng-style="{'background-color': elem.color}" class="md-raised md-primary" ng-click="onClick($event, elem)">
 			<div ng-repeat="elem in elem.items track by $index" ng-include="elem.type + '.html'" ng-style="{display: 'inline-block', 'margin-left': ($first ? '0px' : '5px')}"></div>
 	</md-button>
-</div>
 </script>
 
 <!-- CHIPS -->

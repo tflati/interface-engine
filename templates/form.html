@@ -11,17 +11,20 @@
 		            <span class="md-headline" ng-bind="form.title || 'Search'"></span>
 		            <span class="md-subhead" ng-bind="form.subtitle"></span>
 		            
-		            <div ng-if="form.tooltip" style="display: inline-block;" ng-dropover ng-dropover-options="{'triggerEvent':'hover'}">
-		            	<i class="fa fa-question-circle fa-2x" style="color: orange"></i>
-						<div ng-dropover-contents class="tooltip-container">
-					      <div ng-bind-html="form.tooltip" class="custom-tooltip"></div>
-					    </div>
-				    </div>
+<!-- 		            <div ng-if="form.tooltip" style="display: inline-block;" ng-dropover ng-dropover-options="{'triggerEvent':'hover'}"> -->
+<!-- 		            	<i ng-if="form.tooltip" title="{{form.tooltip}}" class="fa fa-question-circle fa-2x" style="color: orange"></i> -->
+<!-- 						<div ng-dropover-contents class="tooltip-container"> -->
+<!-- 					      <div ng-bind-html="form.tooltip" class="custom-tooltip"></div> -->
+<!-- 					    </div> -->
+<!-- 				    </div> -->
 		            
 		    </md-card-title-text>
 		</md-card-title>
 		
 		<md-card-content>
+		
+		<i ng-if="form.tooltip" tooltip-show-trigger="focusin" tooltip-hide-trigger="focusout" title-direction="right" title="{{form.tooltip}}" class="fa fa-question-circle fa-2x" style="color: orange"></i>
+		
 		<md-content class="md-padding">
 			
 <!-- 			<h1>Form with elements</h1> -->
