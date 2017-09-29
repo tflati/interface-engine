@@ -293,7 +293,7 @@
 		<!-- Checkbox (group) -->
 		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
 			<legend>{{label}}</legend>
-         	<md-checkbox ng-checked="exists(value, subdata)" ng-click="toggle(value, subdata)" ng-repeat="value in subdata track by $index">
+         	<md-checkbox ng-checked="exists(value, data_source)" ng-click="toggle(value, data_source)" ng-repeat="value in subdata track by $index">
 			{{value}}
             </md-checkbox>
         </fieldset>

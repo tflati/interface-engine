@@ -45,6 +45,10 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 	
 	// Set meta tags
 	ngMeta.setTitle($scope.get_current_page_data().title, " | " + info.title_short);
+	for(var i=0; i<info.meta.length; i++){
+		var singleMeta = info.meta[i];
+		ngMeta.setTag(singleMeta["key"], singleMeta["value"]);
+	}
 
 	$scope.load_form = function(group, option) {
 

@@ -105,7 +105,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if($scope.data_source && $scope.data_source.checked == true) {
 			console.log("INIT CHECKBOX", $scope.data_source.checked, $scope.data_source);
 			for(var i=0; i<$scope.data_source.values.length; i++)
-				$scope.toggle($scope.data_source.values[i], $scope.data_source.values);
+				$scope.toggle($scope.data_source.values[i], $scope.data_source);
 		}
 		
 		if(data.subdata)
@@ -118,14 +118,14 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	};
 	
 	$scope.exists = function(item, field){
-//		console.log("EXISTS", item, field);
+		console.log("EXISTS", item, field.value);
 	    if(field.value == undefined) return false;
 	    return field.value.indexOf(item) > -1;
 	};
 	
 	$scope.toggle = function (item, field) {
 //		console.log("TOGGLE", item, field);
-	    if(field.value == undefined) field.value = []                        
+	    if(field.value == undefined) field.value = []
 	    var idx = field.value.indexOf(item);
 	    if (idx > -1) {
 	    	field.value.splice(idx, 1);

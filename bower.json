@@ -15,12 +15,14 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "3.2.1",
-    "angular": "1.5",
-    "angular-sanitize": "1.5",
-    "angular-aria": "1.5",
-    "angular-messages": "1.5",
-    "angular-route": "1.5",
+    "jquery": "~3.2.1",
+    "angular": "~1.5",
+    "angular-sanitize": "~1.5",
+    "angular-aria": "~1.5",
+    "angular-messages": "~1.5",
+    "angular-route": "~1.5",
+    "angular-cookies": "~1.5",
+    "angular-material": "~1.1.4",
     "AngularJS-Toaster": "^2.1.0",
     "font-awesome": "^4.7.0",
     "angular-chart.js": "^1.1.1",
@@ -29,10 +31,12 @@
     "components-font-awesome": "^4.7.0",
     "phylotree": "^0.1.6",
     "angular-jqcloud": "^1.0.3",
-    "angular-material": "1.1.4",
-    "angular-cookies": "1.5.11",
     "angular-google-analytics": "^1.1.9",
     "ngMeta": "^1.0.2",
     "angular-tooltips": "tooltips-angular#^1.0.4"
+  },
+  "resolutions": {
+    "angular": "~1.5.x",
+    "angular-material": "~1.1.4"
   }
 }

@@ -13,6 +13,7 @@
 	<!-- <meta name="author" content="{{ngMeta['author']}}" /> -->
 	<title ng-bind="ngMeta.title"></title>
 	<meta name="description" content="{{ngMeta.description}}" />
+	<meta name="robots" content="{{ngMeta.robots}}" />
 	
 	<link rel="stylesheet" href="bower_components/components-font-awesome/css/font-awesome.min.css">
 	
@@ -508,12 +509,13 @@
 			   AnalyticsProvider.setAccount('UU-XXXXXXX-X');  //UU-XXXXXXX-X should be your tracking code
 			   AnalyticsProvider
 			      .delayScriptTag(true)
-			      .ignoreFirstPageLoad(true)
-			      .trackPages(true)
-			      .trackUrlParams(true)
+// 			      .ignoreFirstPageLoad(true)
+// 			      .trackPages(true)
+// 			      .trackUrlParams(true)
 			      .setPageEvent('$stateChangeSuccess')
-			      .logAllCalls(false)
-			      .setDomainName('none');
+// 			      .logAllCalls(false)
+// 			      .setDomainName('none')
+			      ;
 			      
 			}]).run(['Analytics', function(Analytics) { }]);
 		
