@@ -4,12 +4,12 @@ app.controller("cardController", function($scope, $window, $rootScope){
 	
 	$scope.sending = false;
 	
-	console.log("CARD CONTROLLER");
-	
 	$scope.init = function(data){
 		
-		console.log("CARD SCOPE", data, $scope);
-		console.log("CARD DATA", data);
+		console.log("CARD CONTROLLER", data.title, data);
+		
+//		console.log("CARD SCOPE", data, $scope);
+//		console.log("CARD DATA", data);
 		$scope.title = data.title;
 		$scope.elements = data.elements;
 		$scope.subtitle = data.subtitle;

@@ -133,7 +133,6 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 		$location.url(url);
 
 		if (isForm) {
-
 			var canSee = $scope.form.visibility == "public"
 					|| !$scope.form.visibility
 					|| ($scope.form.visibility == "restricted" && dataService.loggedIn)
@@ -150,6 +149,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 			} else {
 				$scope.page = 'templates/restricted.html';
 			}
+//		} // MODIFIED 29/09
 		} else {
 			// if(url == "home") url = "main";
 
@@ -159,7 +159,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 			if (url.indexOf("/") == 0) {
 				$window.location.href = url;
 			} else {
-				$scope.page = 'templates/main.html';
+//				$scope.page = 'templates/main.html';
 
 				$scope.showing = true;
 
@@ -172,7 +172,7 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 				}
 
 				if (url == "main") {
-					$scope.page = 'templates/main.html'; // window.location
+//					$scope.page = 'templates/main.html'; // window.location
 															// =
 															// url;
 					$scope.info.image.percentage_width = $scope.info.image.percentage_width_original;
@@ -286,6 +286,6 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 
 	if (pageTitle != undefined)
 		$scope.goTo({
-			url : pageTitle
+			url: pageTitle
 		});
 });

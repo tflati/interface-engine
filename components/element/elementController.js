@@ -5,7 +5,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 
 	$scope.init = function(data){
 		
-		console.log("INITIALIZING", data.type, data);
+//		console.log("INITIALIZING", data.type, data);
 		
 //		$scope.field = data;
 		
@@ -20,6 +20,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.showLegend = data.showLegend;
 		$scope.title = data.title;
 		$scope.label = data.label;
+		$scope.color = data.color;
 		$scope.data_source = data.data;
 		$scope.items = data.items;
 		$scope.numbered = data.numbered;
@@ -28,7 +29,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.inline = data.inline;
 		$scope.subdata = data.subdata || [];
 		
-		console.log("INIT ELEMENT METADATA: ", data, $scope.data_source, $scope.subdata);
+//		console.log("INIT ELEMENT METADATA: ", data.label, data, $scope.data_source, $scope.subdata);
 		
 		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
 			dataService.global[$scope.data_source.key] = $scope.data_source.value;
@@ -55,7 +56,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			{
 				var key = keys[index];
 				
-				console.log("ADDING WATCH", key, dataService.global[key], $scope);
+				console.log("ADDING WATCH", key, dataService, dataService.global[key], $scope);
 				
 				if(data.data && data.data.variable_value)
 					$scope.replaceTemplates();
@@ -96,16 +97,16 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if($scope.data_source && $scope.data_source.onChange){
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
-				console.log("[1] GLOBAL:", dataService, $scope.data_source);
+				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.data_source);
 				dataService.global[listener.key] = $scope.data_source.value;
-				console.log("[1] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
+				console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
 			}
 		}
 		
 		if($scope.data_source && $scope.data_source.checked == true) {
-			console.log("INIT CHECKBOX", $scope.data_source.checked, $scope.data_source);
+			console.log("INIT CHECKBOX", data.label, $scope.data_source.checked, $scope.data_source);
 			for(var i=0; i<$scope.data_source.values.length; i++)
-				$scope.toggle($scope.data_source.values[i], $scope.data_source);
+				$scope.set($scope.data_source.values[i], $scope.data_source);
 		}
 		
 		if(data.subdata)
@@ -118,13 +119,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	};
 	
 	$scope.exists = function(item, field){
-		console.log("EXISTS", item, field.value);
+		console.log("EXISTS", item, field.value, field.value == undefined ? false : field.value.indexOf(item) > -1);
 	    if(field.value == undefined) return false;
 	    return field.value.indexOf(item) > -1;
 	};
 	
 	$scope.toggle = function (item, field) {
-//		console.log("TOGGLE", item, field);
+		console.log("TOGGLE", item, field.value, field.value == undefined ? field.value : field.value.indexOf(item));
 	    if(field.value == undefined) field.value = []
 	    var idx = field.value.indexOf(item);
 	    if (idx > -1) {
@@ -146,14 +147,29 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 	};
 	
+	$scope.set = function (item, field) {
+		console.log("TOGGLE", item, field.value, field.value == undefined ? field.value : field.value.indexOf(item));
+	    if(field.value == undefined) field.value = []
+	    var idx = field.value.indexOf(item);
+	    if (idx == -1){
+	    	field.value.push(item);
+		    var listener = $scope.data_source.onClick;
+			if(listener.action == "write") {
+				console.log("[3] GLOBAL:", dataService);
+				dataService.global[listener.key] = field.value.join("|");
+				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", field.value, "real value: ",dataService.global[listener.key]);
+			}
+	    }
+	};
+	
 	$scope.onChange = function(newValue){
 		console.log("["+$scope.type+"] NEW VALUE: ", newValue);
 		
 		var listener = $scope.data_source.onChange;
 		if(listener.action == "write") {
-			console.log("[2] GLOBAL:", dataService);
+			console.log("[2] ONCHANGE GLOBAL:", dataService);
 			dataService.global[listener.key] = newValue.id || newValue;
-			console.log("[2] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
+			console.log("[2] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
 		}
 	};
 	
@@ -181,7 +197,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				var value = undefined;
 				if(template.key) value = dataService.global[template.key];
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
-				if(value == undefined) continue;
+				if(value == undefined || value == "") return undefined;
 				
 				console.log("GET URL", $scope.data_source.type, value);
 				
@@ -307,7 +323,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				}
 			}
 		
-		if($scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
+		if($scope.type == "chart-line" || $scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
 			$scope.subdata.labels = []
 			$scope.subdata.points = []
 			
@@ -388,15 +404,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		        }]}
 			};
 			
-			if($scope.type == "chart-bar") {
+			if($scope.type == "chart-bar" || $scope.type == "chart-line") {
 				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
 				$scope.subdata.options.legend.display = $scope.subdata.series.length > 0;
 				
-				if($scope.stacked)
+//				if($scope.stacked){
 					if($scope.data_source.max) {
-//						console.log("MAX VALUE", $scope.data_source.max);
 						$scope.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.data_source.max);
-				}
+					}
+					if($scope.data_source.min) {
+						$scope.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.data_source.min);
+					}
+//				}
 			}
 			else {
 				$scope.subdata.points = $scope.subdata.points[0];
@@ -524,7 +543,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
 		}
 		else if($scope.action == "window") {
-			console.log("Opening a new window with data", $scope.card);
+			console.log("Opening a new window with data", $scope);
 			
 			$scope.inputData = $scope.card;
 			$window.parentScope = $scope;
