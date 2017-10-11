@@ -600,20 +600,30 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		else
 		{
-			console.log("CLICK", evt);
-			var value = $scope.subdata.items[evt[0]._index][0];
-			console.log("CLICK EVENT", evt, value);
+			var value = undefined;
+			
+			if(evt){
+				console.log("CLICK", evt);
+				value = $scope.subdata.items[evt[0]._index][0];
+				console.log("CLICK EVENT", evt, value);
+			}
+			else {
+				console.log("CLICK", $scope);
+				value = $scope.data_source.value;
+			}
 			
 			var listener = $scope.data_source.onClick;
 			if(listener && listener.action == "write") {
-				$scope.$apply(function() {
-					console.log("[4] GLOBAL:", dataService);
-//					dataService.global[listener.key] = listener.value || value.id || value;
-//					dataService.global[listener.key + "_value"] = value.id || value;
-					dataService.global[listener.key] = value;
+//				$scope.$apply(function() {
+					console.log("[4] GLOBAL:", dataService, listener, value);
+					
+					// TODO: decide which one(s) to keep
+					dataService.global[listener.key] = listener.value || value.id || value;
+					dataService.global[listener.key + "_value"] = value.id || value.label || value;
+//					dataService.global[listener.key] = value;
 					
 					console.log("[4] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ", dataService.global[listener.key], dataService.global);
-			    });
+//			    });
 			}
 		}
 		
