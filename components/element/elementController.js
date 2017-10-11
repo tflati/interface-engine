@@ -95,6 +95,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		if($scope.data_source && $scope.data_source.onChange){
+			console.log("ANALYZING ON CHANGE", $scope.data_source.onChange);
+			
 			var listener = $scope.data_source.onChange;
 			if(listener.action == "write") {
 				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.data_source);
@@ -182,6 +184,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			return "";
 		}
 		var templates = $scope.data_source.templates;
+		console.log("GET_URL TEMPLATES", templates);
 		
 		var url = $scope.data_source.url;
 		if(!templates) return url;
@@ -197,9 +200,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				var value = undefined;
 				if(template.key) value = dataService.global[template.key];
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
-				if(value == undefined || value == "") return undefined;
+				if(value == undefined || value == "") {
+					console.log("GET_URL MID ERROR", dataService);
+					return undefined;
+				}
 				
-				console.log("GET URL", $scope.data_source.type, value);
+				console.log("GET URL MID", $scope.data_source.type, value);
 				
 				if(value.label) value = value.id; // MODIFIED
 				if(angular.isString(value)) value = value.replace("/", "");
@@ -209,7 +215,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				finalUrl = finalUrl.replace(template.template, value);
 			}
 			
-			console.log("GET_URL", url, finalUrl);
+			console.log("GET_URL FINAL", url, finalUrl);
 			
 			return finalUrl;
 		}

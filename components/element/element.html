@@ -23,8 +23,9 @@
 
 <iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}"></iframe>
 
-<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none; background-color: {{color}}" ng-click="onClick()">
-	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" style="color: {{data_source.color}}"></i>
+<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none; background-color: {{color}}" ng-click="onClick()" title="{{title}}">
+	<i ng-if="data_source.icon" class="fa {{data_source.icon}} {{data_source.modifiers}}" style="color: {{data_source.color}}"></i>
+	<img ng-if="data_source.image" ng-src="{{data_source.image}}" height="{{data_source.height}}" style="vertical-align: middle;">
 	{{label}}
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
