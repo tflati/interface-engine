@@ -2,14 +2,14 @@
 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
 </div>
 
-<div ng-if="type == 'text'" ng-bind-html="label"></div>
-<p    ng-if="type == 'paragraph' && inline != 'true'" ng-bind-html="data_source.value"></p>
-<span ng-if="type == 'paragraph' && inline == 'true'" ng-bind-html="data_source.value" style="vertical-align: middle;"></span>
+<div ng-if="field.type == 'text'" ng-bind-html="field.label"></div>
+<p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
+<span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
-<img ng-if="type == 'image'" style="width:{{data_source.width || 'auto'}}; margin: {{data_source.margin || '0px'}}; vertical-align: middle;" ng-src="{{data_source.url}}"></img>
+<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}"></img>
 
-<div ng-if="type == 'chips'">
-	<md-chips ng-model="items" readonly="true" md-removable="false" style="display: inline-block;">
+<div ng-if="field.type == 'chips'">
+	<md-chips ng-model="field.items" readonly="true" md-removable="false" style="display: inline-block;">
       <md-chip-template custom-chip>
         <span style="color: {{$chip.color}}">
           <span ng-if="$chip.key"><strong>{{$chip.key}}</strong>:</span>
@@ -19,87 +19,89 @@
     </md-chips>
 </div>
 
-<md-chip ng-if="type == 'chip'">{{subdata.label}}</md-chip>
+<md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip>
 
-<iframe ng-if="type == 'iframe'" allowfullscreen src="{{trustSrc(data_source.url)}}" width="{{width || '100%'}}" height="{{height || '100%'}}"></iframe>
+<iframe ng-if="field.type == 'iframe'" allowfullscreen src="{{trustSrc(field.data.url)}}" width="{{field.width || '100%'}}" height="{{field.height || '100%'}}"></iframe>
 
-<md-button ng-if="type == 'button'" class="md-primary md-raised" style="text-decoration: none; background-color: {{color}}" ng-click="onClick()" title="{{title}}">
-	<i ng-if="data_source.icon" class="fa {{data_source.icon}} {{data_source.modifiers}}" style="color: {{data_source.color}}"></i>
-	<img ng-if="data_source.image" ng-src="{{data_source.image}}" height="{{data_source.height}}" style="vertical-align: middle;">
-	{{label}}
+<md-button ng-if="field.type == 'button' && field.action != 'download'" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}">
+	<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
+	<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
+	{{field.label}}
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
 
-<hr ng-if="type == 'divider'" class="divider">
+<form ng-if="field.type == 'button' && field.action == 'download'" method="get" action="{{field.url}}">
+	<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{field.label}}</md-button>
+</form>
 
-<div ng-if="type == 'spacer'" class="spacer"></div>
+<hr ng-if="field.type == 'divider'" class="divider">
 
-<span ng-if='type == "icon"' style="padding: 5px;">
-	<i class="fa {{data_source.icon}} {{data_source.modifiers}}" aria-label="{{data_source.title}}" title="{{data_source.title}}" style="color: {{data_source.color}}"></i>
+<div ng-if="field.type == 'spacer'" class="spacer"></div>
+
+<span ng-if='field.type == "icon"' style="padding: 5px;">
+	<i class="fa {{field.data.icon}} {{field.data.modifiers}}" aria-label="{{field.data.title}}" title="{{field.data.title}}" style="color: {{field.data.color}}"></i>
 </span>
 
-<div ng-if="type == 'bullet_list'">
+<div ng-if="field.type == 'bullet_list'">
 	<ul>
-		<li ng-repeat="item in data_source track by $index">
+		<li ng-repeat="item in field.data track by $index">
 			<p ng-bind-html="item"></p>
 		</li>
 	</ul>
 </div>
 
-<div ng-if="type == 'table'" style="overflow: auto;">
+<div ng-if="field.type == 'table'" style="overflow: auto;">
 
 	<table md-table md-row-select multiple>
 		<tbody md-body>
 			<thead md-head>
 				<tr md-row md-auto-select>
-					<th ng-switch="field.type" style="text-align: {{alignment}}; overflow-wrap: break-word; padding-right: 10px;" md-cell md-column ng-repeat="field in subdata.header track by $index">
-						<span ng-switch-when="undefined">{{field}}</span>
+					<th
+						ng-repeat="f in field.subdata.header track by $index"
+						md-cell md-column
+						ng-switch="f.type" style="text-align: {{f.alignment}}; overflow-wrap: break-word; padding-right: 10px;"
+						>
+						<span ng-switch-when="undefined">{{f}}</span>
 						<div ng-switch-default>
-<!-- 							<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'position': 'top-center', 'verticalOffset': 10}"> -->
-<!-- 								<div ng-dropover-contents class="tooltip-container"> -->
-<!-- 							      <div ng-bind="field.tooltip" class="custom-tooltip"></div> -->
-<!-- 							    </div> -->
-								<p title="{{field.tooltip}}" ng-if='field.type == "text"' ng-bind-html="field.label">
-								</p>
-<!-- 							</div> -->
+							<p title="{{f.tooltip}}" ng-if='f.type == "text"' ng-bind-html="f.label"></p>
 						</div>
 					</th>
 				</tr>
 			</thead>
-			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
-              <td md-cell ng-switch="field.type" ng-repeat="field in item track by $index" style="text-align: {{field.text_align}};">
+			<tr md-row md-auto-select ng-repeat="item in field.subdata.items track by $index">
+              <td md-cell ng-switch="f.type" ng-repeat="f in item track by $index" style="text-align: {{f.text_align}};">
                 <span ng-switch-when="undefined">
-                	<span ng-if="field.label">{{field.label}}</span>
-              		<span ng-if="!field.label">{{field}}</span>
+                	<span ng-if="f.label">{{f.label}}</span>
+              		<span ng-if="!f.label">{{f}}</span>
               	</span>
               	
                 <div ng-switch-default>
                 
 <!--                 	flex="{{element.width || '100'}}" -->
-                	<div ng-if="field.type == 'multi'" layout="{{field.layout || 'column'}}" layout-align="{{field.align || 'start start'}}">
-						<element ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
+                	<div ng-if="f.type == 'multi'" layout="{{f.layout || 'column'}}" layout-align="{{f.align || 'start start'}}">
+						<element ng-repeat="element in f.subdata" ng-controller="elementController" ng-init="init(element)">
 						</element>
 					</div>
 					
-					<span ng-if='field.type == "icon"' style="padding: 5px;">
-						<i class="fa {{field.data_source.icon}} {{field.data_source.modifiers}}" aria-label="{{field.data_source.title}}" title="{{field.data_source.title}}" style="color: {{field.data_source.color}}"></i>
+					<span ng-if='f.type == "icon"' style="padding: 5px;">
+						<i class="fa {{f.data.icon}} {{f.data.modifiers}}" aria-label="{{f.data.title}}" title="{{f.data.title}}" style="color: {{f.data.color}}"></i>
 					</span>
 					
 <!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
-					<p ng-if='field.type == "text"' style="width: {{field.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="field.label"></p>
+					<p ng-if='f.type == "text"' style="width: {{f.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="f.label"></p>
                 
-<!--                 	<md-button ng-if='field.type == "button" && field.action == "dialog"' ng-click="onClick()" class="md-raised md-primary">{{field.label}}</md-button> -->
+<!--                 	<md-button ng-if='field.field.type == "button" && field.action == "dialog"' ng-click="onClick()" class="md-raised md-primary">{{field.label}}</md-button> -->
                 	
-                	<element ng-controller="elementController" ng-if='field.type == "button" && (field.action == "window" || field.action == "dialog")' ng-init="init(field)"></element>
+                	<element ng-controller="elementController" ng-if='f.type == "button" && (f.action == "window" || f.action == "dialog")' ng-init="init(f)"></element>
 
-					<a ng-if="field.type == 'link'" title="{{field.title}}" target="{{field.target}}" ng-href="{{field.url}}" ng-bind="field.label"></a>
+					<a ng-if="f.type == 'link'" title="{{f.title}}" target="{{f.target}}" ng-href="{{f.url}}" ng-bind="f.label"></a>
                 	
-                	<form ng-if='field.type == "button" && field.action == "download"' method="get" action="{{field.url}}">
-                		<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{label}}</md-button>
+                	<form ng-if='f.type == "button" && f.action == "download"' method="get" action="{{f.url}}">
+                		<md-button type="submit" title="{{f.title}}" class="md-raised md-primary">{{label}}</md-button>
                 	</form>
                 	
-              		<a download	ng-if='field.type == "download"' title="{{field.title}}" href="{{field.url}}" target="_blank">
-              			<img ng-if="field.icon !== undefined" class="icon" ng-src="{{field.icon}}"/>{{field.label}}
+              		<a download	ng-if='f.type == "download"' title="{{f.title}}" href="{{f.url}}" target="_blank">
+              			<img ng-if="f.icon !== undefined" class="icon" ng-src="{{f.icon}}"/>{{f.label}}
               		</a>
               		
                 </div>
@@ -125,15 +127,15 @@
 <!-- 	 </table> -->
 </div>
 
-<div ng-if="type == 'two-column-table'" style="max-height: 500px; overflow: auto;">
+<div ng-if="field.type == 'two-column-table'" style="max-height: 500px; overflow: auto;">
 	<table md-table md-row-select multiple>
 		<tbody md-body>
 			<thead md-head>
-				<tr ng-if="subdata.labels" md-row md-auto-select>
-					<th md-column ng-repeat="label in subdata.labels"><span>{{label}}</span></th>
+				<tr ng-if="field.subdata.labels" md-row md-auto-select>
+					<th md-column ng-repeat="label in field.subdata.labels"><span>{{label}}</span></th>
 				</tr>
 			</thead>
-			<tr md-row md-auto-select ng-repeat="item in subdata.header track by $index">
+			<tr md-row md-auto-select ng-repeat="item in field.subdata.header track by $index">
 				<td md-cell style="font-weight: bold;">
 					<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
 						<div ng-show="item.tooltip" ng-dropover-contents class="tooltip-container">
@@ -143,16 +145,16 @@
 						<span ng-if='item.type != "text"' ng-bind-html="item"></span>
 					</div>
 				</td>
-				<td md-cell style="text-align: right;"><span>{{subdata.items[0][$index]}}</span></td>
+				<td md-cell style="text-align: right;"><span>{{field.subdata.items[0][$index]}}</span></td>
 			</tr>
 		</tbody>
 	 </table>
 </div>
 
-<div ng-if="type == 'list'" style="max-height: 300px; overflow: auto;">
+<div ng-if="field.type == 'list'" style="max-height: 300px; overflow: auto;">
 	<table md-table md-row-select multiple>
 		<tbody md-body>
-			<tr md-row md-auto-select ng-repeat="item in subdata.items track by $index">
+			<tr md-row md-auto-select ng-repeat="item in field.subdata.items track by $index">
 				<td md-cell style="font-weight: bold;"><span>{{($index+1) + '.'}}</span></td>
 				<td md-cell><span>{{item}}</span></td>
 			</tr>
@@ -160,71 +162,71 @@
 	</table>
 </div>
 
-<div ng-if="type == 'chart-pie'">
-	<p ng-bind="title"></p>
+<div ng-if="field.type == 'chart-pie'">
+	<p ng-bind="field.title"></p>
 	<canvas
 		class="chart chart-pie"
-		chart-data="subdata.points"
-		chart-labels="subdata.labels"
-		chart-options="subdata.options"
+		chart-data="field.subdata.points"
+		chart-labels="field.subdata.labels"
+		chart-options="field.subdata.options"
 		chart-click="onClick"
-		chart-colors="subdata.colors"
+		chart-colors="field.subdata.colors"
 		>
 	</canvas>
 </div>
 
 
-<div ng-if="type == 'chart-doughnut'">
+<div ng-if="field.type == 'chart-doughnut'">
 	<canvas
 		class="chart chart-doughnut"
-		chart-data="subdata.points"
-		chart-labels="subdata.labels"
-		chart-options="subdata.options"
+		chart-data="field.subdata.points"
+		chart-labels="field.subdata.labels"
+		chart-options="field.subdata.options"
 		chart-click="onClick"
 		>
 	</canvas>
 </div>
 
-<div ng-if="type == 'chart-bar'">
+<div ng-if="field.type == 'chart-bar'">
 	<canvas
 		class="chart chart-bar"
-		chart-data="subdata.points"
-		chart-labels="subdata.labels"
-		chart-series="subdata.series"
+		chart-data="field.subdata.points"
+		chart-labels="field.subdata.labels"
+		chart-series="field.subdata.series"
 		chart-click="onClick"
-		chart-options="subdata.options"
+		chart-options="field.subdata.options"
 		>
 	</canvas>
 </div>
 
-<div ng-if="type == 'chart-line'">
+<div ng-if="field.type == 'chart-line'">
 	<canvas
 		class="chart chart-line"
-		chart-data="subdata.points"
-		chart-labels="subdata.labels"
-		chart-series="subdata.series"
+		chart-data="field.subdata.points"
+		chart-labels="field.subdata.labels"
+		chart-series="field.subdata.series"
 		chart-click="onClick"
-		chart-options="subdata.options"
+		chart-options="field.subdata.options"
 		>
 	</canvas>
 </div>
 
-<div ng-if="type == 'paginated-table'">
+<div ng-if="field.type == 'paginated-table'">
 	<md-table-container>
-	  <table md-table ng-model="selected" md-progress="promise">
+	  <table md-table ng-model="field.selected" md-progress="promise">
 	    <thead md-head>
 <!-- 	      <th md-column style="text-align: center; padding-bottom:20px;"> -->
 <!-- 	      Line no. -->
 <!-- 	      </th> -->
-	      <th md-column style="text-align: center; padding-bottom:20px;" ng-repeat="col in subdata.header">
+	      <th md-column style="text-align: center; padding-bottom:20px;" ng-repeat="col in field.subdata.header">
 	      	<span>{{col}}</span>
 	      </th>
 	    </thead>
 	    <tbody md-body>
-	      <tr md-row md-auto-select ng-repeat="row in subdata.items track by $index">
+	      <tr md-row md-auto-select ng-repeat="row in field.subdata.items track by $index">
 <!-- 	        <td md-cell style="text-align: center; padding: 20px;"><b>{{(query.page-1)*query.limit + $index +1}}</b></td> -->
-			<td md-cell style="text-align: center;" ng-repeat="field in row track by $index">
-				<span ng-if="!url">{{field}}</span>
+			<td md-cell style="text-align: center;" ng-repeat="f in row track by $index">
+				<span ng-if="!field.url">{{f}}</span>
 			</td>
 		  </tr>
 	    </tbody>
@@ -240,82 +242,117 @@
 	</md-table-pagination>
 </div>
 
-<div ng-if="type == 'slider'">
+<div ng-if="field.type == 'slider'">
 	<div>
-		<p style="display: inline-block;" ng-bind="label"></p>:
-		<span ng-bind="data_source.value"></span>
+		<p style="display: inline-block;" ng-bind="field.label"></p>:
+		<span ng-bind="field.data.value"></span>
 	</div>
 	<md-slider-container>
-		<md-slider	step="{{data_source.step}}"
+		<md-slider	step="{{field.data.step}}"
 					md-discrete
 					class="md-primary"
 					flex
-					min="{{data_source.min}}"
-					max="{{data_source.max}}"
-					ng-model="data_source.value"
-					aria-label="{{label}}"
-					ng-change="onChange(data_source.value)"
+					min="{{field.data.min}}"
+					max="{{field.data.max}}"
+					ng-model="field.data.value"
+					aria-label="{{field.label}}"
+					ng-change="onChange(field.data.value)"
 					>
 		</md-slider>
 	</md-slider-container>
 </div>
 
 <!-- words="[{text: 'Lorem', weight: 13}, {text: 'Ipsum', weight: 10.5}, {text: 'Dolor', weight: 9.4}, {text: 'Sit', weight: 8}, {text: 'Amet', weight: 6.2}, {text: 'Consectetur', weight: 5}, {text: 'Adipiscing', weight: 5}]" -->
-<div ng-if="type == 'cloud'" align="center" ng-controller="cloudController">
+<div ng-if="field.type == 'cloud'" align="center" ng-controller="cloudController">
 	<jqcloud
-		words="subdata"
-		width="{{width}}"
-		height="{{height}}"
-		steps="{{steps}}">
+		words="field.subdata"
+		width="{{field.width}}"
+		height="{{field.height}}"
+		steps="{{field.steps}}">
 	</jqcloud>
 </div>
 
-<div ng-if="type == 'tree'" ng-controller="treeController" style="overflow: scroll;">
+<div ng-if="field.type == 'tree'" ng-controller="treeController" style="overflow: scroll;">
 	<svg id="tree"></svg>
 </div>
 
-<div ng-if="type == 'circos'" ng-controller="circosController">
+<div ng-if="field.type == 'circos'" ng-controller="circosController">
 	<div align="center" style="font-size: 0.5em;" id="biocircos" ng-show="!sending"></div>
 </div>
 
-<div class="container well" ng-if="type == 'venn'">
-	<div venn="subdata"></div>
+<div class="container well" ng-if="field.type == 'venn'">
+	<div venn="field.subdata"></div>
 </div>
 
-<md-input-container class="md-input-has-placeholder" ng-if="['select', 'checkbox', 'textarea', 'autocomplete'].indexOf(type) !== -1">
-	<md-content ng-if="type != 'autocomplete'">
-		<label ng-if="type != 'checkbox'" ng-bind="data_source.label"></label>
-		
-		<input ng-if="type != 'choice' && type != 'textarea' && type != 'select' && type != 'autocomplete' && type != 'checkbox'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}" type="{{type}}"/>
+<!-- <p ng-bind="field | json"></p> -->
 
-		<textarea ng-if="type == 'textarea'" placeholder="{{placeholder}}" ng-model="data_source.value" ng-value="{{data_source.default}}"></textarea>
+<md-input-container class="md-input-has-placeholder" ng-if="field.subtype == 'form'">
+
+	<md-content ng-if="field.type != 'autocomplete'">
+	
+		<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
+		
+		<!-- Simple text -->
+		<input ng-if="field.type == 'text' || field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
+
+		<!-- Textarea -->
+		<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" ng-required="{{field.required}}"></textarea>
 		
 		<!-- Select simple -->
-		<md-select ng-model="data_source.value" ng-if="type == 'select' && (!data_source.multiple || data_source.multiple == false)" ng-change="onChange(data_source.value)" ng-model-options="{trackBy: '$value.id'}">
-			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option>
+		<md-select
+			ng-model-options="{trackBy: '$value.id'}"
+			ng-model="field.data.value"
+			ng-change="onChange(field.data.value)"
+			ng-if="field.type == 'select' && (!field.data.multiple || field.data.multiple == false)"
+			ng-required="{{field.required}}"
+		>
+<!-- 			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option> -->
+			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">
+				<div ng-if="value.label" style="padding-bottom: 5px; display: table;">
+					<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
+						<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
+					</div>
+					<div style="overflow: hidden; display: table-cell;">
+						<div ng-if="value.label">{{value.label}}</div>
+						<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
+					</div>
+				</div>
+				<span ng-if="!value.label">{{value}}</span>
+			</md-option>
 		</md-select>
 		
 		<!-- Select multiple -->
-		<md-select multiple ng-model="data_source.value" ng-if="type == 'select' && data_source.multiple && data_source.multiple == true" ng-model-options="{trackBy: '$value.id'}">
-			<md-option ng-value="value" ng-repeat="value in subdata track by $index">{{value}}</md-option>
+		<md-select multiple
+			ng-if="field.type == 'select' && field.data.multiple && field.data.multiple == true"
+			ng-model="field.data.value"
+			ng-model-options="{trackBy: '$value.id'}"
+			ng-required="{{field.required}}"
+			>
+			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">{{value}}</md-option>
 		</md-select>
 		
 		<!-- Checkbox (simple) -->
-		<md-checkbox ng-if="type == 'checkbox' && !subdata" ng-model="data_source.value" ng-checked="{{checked}}">
-			{{label}}
+		<md-checkbox ng-if="field.type == 'checkbox' && field.data.value != undefined" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
+			{{field.label}}
 		</md-checkbox>
 		
 		<!-- Checkbox (group) -->
-		<fieldset ng-if="type == 'checkbox' && subdata != undefined">
+		<fieldset ng-if="field.type == 'checkbox' && field.data.value == undefined" ng-required="{{field.required}}">
 			<legend>{{label}}</legend>
-         	<md-checkbox ng-checked="exists(value, data_source)" ng-click="toggle(value, data_source)" ng-repeat="value in subdata track by $index">
+         	<md-checkbox ng-checked="exists(value, field.data)" ng-click="toggle(value, field.data)" ng-repeat="value in field.subdata track by $index">
 			{{value}}
             </md-checkbox>
         </fieldset>
-		
+        
 	</md-content>
-	<md-content ng-if="type == 'autocomplete'" class="md-input-has-placeholder" ng-controller="autocompleteController as actrl" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}">
-		<label ng-bind="data_source.label"></label>
+	
+	<md-content ng-if="field.type == 'autocomplete'"
+		class="md-input-has-placeholder"
+		ng-controller="autocompleteController as actrl"
+		ng-disabled="{{field.disabled}}"
+		ng-required="{{field.required}}">
+		
+		<label ng-bind="field.label"></label>
 		
 		<div ng-if="sending" style="text-align: center; color: cadetblue;">
 			<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
@@ -324,14 +361,15 @@
 		<md-autocomplete
 		      md-select-on-match
 			  md-match-case-insensitive
-			  placeholder="{{data_source.label}}"
+			  placeholder="{{field.label}}"
 	          md-search-text="actrl.searchText"
-	          md-selected-item="data_source.value"
+	          md-selected-item="field.data.value"
 	          md-selected-item-change="actrl.selectedItemChange(item)"
 	          md-items="item in actrl.querySearch(actrl.searchText)"
 	          md-item-text="item.label"
 	          md-min-length="0"
 	          style="min-width: 800px"
+	          ng-required="{{field.required}}"
 	        >
 	        <md-item-template>
 	        
@@ -357,7 +395,7 @@
 <!-- 				</div> -->
 	        </md-item-template>
 	        <md-not-found>
-				<span ng-if="!sending">No items matching "{{actrl.searchText}}" were found. {{field.values.length}}</span>
+				<span ng-if="!sending">No items matching "{{actrl.searchText}}" were found.</span>
 	         	<span ng-if="sending">
 	         		<i class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 	         		Loading data...
@@ -368,7 +406,7 @@
 </md-input-container>
 
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
-<div ng-if="type == 'multi'" layout="row" layout-align="start center" layout-wrap>
-	<element flex="{{element.width}}" ng-repeat="element in subdata" ng-controller="elementController" ng-init="init(element)">
+<div ng-if="field.type == 'multi'" layout="row" layout-align="start center" layout-wrap>
+	<element flex="{{element.width}}" ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

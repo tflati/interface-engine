@@ -1,6 +1,6 @@
 app.controller("elementController", function($scope, $sce, $http, $window, $mdDialog, dataService, messageService){
 	
-	$scope.subdata = [];
+//	$scope.subdata = [];
 	$scope.sending = false;
 
 	$scope.init = function(data){
@@ -9,48 +9,51 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 //		$scope.field = data;
 		
-		$scope.type = data.type;
-		$scope.variable_value = data.variable_value;
-		$scope.disabled = data.disabled;
-		$scope.action = data.action;
-		$scope.card = data.card;
-		$scope.alignment = data.alignment;
-		$scope.key = data.key;
-		$scope.stacked = data.stacked;
-		$scope.showLegend = data.showLegend;
-		$scope.title = data.title;
-		$scope.label = data.label;
-		$scope.color = data.color;
-		$scope.data_source = data.data;
-		$scope.items = data.items;
-		$scope.numbered = data.numbered;
-		$scope.width = data.width;
-		$scope.height = data.height;
-		$scope.inline = data.inline;
-		$scope.subdata = data.subdata || [];
+		$scope.field = data;
 		
-//		console.log("INIT ELEMENT METADATA: ", data.label, data, $scope.data_source, $scope.subdata);
+//		$scope.field.type = data.type;
+//		$scope.variable_value = data.variable_value;
+//		$scope.disabled = data.disabled;
+//		$scope.action = data.action;
+//		$scope.card = data.card;
+//		$scope.alignment = data.alignment;
+//		$scope.key = data.key;
+//		$scope.stacked = data.stacked;
+//		$scope.showLegend = data.showLegend;
+//		$scope.title = data.title;
+//		$scope.label = data.label;
+//		$scope.color = data.color;
+//		$scope.items = data.items;
+//		$scope.numbered = data.numbered;
+//		$scope.width = data.width;
+//		$scope.height = data.height;
+//		$scope.inline = data.inline;
+//		$scope.field.subdata = data.subdata || [];
 		
-		if($scope.data_source && $scope.data_source.value && $scope.data_source.key)
-			dataService.global[$scope.data_source.key] = $scope.data_source.value;
+//		$scope.field.data = data.data;
 		
-		if($scope.type != "image" && $scope.type != "iframe")
+//		console.log("INIT ELEMENT METADATA: ", data.label, data, $scope.field.data, $scope.subdata);
+		
+//		if($scope.field.data && $scope.field.data.value && $scope.field.data.key)
+//			dataService.global[$scope.field.data.key] = $scope.field.data.value;
+		
+		if($scope.field.type != "image" && $scope.field.type != "iframe")
 			$scope.update($scope.get_url());
 		
-		if($scope.data_source != undefined){
+		if($scope.field.data != undefined){
 			
 			var keys = [];
-			if($scope.data_source.key) keys.push($scope.data_source.key);
+			if($scope.field.data.key) keys.push($scope.field.data.key);
 			
-			for(index in $scope.data_source.templates){
+			for(index in $scope.field.data.templates){
 				
-				var template = $scope.data_source.templates[index];
-				console.log("TEMPLATE2", $scope.type, data, template);
+				var template = $scope.field.data.templates[index];
+				console.log("TEMPLATE2", $scope.field.type, data, template);
 				
 				if(template.key && keys.indexOf(template.key) == -1) keys.push(template.key);
 			}
 			
-			console.log("KEYS", $scope.type, data, keys);
+			console.log("KEYS", $scope.field.type, data, keys);
 			
 			for(index in keys)
 			{
@@ -58,7 +61,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				
 				console.log("ADDING WATCH", key, dataService, dataService.global[key], $scope);
 				
-				if(data.data && data.data.variable_value)
+				if($scope.field.data && $scope.field.data.variable_value)
 					$scope.replaceTemplates();
 				
 //				$scope.$watch(function(){return dataService.global["total_fusion_events_per_cell_line"];}, function(newValue, oldValue) {
@@ -74,50 +77,50 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    if (newValue != oldValue){
 				    	
 				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
-				    	$scope.data_source.value = newValue.label; // MODIFIED
+				    	$scope.field.data.value = newValue.label || newValue;
 				    	
-//				    	if(! $scope.data_source.url ) {
-//				    		$scope.data_source.value = newValue;
+//				    	if(! $scope.field.data.url ) {
+//				    		$scope.field.data.value = newValue;
 //				    	}
 //				    	else
-				    	if($scope.data_source && $scope.data_source.onChange != "nothing" )
+				    	if($scope.field.data && $scope.field.data.onChange != "nothing" )
 				    		$scope.update($scope.get_url());
 				    	
-				    	if($scope.data_source.templates)
+				    	if($scope.field.data.templates)
 				    		$scope.replaceTemplates();
 				    }
 				});
 			}
 			
-			if(! $scope.data_source.url && $scope.data_source.values ) {
-				$scope.subdata = $scope.data_source.values;
-			}
+//			if(! $scope.field.data.url && $scope.field.data.values ) {
+//				$scope.field.subdata = $scope.field.data.values;
+//			}
 		}
 		
-		if($scope.data_source && $scope.data_source.onChange){
-			console.log("ANALYZING ON CHANGE", $scope.data_source.onChange);
+		if($scope.field.data && $scope.field.data.onChange){
+			console.log("ANALYZING ON CHANGE", $scope.field.data.onChange);
 			
-			var listener = $scope.data_source.onChange;
+			var listener = $scope.field.data.onChange;
 			if(listener.action == "write") {
-				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.data_source);
-				dataService.global[listener.key] = $scope.data_source.value;
-				console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.data_source.value, "real value: ", dataService.global[listener.key]);
+				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.field.data);
+				dataService.global[listener.key] = $scope.field.data.value;
+				console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
 			}
 		}
 		
-		if($scope.data_source && $scope.data_source.checked == true) {
-			console.log("INIT CHECKBOX", data.label, $scope.data_source.checked, $scope.data_source);
-			for(var i=0; i<$scope.data_source.values.length; i++)
-				$scope.set($scope.data_source.values[i], $scope.data_source);
+		if($scope.field.data && $scope.field.data.checked == true) {
+			console.log("INIT CHECKBOX", data.label, $scope.field.data.checked, $scope.field.data);
+			for(var i=0; i<$scope.field.subdata.length; i++)
+				$scope.set($scope.field.subdata[i], $scope.field.data);
 		}
 		
-		if(data.subdata)
+		if($scope.field.subdata)
 			$scope.convert();
 		
-		if(data.data && data.data.variable_value)
+		if($scope.field.data && $scope.field.data.variable_value)
 			$scope.replaceTemplates();
 		
-		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.data_source, $scope.subdata);
+		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.field.data, $scope.field.subdata);
 	};
 	
 	$scope.exists = function(item, field){
@@ -141,7 +144,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    	field.value.push(item);
 	    }
 	    
-	    var listener = $scope.data_source.onClick;
+	    var listener = $scope.field.data.onClick;
 		if(listener.action == "write") {
 			console.log("[3] GLOBAL:", dataService);
 			dataService.global[listener.key] = field.value.join("|");
@@ -155,7 +158,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    var idx = field.value.indexOf(item);
 	    if (idx == -1){
 	    	field.value.push(item);
-		    var listener = $scope.data_source.onClick;
+		    var listener = $scope.field.data.onClick;
 			if(listener.action == "write") {
 				console.log("[3] GLOBAL:", dataService);
 				dataService.global[listener.key] = field.value.join("|");
@@ -165,10 +168,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	};
 	
 	$scope.onChange = function(newValue){
-		console.log("["+$scope.type+"] NEW VALUE: ", newValue);
+		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue);
 		
-		var listener = $scope.data_source.onChange;
-		if(listener.action == "write") {
+		var listener = $scope.field.data.onChange;
+		if(listener && listener.action == "write") {
 			console.log("[2] ONCHANGE GLOBAL:", dataService);
 			dataService.global[listener.key] = newValue.id || newValue;
 			console.log("[2] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
@@ -179,18 +182,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log("GET_URL", $scope);
 		
-		if ( $scope.data_source == undefined ) {
+		if ( $scope.field.data == undefined ) {
 			console.log("[STRANGE]", $scope);
 			return "";
 		}
-		var templates = $scope.data_source.templates;
+		var templates = $scope.field.data.templates;
 		console.log("GET_URL TEMPLATES", templates);
 		
-		var url = $scope.data_source.url;
+		var url = $scope.field.data.url;
 		if(!templates) return url;
 		else if(url != undefined){
 			
-//			if($scope.data_source.key) value = dataService.global[$scope.data_source.key];
+//			if($scope.field.data.key) value = dataService.global[$scope.field.data.key];
 			
 			var finalUrl = url;
 			for (index in templates)
@@ -205,7 +208,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					return undefined;
 				}
 				
-				console.log("GET URL MID", $scope.data_source.type, value);
+				console.log("GET URL MID", $scope.field.data.type, value);
 				
 				if(value.label) value = value.id; // MODIFIED
 				if(angular.isString(value)) value = value.replace("/", "");
@@ -223,22 +226,22 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.replaceTemplates = function(){
 		
-		if($scope.data_source.url) return;
+		if($scope.field.data.url) return;
 		
-		console.log($scope.type, $scope.data_source, "REPLACEMENT IN VALUE [0]", $scope);
+		console.log($scope.field.type, $scope.field.data, "REPLACEMENT IN VALUE [0]", $scope);
 		
-		$scope.data_source.value = $scope.data_source.variable_value;
-		var templates = $scope.data_source.templates;
+		$scope.field.data.value = $scope.field.data.variable_value;
+		var templates = $scope.field.data.templates;
 		for (index in templates)
 		{
 			var template = templates[index];
 			
-			console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.data_source.value, template, template.key, $scope.data_source.value, dataService.global[template.key], dataService.global);
+			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.field.data.value, template, template.key, $scope.field.data.value, dataService.global[template.key], dataService.global);
 			
 			var value = undefined;
 			if(template.key) value = dataService.global[template.key];
 			if(value == undefined) {
-				console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
+				console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
 				continue;
 			}
 			
@@ -246,11 +249,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			else if(value.id) value = value.id;
 			if(angular.isString(value)) value = value.replace("/", "");
 
-			console.log($scope.type, $scope.data_source, "TEMPLATE REPLACEMENT IN VALUE [2]", $scope.data_source.value, template, value);
+			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [2]", $scope.field.data.value, template, value);
 			
-			$scope.data_source.value = $scope.data_source.value.replace(template.template, value);
+			$scope.field.data.value = $scope.field.data.value.replace(template.template, value);
 		}
-		console.log($scope.type, $scope.data_source, "REPLACED", $scope.data_source.variable_value, $scope.data_source.value);
+		console.log($scope.field.type, $scope.field.data, "REPLACED", $scope.field.data.variable_value, $scope.field.data.value);
 	};
 	
 	$scope.update = function(url, fx){
@@ -258,12 +261,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if(url == undefined) return;
 		if(url == "") return;
 		
-		console.log("PREAJAX TO", url, $scope.data_source);
+		console.log("PREAJAX TO", url, $scope.field.data);
 		
 		if(url.slice(-1) != "/") url += "/";
 		url = url.replace(/#/g, "_SHARP_");
 		
-		console.log("AJAX TO", url, $scope.data_source);
+		console.log("AJAX TO", url, $scope.field.data);
 		$scope.sending = true;
 		
 		if(fx == undefined) fx = $scope.onDataReceived;
@@ -281,29 +284,29 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.onDataReceived = function(response)
 	{
 		$scope.sending = false;
-		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope, $scope.data_source);
+		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope, $scope.field.data);
 		
-		if(response.data.details) $scope.subdata = response.data.details;
-		else $scope.subdata = response.data;
+		if(response.data.details) $scope.field.subdata = response.data.details;
+		else $scope.field.subdata = response.data;
 		
 //		$scope.field.values = $scope.subdata; // ADDED
 		
 		$scope.convert();
 //		console.log("SCOPE ELEMENT DATA: ", $scope);
 		
-		if($scope.data_source.onFinish){
+		if($scope.field.data.onFinish){
 			
 			console.log("ON FINISH [1]", $scope);
 			
-			for(var i in $scope.data_source.onFinish)
+			for(var i in $scope.field.data.onFinish)
 			{
-				var condition = $scope.data_source.onFinish[i];
+				var condition = $scope.field.data.onFinish[i];
 				
 				console.log("ON FINISH [2]", $scope, condition);
 				
 				var value = "";
 				if (condition.property == "length")
-					value = $scope.subdata.items.length;
+					value = $scope.field.subdata.items.length;
 				
 				console.log("WATCH", "CHANGING GLOBAL VALUE", condition.key, value);
 				dataService.global[condition.key] = value;
@@ -318,35 +321,35 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		console.log("CONVERTING ", $scope);
 		
 		// For the select component
-		if($scope.subdata)
-			for(index in $scope.subdata){
-				d = $scope.subdata[index];
+		if($scope.field.subdata)
+			for(index in $scope.field.subdata){
+				d = $scope.field.subdata[index];
 				
-				if (d.id == $scope.data_source.value || d == $scope.data_source.value)
+				if (d.id == $scope.field.data.value || d == $scope.field.data.value)
 				{
-					$scope.data_source.value = d;
+					$scope.field.data.value = d;
 					break;
 				}
 			}
 		
-		if($scope.type == "chart-line" || $scope.type == "chart-bar" || $scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
-			$scope.subdata.labels = []
-			$scope.subdata.points = []
+		if($scope.field.type == "chart-line" || $scope.field.type == "chart-bar" || $scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
+			$scope.field.subdata.labels = []
+			$scope.field.subdata.points = []
 			
-			for(var i=0; i<$scope.subdata.header.length-1; i++)
-				$scope.subdata.points.push([]);
+			for(var i=0; i<$scope.field.subdata.header.length-1; i++)
+				$scope.field.subdata.points.push([]);
 			
-			for(var i=0; i<$scope.subdata.items.length; i++)
+			for(var i=0; i<$scope.field.subdata.items.length; i++)
 			{
-				var item = $scope.subdata.items[i];
+				var item = $scope.field.subdata.items[i];
 				
-				$scope.subdata.labels.push(item[0]);
+				$scope.field.subdata.labels.push(item[0]);
 				
-				for(var j=1; j<$scope.subdata.header.length; j++)
-					$scope.subdata.points[j-1].push(item[j]);
+				for(var j=1; j<$scope.field.subdata.header.length; j++)
+					$scope.field.subdata.points[j-1].push(item[j]);
 			}
 			
-			$scope.subdata.options = {
+			$scope.field.subdata.options = {
 				legend: { display: false },
 				tooltips: {
 				    callbacks: {
@@ -372,7 +375,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					          
 					          var finalString = key + ": " + value;
 					          
-					          if ($scope.type == "chart-pie" || $scope.type == "chart-doughnut"){
+					          if ($scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
 					        	  var allData = chartData.datasets[datasetIndex].data;
 								  var total = 0;
 								  for (var i in allData) {total += parseFloat(allData[i]);}
@@ -392,10 +395,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			    }
 			};
 			
-			if($scope.type != "chart-pie" && $scope.type != "chart-doughnut"){
-				$scope.subdata.options.scales = {
+			if($scope.field.type != "chart-pie" && $scope.field.type != "chart-doughnut"){
+				$scope.field.subdata.options.scales = {
 			        xAxes: [{
-			          stacked: $scope.stacked && $scope.stacked == true ? true : false,
+			          stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
 			          ticks: {
 			        	  maxRotation: 90,
 		                  callback: function (label) {
@@ -405,41 +408,41 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			          }
 			        }],
 			        yAxes: [{
-			          stacked: $scope.stacked && $scope.stacked == true ? true : false,
+			          stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
 			          ticks: {}
 		        }]}
 			};
 			
-			if($scope.type == "chart-bar" || $scope.type == "chart-line") {
-				$scope.subdata.series = $scope.subdata.header.slice(1, $scope.subdata.header.length);
-				$scope.subdata.options.legend.display = $scope.subdata.series.length > 0;
+			if($scope.field.type == "chart-bar" || $scope.field.type == "chart-line") {
+				$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
+				$scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
 				
 //				if($scope.stacked){
-					if($scope.data_source.max) {
-						$scope.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.data_source.max);
+					if($scope.field.data.max) {
+						$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
 					}
-					if($scope.data_source.min) {
-						$scope.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.data_source.min);
+					if($scope.field.data.min) {
+						$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
 					}
 //				}
 			}
 			else {
-				$scope.subdata.points = $scope.subdata.points[0];
-				console.log("SIMPLIFYING DATA", $scope.subdata, $scope.subdata.points);				
+				$scope.field.subdata.points = $scope.field.subdata.points[0];
+				console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
 			}
 		}
-		else if($scope.type == 'venn')
+		else if($scope.field.type == 'venn')
 		{
-			if($scope.subdata.items)
+			if($scope.field.subdata.items)
 			{
-				console.log("VENN", $scope.subdata);
+				console.log("VENN", $scope.field.subdata);
 				
 				formatted_data = [];
 				sizes = {};
-				for(var i=0; i<$scope.subdata.header.length; i++)
+				for(var i=0; i<$scope.field.subdata.header.length; i++)
 				{
-					var name = $scope.subdata.header[i];
-					var size = $scope.subdata.items[0][i];
+					var name = $scope.field.subdata.header[i];
+					var size = $scope.field.subdata.items[0][i];
 					if (name.indexOf("\u2229") !== -1) continue;
 					
 					sizes[name] = size;
@@ -447,9 +450,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				
 				console.log("VENN", sizes);
 				
-				for(var i=0; i<$scope.subdata.header.length; i++)
+				for(var i=0; i<$scope.field.subdata.header.length; i++)
 				{
-					var pieces = $scope.subdata.header[i].split("\u2229");
+					var pieces = $scope.field.subdata.header[i].split("\u2229");
 					var final_pieces = []
 					for(var j=0; j<pieces.length; j++)
 					{
@@ -457,25 +460,41 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					}
 //					if (pieces.length == 1) pieces += " ("+$scope.subdata.items[0][i]+")";
 					
-					formatted_data.push({"sets": final_pieces, "size": $scope.subdata.items[0][i]});
+					formatted_data.push({"sets": final_pieces, "size": $scope.field.subdata.items[0][i]});
 				}
 				console.log("VENN", formatted_data);
 				
-				$scope.subdata = formatted_data;
+				$scope.field.subdata = formatted_data;
+			}
+		}
+		else if($scope.field.type == 'cloud')
+		{
+			if($scope.field.subdata.items)
+			{
+				formatted_data = [];
+				
+				for(var i=0; i<$scope.field.subdata.items.length; i++)
+				{
+					var item = $scope.field.subdata.items[i];
+					formatted_data.push({"text": item[0], "weight": item[1]});
+				}
+				console.log("CLOUD", formatted_data);
+				
+				$scope.field.subdata = formatted_data;
 			}
 		}
 		
-		console.log("FINAL ELEMENT METADATA: ", $scope.type, $scope.subdata, $scope);
+		console.log("FINAL ELEMENT METADATA: ", $scope.field.type, $scope.field.subdata, $scope);
 	};
 	
 	$scope.onClick = function(evt){
 		
 		console.log("CLICKED!", evt, $scope);
 		
-		if($scope.data_source && $scope.data_source.action == "send")
+		if($scope.field && $scope.field.data.action == "send")
 		{
-			var form = dataService.global[$scope.data_source.source];
-			console.log("DATA SOURCE", $scope.data_source.source, dataService.global, form);
+			var form = dataService.global[$scope.field.data.source];
+			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
 			
 			var args = {};
 			for(var i=0; i<form.fields.length; i++)
@@ -483,11 +502,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				var field = form.fields[i];
 				console.log("FIELD", field);
 				
-				if (angular.isArray(field.value)) {
+				if (angular.isArray(field.data.value)) {
 					subargs = []
-					for (var j=0; j<field.value.length; j++){
-						var value = field.value[j].id;
-						if (value == undefined) value = field.value[j];
+					for (var j=0; j<field.data.value.length; j++){
+						var value = field.data.value[j].id;
+						if (value == undefined) value = field.data.value[j];
 						console.log("VALUE", value);
 						
 						if (value == undefined || value == "undefined" || value == "") value = "ALL";
@@ -498,10 +517,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				}
 				else {
 					var value = "ALL";
-					if (field.value && field.value.id) value = field.value.id;
-					else if (field.value) value = field.value;
+					if (field.data.value && field.data.value.id) value = field.data.value.id;
+					else if (field.data.value) value = field.data.value;
 					
-					if (field.type == "checkbox") value = field.value;
+					if (field.type == "checkbox") value = field.data.value;
 					
 					console.log("VALUE", value);
 					
@@ -513,7 +532,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			console.log("BUTTON ARGS SENT VIA POST", args);
 			
 			$scope.doing_ajax = true; 
-			$http.post($scope.data_source.onClick, args)
+			$http.post($scope.field.data.onClick, args)
 				 .then(
 					function(result){
 						
@@ -540,7 +559,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					}
 				 );
 		}
-		else if($scope.action == "link") {
+		else if($scope.field.action == "link") {
 			
 			var url = $scope.get_url();
 			
@@ -548,22 +567,22 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
 		}
-		else if($scope.action == "window") {
+		else if($scope.field.action == "window") {
 			console.log("Opening a new window with data", $scope);
 			
 			$scope.inputData = $scope.card;
 			$window.parentScope = $scope;
 			var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 		}
-		else if($scope.action == "dialog") {
+		else if($scope.field.action == "dialog") {
 			
-			var card = $scope.card;
+			var card = $scope.field.data.card;
 	        
 			console.log("I would like to open a dialog.", $scope);
 			
 	        $mdDialog.show({
 	        	multiple: true,
-	        	locals: {data: card},
+	        	locals: {data: $scope.field.data.card},
 	            controller: function DialogController($scope, $mdDialog, data) {
 	                $scope.row = [data];
 	                $scope.closeDialog = function() {
@@ -604,15 +623,15 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			if(evt){
 				console.log("CLICK", evt);
-				value = $scope.subdata.items[evt[0]._index][0];
+				value = $scope.field.subdata.items[evt[0]._index][0];
 				console.log("CLICK EVENT", evt, value);
 			}
 			else {
 				console.log("CLICK", $scope);
-				value = $scope.data_source.value;
+				value = $scope.field.data.value;
 			}
 			
-			var listener = $scope.data_source.onClick;
+			var listener = $scope.field.data.onClick;
 			if(listener && listener.action == "write") {
 //				$scope.$apply(function() {
 					console.log("[4] GLOBAL:", dataService, listener, value);
@@ -627,7 +646,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			}
 		}
 		
-//		var changeListener = $scope.data_source.onClick;
+//		var changeListener = $scope.field.data.onClick;
 //		if(changeListener.action == "write") {
 //			$scope.$apply(function() {
 //				console.log("GLOBAL:", dataService);

@@ -44,11 +44,11 @@ app.directive("myTable", function() {
 					var field = $scope.formData.fields[i];
 					console.log("FIELD", field);
 					
-					if (angular.isArray(field.value)) {
+					if (angular.isArray(field.data.value)) {
 						subargs = []
-						for (var j=0; j<field.value.length; j++){
-							var value = field.value[j].id;
-							if (value == undefined) value = field.value[j];
+						for (var j=0; j<field.data.value.length; j++){
+							var value = field.data.value[j].id;
+							if (value == undefined) value = field.data.value[j];
 							console.log("VALUE", value);
 							
 							if (value == undefined || value == "undefined" || value == "") value = "ALL";
@@ -59,11 +59,11 @@ app.directive("myTable", function() {
 					}
 					else {
 						var value = "ALL";
-						if (field.value && field.value.id) value = field.value.id;
-						else if (field.value) value = field.value;
+						if (field.data.value && field.data.value.id) value = field.data.value.id;
+						else if (field.data.value) value = field.data.value;
 						
 						if (field.type == "checkbox") {
-							value = field.value ? field.value : false;
+							value = field.data.value ? field.data.value : false;
 							if(value.value) value = value.value;
 						}
 						

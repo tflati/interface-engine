@@ -25,10 +25,10 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 		else {
 			var results = [];
 			
-			if(!query) results = $scope.field.values;
-			else if($scope.field.sending) return $scope.field.values;
+			if(!query) results = $scope.field.data.subdata;
+			else if($scope.field.sending) return $scope.field.data.subdata;
 			else {
-				results = $scope.field.values.filter(
+				results = $scope.field.data.subdata.filter(
 						function(item)
 						{
 							return angular.lowercase(item.label).indexOf(angular.lowercase(query)) >= 0;
