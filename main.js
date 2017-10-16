@@ -50,35 +50,35 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 		ngMeta.setTag(singleMeta["key"], singleMeta["value"]);
 	}
 
-	$scope.load_form = function(group, option) {
-
-		// Remove previous form inputs...
-		for (var f = 0; f < $scope.form.fields.length;) {
-			// console.log("FORM FIELD: ", f,
-			// $scope.form.fields[f]);
-
-			if ($scope.form.fields[f].parent_group_id == group.group_id) {
-				// console.log("Removing form field " + f,
-				// $scope.form.fields[f]);
-				// toRemove.push(f);
-				$scope.form.fields.splice(f, 1);
-			} else
-				f++;
-		}
-
-		// ... and add newly selected form inputs
-		if(option.form)
-		{	
-			for (var f = 0; f < option.form.fields.length; f++) {
-				// console.log("Adding form field " + f,
-				// option.form.fields[f]);
-				option.form.fields[f].parent_group_id = group.group_id;
-				var newForm = option.form.fields[f];
-
-				$scope.form.fields.push(newForm);
-			}
-		}
-	};
+//	$scope.load_form = function(group, option) {
+//
+//		// Remove previous form inputs...
+//		for (var f = 0; f < $scope.form.fields.length;) {
+//			// console.log("FORM FIELD: ", f,
+//			// $scope.form.fields[f]);
+//
+//			if ($scope.form.fields[f].parent_group_id == group.group_id) {
+//				// console.log("Removing form field " + f,
+//				// $scope.form.fields[f]);
+//				// toRemove.push(f);
+//				$scope.form.fields.splice(f, 1);
+//			} else
+//				f++;
+//		}
+//
+//		// ... and add newly selected form inputs
+//		if(option.form)
+//		{	
+//			for (var f = 0; f < option.form.fields.length; f++) {
+//				// console.log("Adding form field " + f,
+//				// option.form.fields[f]);
+//				option.form.fields[f].parent_group_id = group.group_id;
+//				var newForm = option.form.fields[f];
+//
+//				$scope.form.fields.push(newForm);
+//			}
+//		}
+//	};
 
 	$scope.inForm = function() {
 
@@ -241,36 +241,30 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 				});
 	};
 
-	/* MOVE TO FORM CONTROLLER */
-	$scope.exists = function(item, field) {
-		if (field.value == undefined) return false;
-		
-		if(field.exclusive) return field.value == item;
-		return field.value.indexOf(item) > -1;
-	};
-
-	/* MOVE TO FORM CONTROLLER */
-	$scope.toggle = function(item, field) {
-		
-		if(field.exclusive) {
-			if (field.value == item) field.value = undefined;
-			else field.value = item;
-//							if (field.value == undefined) field.value = ""
-//							if (field.value == item.value)
-//								field.value = item.value;
-//							else {
-//								field.value = item.value;
-//							}
-		}
-		else {
-			if (field.value == undefined) field.value = []
-			var idx = field.value.indexOf(item);
-			if (idx > -1)
-				field.value.splice(idx, 1);
-			else
-				field.value.push(item);
-		}
-	};
+//	/* MOVE TO FORM CONTROLLER */
+//	$scope.exists = function(item, field) {
+//		if (field.value == undefined) return false;
+//		
+//		if(field.exclusive) return field.value == item;
+//		return field.value.indexOf(item) > -1;
+//	};
+//
+//	/* MOVE TO FORM CONTROLLER */
+//	$scope.toggle = function(item, field) {
+//		
+//		if(field.exclusive) {
+//			if (field.value == item) field.value = undefined;
+//			else field.value = item;
+//		}
+//		else {
+//			if (field.value == undefined) field.value = []
+//			var idx = field.value.indexOf(item);
+//			if (idx > -1)
+//				field.value.splice(idx, 1);
+//			else
+//				field.value.push(item);
+//		}
+//	};
 
 	$rootScope.search_started = false;
 	$scope.send_query = function() {

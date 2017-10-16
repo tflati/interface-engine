@@ -10,6 +10,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //		$scope.field = data;
 		
 		$scope.field = data;
+		$scope.field.subdata = [];
 		
 //		$scope.field.type = data.type;
 //		$scope.variable_value = data.variable_value;
@@ -83,7 +84,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //				    		$scope.field.data.value = newValue;
 //				    	}
 //				    	else
-				    	if($scope.field.data && $scope.field.data.onChange != "nothing" )
+				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
 				    		$scope.update($scope.get_url());
 				    	
 				    	if($scope.field.data.templates)
@@ -92,9 +93,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				});
 			}
 			
-//			if(! $scope.field.data.url && $scope.field.data.values ) {
-//				$scope.field.subdata = $scope.field.data.values;
-//			}
+			// Necessary for checkbox
+			if(! $scope.field.data.url && $scope.field.data.values ) {
+				$scope.field.subdata = $scope.field.data.values;
+			}
 		}
 		
 		if($scope.field.data && $scope.field.data.onChange){
@@ -108,10 +110,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			}
 		}
 		
+		// Needed for checkbox initialization
 		if($scope.field.data && $scope.field.data.checked == true) {
 			console.log("INIT CHECKBOX", data.label, $scope.field.data.checked, $scope.field.data);
 			for(var i=0; i<$scope.field.subdata.length; i++)
-				$scope.set($scope.field.subdata[i], $scope.field.data);
+				$scope.toggle($scope.field.subdata[i]);
 		}
 		
 		if($scope.field.subdata)
@@ -123,49 +126,61 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.field.data, $scope.field.subdata);
 	};
 	
-	$scope.exists = function(item, field){
-		console.log("EXISTS", item, field.value, field.value == undefined ? false : field.value.indexOf(item) > -1);
-	    if(field.value == undefined) return false;
-	    return field.value.indexOf(item) > -1;
+	$scope.exists = function(item){
+//		console.log("EXISTS", item, $scope.field.data.value, $scope.field.data.value == undefined ? false : $scope.field.data.value.indexOf(item) > -1);
+	    if($scope.field.data.value == undefined) return false;
+	    return $scope.field.data.value.indexOf(item) > -1;
 	};
 	
-	$scope.toggle = function (item, field) {
-		console.log("TOGGLE", item, field.value, field.value == undefined ? field.value : field.value.indexOf(item));
-	    if(field.value == undefined) field.value = []
-	    var idx = field.value.indexOf(item);
-	    if (idx > -1) {
-	    	field.value.splice(idx, 1);
-	    	
-//	    	evt = []
-//		    evt[0]._index = idx;
-//		    $scope.onClick(evt);
-	    }
-	    else {
-	    	field.value.push(item);
-	    }
+	$scope.toggle = function (item) {
+		
+		if($scope.field.exclusive) {
+			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
+			else $scope.field.data.value = item;
+		}
+		else {
+			if ($scope.field.data.value == undefined) $scope.field.data.value = []
+			var idx = $scope.field.data.value.indexOf(item);
+			console.log("TOGGLE", item, $scope.field.data.value, idx);
+			if (idx >= 0) {
+				console.log("TOGGLE BEFORE", $scope.field.data.value);
+				$scope.field.data.value.splice(idx, 1);
+				console.log("TOGGLE AFTER", $scope.field.data.value);
+			}
+			else {
+				$scope.field.data.value.push(item);
+			}
+		}
+		
+//		console.log("TOGGLE", item, $scope.field.data.value, $scope.field.data.value == undefined ? $scope.field.data.value : $scope.field.data.value.indexOf(item));
+//	    if($scope.field.data.value == undefined) $scope.field.data.value = [];
+//	    var idx = $scope.field.data.value.indexOf(item);
+//	    if (idx > -1) $scope.field.data.value.splice(idx, 1);
+//	    else $scope.field.data.value.push(item);
 	    
 	    var listener = $scope.field.data.onClick;
 		if(listener.action == "write") {
 			console.log("[3] GLOBAL:", dataService);
-			dataService.global[listener.key] = field.value.join("|");
-			console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", field.value, "real value: ",dataService.global[listener.key]);
+			dataService.global[listener.key] = $scope.field.data.value.join("|");
+			console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
 		}
 	};
 	
-	$scope.set = function (item, field) {
-		console.log("TOGGLE", item, field.value, field.value == undefined ? field.value : field.value.indexOf(item));
-	    if(field.value == undefined) field.value = []
-	    var idx = field.value.indexOf(item);
-	    if (idx == -1){
-	    	field.value.push(item);
-		    var listener = $scope.field.data.onClick;
-			if(listener.action == "write") {
-				console.log("[3] GLOBAL:", dataService);
-				dataService.global[listener.key] = field.value.join("|");
-				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", field.value, "real value: ",dataService.global[listener.key]);
-			}
-	    }
-	};
+//	$scope.set = function (item) {
+//		console.log("TOGGLE", item, $scope.field);
+////		console.log("TOGGLE", item, field.data.value, field.data.value == undefined ? field.data.value : field.data.value.indexOf(item));
+//	    if($scope.field.data.value == undefined) $scope.field.data.value = [];
+//	    var idx = $scope.field.data.value.indexOf(item);
+//	    if (idx == -1){
+//	    	$scope.field.data.value.push(item);
+//		    var listener = $scope.field.data.onClick;
+//			if(listener.action == "write") {
+//				console.log("[3] GLOBAL:", dataService);
+//				dataService.global[listener.key] = $scope.field.data.value.join("|");
+//				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
+//			}
+//	    }
+//	};
 	
 	$scope.onChange = function(newValue){
 		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue);
@@ -203,12 +218,12 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				var value = undefined;
 				if(template.key) value = dataService.global[template.key];
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
-				if(value == undefined || value == "") {
+				if(value == undefined) { // value == ""
 					console.log("GET_URL MID ERROR", dataService);
 					return undefined;
 				}
 				
-				console.log("GET URL MID", $scope.field.data.type, value);
+				console.log("GET URL MID", $scope.field.type, value);
 				
 				if(value.label) value = value.id; // MODIFIED
 				if(angular.isString(value)) value = value.replace("/", "");
@@ -230,7 +245,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log($scope.field.type, $scope.field.data, "REPLACEMENT IN VALUE [0]", $scope);
 		
-		$scope.field.data.value = $scope.field.data.variable_value;
+		if($scope.field.data.variable_value)
+			$scope.field.data.value = $scope.field.data.variable_value;
+		
 		var templates = $scope.field.data.templates;
 		for (index in templates)
 		{
@@ -320,17 +337,17 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log("CONVERTING ", $scope);
 		
-		// For the select component
-		if($scope.field.subdata)
-			for(index in $scope.field.subdata){
-				d = $scope.field.subdata[index];
-				
-				if (d.id == $scope.field.data.value || d == $scope.field.data.value)
-				{
-					$scope.field.data.value = d;
-					break;
-				}
-			}
+		// For the select component: modified 13/10/17
+//		if($scope.field.subdata)
+//			for(index in $scope.field.subdata){
+//				d = $scope.field.subdata[index];
+//				
+//				if (d.id == $scope.field.data.value || d == $scope.field.data.value)
+//				{
+//					$scope.field.data.value = d;
+//					break;
+//				}
+//			}
 		
 		if($scope.field.type == "chart-line" || $scope.field.type == "chart-bar" || $scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
 			$scope.field.subdata.labels = []
@@ -435,7 +452,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		{
 			if($scope.field.subdata.items)
 			{
-				console.log("VENN", $scope.field.subdata);
+				console.log("VENN DATA", $scope.field.subdata);
 				
 				formatted_data = [];
 				sizes = {};
@@ -443,12 +460,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				{
 					var name = $scope.field.subdata.header[i];
 					var size = $scope.field.subdata.items[0][i];
+					console.log("VENN", name, size);
 					if (name.indexOf("\u2229") !== -1) continue;
 					
 					sizes[name] = size;
 				}
 				
-				console.log("VENN", sizes);
+				console.log("VENN SIZES", sizes);
 				
 				for(var i=0; i<$scope.field.subdata.header.length; i++)
 				{
@@ -570,19 +588,19 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		else if($scope.field.action == "window") {
 			console.log("Opening a new window with data", $scope);
 			
-			$scope.inputData = $scope.card;
+			$scope.inputData = $scope.field.card;
 			$window.parentScope = $scope;
 			var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 		}
 		else if($scope.field.action == "dialog") {
 			
-			var card = $scope.field.data.card;
+			var card = $scope.field.card;
 	        
 			console.log("I would like to open a dialog.", $scope);
 			
 	        $mdDialog.show({
 	        	multiple: true,
-	        	locals: {data: $scope.field.data.card},
+	        	locals: {data: card},
 	            controller: function DialogController($scope, $mdDialog, data) {
 	                $scope.row = [data];
 	                $scope.closeDialog = function() {

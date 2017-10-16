@@ -97,7 +97,7 @@
 					<a ng-if="f.type == 'link'" title="{{f.title}}" target="{{f.target}}" ng-href="{{f.url}}" ng-bind="f.label"></a>
                 	
                 	<form ng-if='f.type == "button" && f.action == "download"' method="get" action="{{f.url}}">
-                		<md-button type="submit" title="{{f.title}}" class="md-raised md-primary">{{label}}</md-button>
+                		<md-button type="submit" title="{{f.title}}" class="md-raised md-primary">{{f.label}}</md-button>
                 	</form>
                 	
               		<a download	ng-if='f.type == "download"' title="{{f.title}}" href="{{f.url}}" target="_blank">
@@ -332,17 +332,23 @@
 		</md-select>
 		
 		<!-- Checkbox (simple) -->
-		<md-checkbox ng-if="field.type == 'checkbox' && field.data.value != undefined" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
+		<md-checkbox ng-if="field.type == 'checkbox' && field.data.values.length == 1" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
 			{{field.label}}
 		</md-checkbox>
 		
 		<!-- Checkbox (group) -->
-		<fieldset ng-if="field.type == 'checkbox' && field.data.value == undefined" ng-required="{{field.required}}">
-			<legend>{{label}}</legend>
-         	<md-checkbox ng-checked="exists(value, field.data)" ng-click="toggle(value, field.data)" ng-repeat="value in field.subdata track by $index">
-			{{value}}
+		<fieldset ng-if="field.type == 'checkbox' && field.data.values.length > 1" ng-required="{{field.required}}">
+			<legend>{{field.label}}</legend>
+         	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value.label)" ng-click="toggle(value.label)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
+			{{value.label}}
             </md-checkbox>
         </fieldset>
+        
+		<md-radio-group ng-if="field.type == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.data.value">
+			<md-radio-button ng-click="toggle(value)" ng-repeat="value in field.data.values track by $index" name="{{field.group_id}}" ng-value="value.value" type="radio" aria-label="Multi-choice">
+				{{value.label}}
+			</md-radio-button>
+		</md-radio-group>
         
 	</md-content>
 	
