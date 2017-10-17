@@ -3,9 +3,9 @@
 	<p ng-bind="form.long_description"></p>
 </section>
 
-<section layout="column" style="padding: 0% 5% 0% 5%;">
+<section layout="row" style="padding: 0% 5% 0% 5%;">
 	
-	<md-card ng-if="!search_started" flex="{{form.width || 75}}" style="height: 100%;">
+	<md-card ng-if="!search_started" flex="{{form.width || 65}}" style="height: 100%;">
 		<md-card-title>
 			<md-card-title-text>
 		            <span class="md-headline" ng-bind="form.title || 'Search'"></span>
@@ -167,6 +167,11 @@
 		</md-card-content>
 	</md-card>
 	
+	<div flex="35" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
+		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
+		</card>
+	</div>
+	
 </section>
 
 
@@ -262,10 +267,5 @@
 			
 		</md-card-content>
 	</md-card>
-	
-	<div flex="100" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
-		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
-		</card>
-	</div>
 	
 </section>

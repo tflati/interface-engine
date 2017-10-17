@@ -10,7 +10,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //		$scope.field = data;
 		
 		$scope.field = data;
-		$scope.field.subdata = [];
+		$scope.field.subdata = data.subdata || [];
 		
 //		$scope.field.type = data.type;
 //		$scope.variable_value = data.variable_value;
@@ -60,20 +60,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			{
 				var key = keys[index];
 				
-				console.log("ADDING WATCH", key, dataService, dataService.global[key], $scope);
-				
 				if($scope.field.data && $scope.field.data.variable_value)
 					$scope.replaceTemplates();
 				
-//				$scope.$watch(function(){return dataService.global["total_fusion_events_per_cell_line"];}, function(newValue, oldValue) {
-//					if (newValue != oldValue){
-//						console.log("MANUAL WATCH", newValue, oldValue, $scope);
-//						$scope.replaceTemplates();
-//					}
-//				});
+				console.log("ADDING WATCH", $scope.field.type, $scope.field, key, dataService, dataService.global[key], $scope);
 				
 				$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
-					console.log("WATCH", key, newValue, oldValue, $scope);
+					console.log("INSIDE WATCH", key, newValue, oldValue, $scope);
 					
 				    if (newValue != oldValue){
 				    	
@@ -165,22 +158,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
 		}
 	};
-	
-//	$scope.set = function (item) {
-//		console.log("TOGGLE", item, $scope.field);
-////		console.log("TOGGLE", item, field.data.value, field.data.value == undefined ? field.data.value : field.data.value.indexOf(item));
-//	    if($scope.field.data.value == undefined) $scope.field.data.value = [];
-//	    var idx = $scope.field.data.value.indexOf(item);
-//	    if (idx == -1){
-//	    	$scope.field.data.value.push(item);
-//		    var listener = $scope.field.data.onClick;
-//			if(listener.action == "write") {
-//				console.log("[3] GLOBAL:", dataService);
-//				dataService.global[listener.key] = $scope.field.data.value.join("|");
-//				console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
-//			}
-//	    }
-//	};
 	
 	$scope.onChange = function(newValue){
 		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue);
@@ -305,6 +282,25 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		if(response.data.details) $scope.field.subdata = response.data.details;
 		else $scope.field.subdata = response.data;
+
+		for(var k in $scope.field.subdata)
+		{
+			var item = $scope.field.subdata[k];
+			if(item.id == $scope.field.value)
+			{
+				console.log("INIT FOUND", item);
+				$scope.field.data.value = item;
+				
+				var listener = $scope.field.data.onChange;
+				if(listener && listener.action == "write") {
+					console.log("[3] GLOBAL:", dataService);
+					dataService.global[listener.key] = $scope.field.data.value.id || $scope.field.data.value;
+					console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
+				}
+				
+				break;
+			}
+		}
 		
 //		$scope.field.values = $scope.subdata; // ADDED
 		
@@ -353,99 +349,112 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$scope.field.subdata.labels = []
 			$scope.field.subdata.points = []
 			
-			for(var i=0; i<$scope.field.subdata.header.length-1; i++)
-				$scope.field.subdata.points.push([]);
-			
-			for(var i=0; i<$scope.field.subdata.items.length; i++)
+			if($scope.field.subdata.items)
 			{
-				var item = $scope.field.subdata.items[i];
+				for(var i=0; i<$scope.field.subdata.header.length-1; i++)
+					$scope.field.subdata.points.push([]);
 				
-				$scope.field.subdata.labels.push(item[0]);
-				
-				for(var j=1; j<$scope.field.subdata.header.length; j++)
-					$scope.field.subdata.points[j-1].push(item[j]);
-			}
+				for(var i=0; i<$scope.field.subdata.items.length; i++)
+				{
+					var item = $scope.field.subdata.items[i];
+					
+					$scope.field.subdata.labels.push(item[0]);
+					
+					for(var j=1; j<$scope.field.subdata.header.length; j++)
+						$scope.field.subdata.points[j-1].push(item[j]);
+				}
 			
-			$scope.field.subdata.options = {
-				legend: { display: false },
-				tooltips: {
-				    callbacks: {
-				        title: function(tooltipItem, chartData) {
-//					          console.log("TITLE", tooltipItem, chartData)
-					      var item = chartData.labels[tooltipItem[0].index];
-					      
-					      if(item.label) s = item.label;
-					      else s = item;
-					      
-					      // if(item.id) s += " (ID:"+item.id+")";
-					      
-				          return s;
-				        },
-				        label: function(tooltipItem, chartData) {
-//					          console.log("LABEL", tooltipItem, chartData)
-					          var datasetIndex = tooltipItem.datasetIndex;
-					          
-					          var key = chartData.datasets[datasetIndex].label;
-					          if (key == undefined) key = chartData.labels[tooltipItem.index].label;
-					          
-					          var value = chartData.datasets[datasetIndex].data[tooltipItem.index];
-					          
-					          var finalString = key + ": " + value;
-					          
-					          if ($scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
-					        	  var allData = chartData.datasets[datasetIndex].data;
-								  var total = 0;
-								  for (var i in allData) {total += parseFloat(allData[i]);}
-								  var fraction = (value / total) * 100;
-								  
-						          // var percentage = Math.round(fraction);
-								  var percentage = fraction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping:false})
+				$scope.field.subdata.options = {
+					legend: { display: false },
+					tooltips: {
+					    callbacks: {
+					        title: function(tooltipItem, chartData) {
+	//					          console.log("TITLE", tooltipItem, chartData)
+						      var item = chartData.labels[tooltipItem[0].index];
+						      
+						      if(item.label) s = item.label;
+						      else s = item;
+						      
+						      // if(item.id) s += " (ID:"+item.id+")";
+						      
+					          return s;
+					        },
+					        label: function(tooltipItem, chartData) {
+	//					          console.log("LABEL", tooltipItem, chartData)
+						          var datasetIndex = tooltipItem.datasetIndex;
 						          
-						          console.log(total, value, fraction, percentage);
+						          var key = chartData.datasets[datasetIndex].label;
+						          if (key == undefined) key = chartData.labels[tooltipItem.index].label;
 						          
-						          finalString += " ("+percentage+"%)";
-					          }
-					          
-					          return finalString;
-					        }
-				      }
-			    }
-			};
+						          var value = chartData.datasets[datasetIndex].data[tooltipItem.index];
+						          
+						          var finalString = key + ": " + value;
+						          
+						          if ($scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
+						        	  var allData = chartData.datasets[datasetIndex].data;
+									  var total = 0;
+									  for (var i in allData) {total += parseFloat(allData[i]);}
+									  var fraction = (value / total) * 100;
+									  
+							          // var percentage = Math.round(fraction);
+									  var percentage = fraction.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2, useGrouping:false})
+							          
+							          console.log(total, value, fraction, percentage);
+							          
+							          finalString += " ("+percentage+"%)";
+						          }
+						          
+						          return finalString;
+						        }
+					      }
+				    }
+				};
 			
-			if($scope.field.type != "chart-pie" && $scope.field.type != "chart-doughnut"){
-				$scope.field.subdata.options.scales = {
-			        xAxes: [{
-			          stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
-			          ticks: {
-			        	  maxRotation: 90,
-		                  callback: function (label) {
-//							                  console.log("X AXIS", label);
-		                      return label.id;
-		                  }
-			          }
-			        }],
-			        yAxes: [{
-			          stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
-			          ticks: {}
-		        }]}
-			};
-			
-			if($scope.field.type == "chart-bar" || $scope.field.type == "chart-line") {
-				$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
-				$scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
+				if($scope.field.type != "chart-pie" && $scope.field.type != "chart-doughnut"){
+					$scope.field.subdata.options.scales = {
+				        xAxes: [{
+				          stacked: $scope.field.type == "chart-bar" && $scope.field.stacked && $scope.field.stacked == true ? true : false,
+		        		  scaleLabel: {
+								display: true,
+								labelString: $scope.field.subdata.descriptions ? $scope.field.subdata.descriptions[0] : "-",
+							},
+				          ticks: {
+				        	  maxRotation: 90,
+			                  callback: function (label) {
+//								                  console.log("X AXIS", label);
+			                      return label.label || label.id || label;
+			                  }
+				          }
+				        }],
+				        yAxes: [{
+				        	scaleLabel: {
+								display: true,
+								labelString: $scope.field.subdata.descriptions ? $scope.field.subdata.descriptions[1] : "-",
+							},
+							stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
+							ticks: {}
+			        }]}
+				};
 				
-//				if($scope.stacked){
-					if($scope.field.data.max) {
-						$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
-					}
-					if($scope.field.data.min) {
-						$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
-					}
-//				}
-			}
-			else {
-				$scope.field.subdata.points = $scope.field.subdata.points[0];
-				console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
+				if($scope.field.type == "chart-bar" || $scope.field.type == "chart-line") {
+					$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
+					$scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
+					
+	//				if($scope.stacked){
+						if($scope.field.data.max) {
+							$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
+						}
+						if($scope.field.data.min) {
+							$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
+						}
+	//				}
+				}
+				else {
+					$scope.field.subdata.points = $scope.field.subdata.points[0];
+					console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
+				}
+				
+				console.log("CHART OPTIONS", $scope.field.subdata.options);
 			}
 		}
 		else if($scope.field.type == 'venn')
@@ -663,15 +672,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //			    });
 			}
 		}
-		
-//		var changeListener = $scope.field.data.onClick;
-//		if(changeListener.action == "write") {
-//			$scope.$apply(function() {
-//				console.log("GLOBAL:", dataService);
-//				dataService.global[changeListener.key] = value;
-//				console.log("CHANGING VALUE OF VARIABLE '" + changeListener.key + "' TO " + value + " (real value: "+dataService.global[changeListener.key]+")");
-//			});
-//		}
 	};
 	
 	$scope.trustSrc = function(src) {

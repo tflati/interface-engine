@@ -332,12 +332,12 @@
 		</md-select>
 		
 		<!-- Checkbox (simple) -->
-		<md-checkbox ng-if="field.type == 'checkbox' && field.data.values.length == 1" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
+		<md-checkbox ng-if="field.type == 'checkbox' && !field.data.multiple" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
 			{{field.label}}
 		</md-checkbox>
 		
 		<!-- Checkbox (group) -->
-		<fieldset ng-if="field.type == 'checkbox' && field.data.values.length > 1" ng-required="{{field.required}}">
+		<fieldset ng-if="field.type == 'checkbox' && field.data.multiple" ng-required="{{field.required}}">
 			<legend>{{field.label}}</legend>
          	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value.label)" ng-click="toggle(value.label)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
 			{{value.label}}
@@ -374,7 +374,7 @@
 	          md-items="item in actrl.querySearch(actrl.searchText)"
 	          md-item-text="item.label"
 	          md-min-length="0"
-	          style="min-width: 800px"
+	          style="min-width: 100%"
 	          ng-required="{{field.required}}"
 	        >
 	        <md-item-template>
