@@ -421,7 +421,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				};
 			
 				if($scope.field.type != "chart-pie" && $scope.field.type != "chart-doughnut"){
-					console.log("XLABELS", $scope.field.subdata.chart_options.xlabels);
+					console.log("XLABELS", $scope.field.subdata);
 					
 					$scope.field.subdata.options.scales = {
 				        xAxes: [{
@@ -433,7 +433,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				          ticks: {
 				        	  maxRotation: 90,
 			                  callback: function (label) {
-			                	  if ($scope.field.subdata.chart_options.xlabels == false) return "";
+			                	  if ($scope.field.subdata.chart_options && $scope.field.subdata.chart_options.xlabels == false) return "";
 //								                  console.log("X AXIS", label);
 			                      return label.label || label.id || label;
 			                  }
