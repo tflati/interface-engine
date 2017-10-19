@@ -167,9 +167,11 @@
 		</md-card-content>
 	</md-card>
 	
-	<div flex="35" layout="row" style="flex-direction: row-reverse" ng-repeat="row in form.elements track by $index">
-		<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
-		</card>
+	<div flex="35" layout="column">
+		<div layout="row" ng-repeat="row in form.elements track by $index">
+			<card ng-show="show" ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
+			</card>
+		</div>
 	</div>
 	
 </section>

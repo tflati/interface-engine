@@ -53,6 +53,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				
 				if(template.key && keys.indexOf(template.key) == -1) keys.push(template.key);
 			}
+			if($scope.field.data.onChange && $scope.field.data.onChange.key != undefined && keys.indexOf($scope.field.data.onChange.key) == -1) keys.push($scope.field.data.onChange.key);
 			
 			console.log("KEYS", $scope.field.type, data, keys);
 			
@@ -63,20 +64,29 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				if($scope.field.data && $scope.field.data.variable_value)
 					$scope.replaceTemplates();
 				
-				console.log("ADDING WATCH", $scope.field.type, $scope.field, key, dataService, dataService.global[key], $scope);
+				console.log("ADDING WATCH", $scope.field.type, key, $scope.field, dataService, dataService.global[key], $scope);
 				
 				$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
-					console.log("INSIDE WATCH", key, newValue, oldValue, $scope);
+					console.log("INSIDE WATCH", $scope.field.type, key, newValue, oldValue, $scope);
 					
 				    if (newValue != oldValue){
 				    	
-				    	console.log("Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key]);
-				    	$scope.field.data.value = newValue.label || newValue;
+				    	console.log($scope.field.type, "Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
 				    	
-//				    	if(! $scope.field.data.url ) {
-//				    		$scope.field.data.value = newValue;
-//				    	}
-//				    	else
+				    	// Update of value (it might be a simple value or an object
+				    	if($scope.field.subdata && $scope.field.subdata.length > 0){
+				    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
+				    		for(var i=0; i<$scope.field.subdata.length; i++) {
+				    			var obj = $scope.field.subdata[i];
+				    			if (obj == newValue || obj.id == newValue)
+				    				$scope.field.data.value = obj;
+				    		}
+				    	}
+				    	else {
+				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue);
+				    		$scope.field.data.value = newValue.label || newValue;
+				    	}
+				    	
 				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
 				    		$scope.update($scope.get_url());
 				    	
@@ -411,16 +421,19 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				};
 			
 				if($scope.field.type != "chart-pie" && $scope.field.type != "chart-doughnut"){
+					console.log("XLABELS", $scope.field.subdata.chart_options.xlabels);
+					
 					$scope.field.subdata.options.scales = {
 				        xAxes: [{
 				          stacked: $scope.field.type == "chart-bar" && $scope.field.stacked && $scope.field.stacked == true ? true : false,
 		        		  scaleLabel: {
 								display: true,
-								labelString: $scope.field.subdata.descriptions ? $scope.field.subdata.descriptions[0] : "-",
+								labelString: $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[0] : "",
 							},
 				          ticks: {
 				        	  maxRotation: 90,
 			                  callback: function (label) {
+			                	  if ($scope.field.subdata.chart_options.xlabels == false) return "";
 //								                  console.log("X AXIS", label);
 			                      return label.label || label.id || label;
 			                  }
@@ -429,7 +442,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				        yAxes: [{
 				        	scaleLabel: {
 								display: true,
-								labelString: $scope.field.subdata.descriptions ? $scope.field.subdata.descriptions[1] : "-",
+								labelString: $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[1] : "",
 							},
 							stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
 							ticks: {}
@@ -659,17 +672,30 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			}
 			
 			var listener = $scope.field.data.onClick;
-			if(listener && listener.action == "write") {
-//				$scope.$apply(function() {
-					console.log("[4] GLOBAL:", dataService, listener, value);
+			if(listener) {
+				for(var i=0; i<listener.length; i++)
+				{
+					var actionObject = listener[i];
 					
-					// TODO: decide which one(s) to keep
-					dataService.global[listener.key] = listener.value || value.id || value;
-					dataService.global[listener.key + "_value"] = value.id || value.label || value;
-//					dataService.global[listener.key] = value;
-					
-					console.log("[4] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", value, "real value: ", dataService.global[listener.key], dataService.global);
-//			    });
+					if(actionObject.action == "write")
+					{
+						if($scope.field.type == "chart-pie")
+						{
+							$scope.$apply(function() {
+								console.log("[4] GLOBAL:", dataService, listener, value);
+								dataService.global[actionObject.key] = actionObject.value || value.id || value;
+								dataService.global[actionObject.key + "_value"] = actionObject.value || value.id || value.label || value;
+								console.log("[4] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
+							});
+						}
+						else {
+							console.log("[5] GLOBAL:", dataService, listener, value);
+							dataService.global[actionObject.key] = actionObject.value || value.id || value;
+							dataService.global[actionObject.key + "_value"] = actionObject.value || value.id || value.label || value;
+							console.log("[5] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
+						}
+					}
+				}
 			}
 		}
 	};
