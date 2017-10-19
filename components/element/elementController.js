@@ -605,14 +605,20 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			console.log("Opening a new window through link", $scope, url);
 			
-			$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
+			if(url != undefined)
+				$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
+			else {
+				messageService.showMessage($scope.field.data.error_message, "error", "Error");
+			}
 		}
 		else if($scope.field.action == "window") {
 			console.log("Opening a new window with data", $scope);
 			
-			$scope.inputData = $scope.field.card;
-			$window.parentScope = $scope;
-			var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+			if($scope.get_url() != undefined){
+				$scope.inputData = $scope.field.card;
+				$window.parentScope = $scope;
+				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+			}
 		}
 		else if($scope.field.action == "dialog") {
 			
