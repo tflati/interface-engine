@@ -30,6 +30,15 @@ app.controller("cardController", function($scope, $window, $rootScope){
 			}, true);
 		}
 		
+		if (data.show == "before_send"){
+			$scope.show = !$rootScope.search_started;
+
+			$scope.$watch(function(){return $rootScope.search_started;}, function(newValue, oldValue) {
+				console.log("SEARCH STARTED WATCH", $rootScope.search_started);
+				$scope.show = !newValue;
+			}, true);
+		}
+		
 		console.log("CARD DATA: ", data);
 	};
 	

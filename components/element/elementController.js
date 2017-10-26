@@ -41,6 +41,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if($scope.field.type != "image" && $scope.field.type != "iframe")
 			$scope.update($scope.get_url());
 		
+		if($scope.field.value) $scope.field.data.value = $scope.field.value;
+		
 		if($scope.field.data != undefined){
 			
 			var keys = [];
@@ -84,7 +86,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    	}
 				    	else {
 				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue);
-				    		$scope.field.data.value = newValue.label || newValue;
+				    		$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
 				    	}
 				    	
 				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
@@ -163,35 +165,37 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    
 	    var listener = $scope.field.data.onClick;
 		if(listener.action == "write") {
-			console.log("[3] GLOBAL:", dataService);
+			console.log("[3bis] GLOBAL:", dataService);
 			dataService.global[listener.key] = $scope.field.data.value.join("|");
-			console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
+			console.log("[3bis] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
 		}
 	};
 	
 	$scope.onChange = function(newValue){
 		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue);
 		
-		var listener = $scope.field.data.onChange;
-		if(listener && listener.action == "write") {
-			console.log("[2] ONCHANGE GLOBAL:", dataService);
-			dataService.global[listener.key] = newValue.id || newValue;
-			console.log("[2] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
-		}
+			var listener = $scope.field.data.onChange;
+			if(listener && listener.action == "write") {
+				console.log("[2] ONCHANGE GLOBAL:", dataService);
+				dataService.global[listener.key] = newValue == undefined ? newValue : (newValue.id || newValue);
+				console.log("[2] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
+			}
 	};
 	
 	$scope.get_url = function(){
 		
-		console.log("GET_URL", $scope);
+//		console.log("GET_URL", $scope);
 		
 		if ( $scope.field.data == undefined ) {
 			console.log("[STRANGE]", $scope);
 			return "";
 		}
 		var templates = $scope.field.data.templates;
-		console.log("GET_URL TEMPLATES", templates);
+//		console.log("GET_URL TEMPLATES", templates);
 		
 		var url = $scope.field.data.url;
+		if (url == undefined) return "";
+		
 		if(!templates) return url;
 		else if(url != undefined){
 			
@@ -206,21 +210,22 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				if(template.key) value = dataService.global[template.key];
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
 				if(value == undefined) { // value == ""
-					console.log("GET_URL MID ERROR", dataService);
+//					console.log("GET_URL MID ERROR", $scope.field, dataService);
+					$scope.field.subdata = [];
 					return undefined;
 				}
 				
-				console.log("GET URL MID", $scope.field.type, value);
+//				console.log("GET URL MID", $scope.field.type, value);
 				
 				if(value.label) value = value.id; // MODIFIED
 				if(angular.isString(value)) value = value.replace("/", "");
 				
-				console.log("TEMPLATE REPLACEMENT", template, value);
+//				console.log("TEMPLATE REPLACEMENT", template, value);
 				
 				finalUrl = finalUrl.replace(template.template, value);
 			}
 			
-			console.log("GET_URL FINAL", url, finalUrl);
+//			console.log("GET_URL FINAL", url, finalUrl);
 			
 			return finalUrl;
 		}
@@ -296,7 +301,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		for(var k in $scope.field.subdata)
 		{
 			var item = $scope.field.subdata[k];
-			if(item.id == $scope.field.value)
+			if(item.id == $scope.field.data.value)
 			{
 				console.log("INIT FOUND", item);
 				$scope.field.data.value = item;
@@ -428,7 +433,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				          stacked: $scope.field.type == "chart-bar" && $scope.field.stacked && $scope.field.stacked == true ? true : false,
 		        		  scaleLabel: {
 								display: true,
-								labelString: $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[0] : "",
+								labelString: $scope.field.subdata.descriptions && $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[0] : "",
 							},
 				          ticks: {
 				        	  maxRotation: 90,
@@ -442,7 +447,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				        yAxes: [{
 				        	scaleLabel: {
 								display: true,
-								labelString: $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[1] : "",
+								labelString: $scope.field.subdata.descriptions && $scope.field.subdata.descriptions.length > 0 ? $scope.field.subdata.descriptions[1] : "",
 							},
 							stacked: $scope.field.stacked && $scope.field.stacked == true ? true : false,
 							ticks: {}
@@ -529,7 +534,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.onClick = function(evt){
 		
-		console.log("CLICKED!", evt, $scope);
+		console.log("CLICKED!", evt, $scope, dataService.global);
+		
+		if($scope.field.data.url && $scope.get_url() == undefined)
+			if($scope.field.data.error_message)
+				messageService.showMessage($scope.field.data.error_message, "error");
 		
 		if($scope.field && $scope.field.data.action == "send")
 		{
@@ -607,9 +616,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			if(url != undefined)
 				$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
-			else {
-				messageService.showMessage($scope.field.data.error_message, "error", "Error");
-			}
 		}
 		else if($scope.field.action == "window") {
 			console.log("Opening a new window with data", $scope);
@@ -637,7 +643,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	                
 	                $scope.show_dialog = function(evt, card){
 	                    
-	                    console.log(evt, card);
+	                    console.log("DIALOG", evt, card);
 	                    
 	                    $mdDialog.show({
 	                    	multiple: true,

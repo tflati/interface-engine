@@ -23,7 +23,7 @@
 
 <iframe ng-if="field.type == 'iframe'" allowfullscreen src="{{trustSrc(field.data.url)}}" width="{{field.width || '100%'}}" height="{{field.height || '100%'}}"></iframe>
 
-<md-button ng-if="field.type == 'button' && field.action != 'download'" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}">
+<md-button ng-if="field.type == 'button' && field.action != 'download'" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}" ng-disabled="get_url() == undefined">
 	<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
 	<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
 	{{field.label}}
