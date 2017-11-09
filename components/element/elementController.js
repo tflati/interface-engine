@@ -298,6 +298,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if(response.data.details) $scope.field.subdata = response.data.details;
 		else $scope.field.subdata = response.data;
 
+		if($scope.field.subdata.items && $scope.field.subdata.items.length == 0 && $scope.field.data.empty_message){
+			messageService.showMessage($scope.field.data.empty_message, "error");
+		}
+		
 		for(var k in $scope.field.subdata)
 		{
 			var item = $scope.field.subdata[k];
@@ -696,15 +700,15 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 							$scope.$apply(function() {
 								console.log("[4] GLOBAL:", dataService, listener, value);
 								dataService.global[actionObject.key] = actionObject.value || value.id || value;
-								dataService.global[actionObject.key + "_value"] = actionObject.value || value.id || value.label || value;
-								console.log("[4] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
+								dataService.global[actionObject.key + "_value"] = value.id || value.label || value;
+								console.log("[4] CHANGING VALUE OF VARIABLE '", actionObject, "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
 							});
 						}
 						else {
 							console.log("[5] GLOBAL:", dataService, listener, value);
 							dataService.global[actionObject.key] = actionObject.value || value.id || value;
-							dataService.global[actionObject.key + "_value"] = actionObject.value || value.id || value.label || value;
-							console.log("[5] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
+							dataService.global[actionObject.key + "_value"] = value.id || value.label || value;
+							console.log("[5] CHANGING VALUE OF VARIABLE '", actionObject, "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
 						}
 					}
 				}
