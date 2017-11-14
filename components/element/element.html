@@ -2,24 +2,24 @@
 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
 </div>
 
-<div ng-if="field.type == 'text'" ng-bind-html="field.label"></div>
+<!-- <div ng-if="field.type == 'text'" ng-bind-html="field.label"></div> -->
 <p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
 <span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
 <img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}"></img>
 
-<div ng-if="field.type == 'chips'">
-	<md-chips ng-model="field.items" readonly="true" md-removable="false" style="display: inline-block;">
-      <md-chip-template custom-chip>
-        <span style="color: {{$chip.color}}">
-          <span ng-if="$chip.key"><strong>{{$chip.key}}</strong>:</span>
-          <em>{{$chip.value}}</em>
-        </span>
-      </md-chip-template>
-    </md-chips>
-</div>
+<!-- <div ng-if="field.type == 'chips'"> -->
+<!-- 	<md-chips ng-model="field.items" readonly="true" md-removable="false" style="display: inline-block;"> -->
+<!--       <md-chip-template custom-chip> -->
+<!--         <span style="color: {{$chip.color}}"> -->
+<!--           <span ng-if="$chip.key && $chip.displayKey == true"><strong>{{$chip.key}}</strong>:</span> -->
+<!--           <em>{{$chip.value}}</em> -->
+<!--         </span> -->
+<!--       </md-chip-template> -->
+<!--     </md-chips> -->
+<!-- </div> -->
 
-<md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip>
+<!-- <md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip> -->
 
 <iframe ng-if="field.type == 'iframe'" allowfullscreen src="{{trustSrc(field.data.url)}}" width="{{field.width || '100%'}}" height="{{field.height || '100%'}}"></iframe>
 
@@ -197,6 +197,7 @@
 		chart-options="field.subdata.options"
 		>
 	</canvas>
+<!-- 	<p ng-bind="field.subdata | json"></p> -->
 </div>
 
 <div ng-if="field.type == 'chart-line'">
@@ -294,6 +295,12 @@
 		
 		<!-- Simple text -->
 		<input ng-if="field.type == 'text' || field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
+
+		<!-- Password -->
+		<input ng-if="field.type == 'password'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
+
+		<!-- Email -->
+		<input ng-if="field.type == 'email'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
 
 		<!-- Textarea -->
 		<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" ng-required="{{field.required}}"></textarea>

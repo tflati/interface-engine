@@ -20,9 +20,9 @@
 
 -->
 
-<span ng-repeat="elem in myElement">
+<div ng-repeat="elem in myElement">
 	<div style="width: {{elem.width || '100%'}}" ng-include="elem.type + '.html'" style="display: inline-block;"></div>
-</span>
+</div>
 
 <!-- TEXT -->
 <script type="text/ng-template" id="text.html">
@@ -35,7 +35,7 @@
 	</div>
 	<div  ng-if="!elem.url" style="display: inline-block">
 		<md-tooltip>{{elem.title}}</md-tooltip>
-		<font color="{{elem.color}}">{{elem.label}}</font>
+		<div ng-bind-html="elem.label" color="{{elem.color}}"></div>
 	</div>
 	<!-- pedix -->
 	<sub ng-if="elem.pedix">
@@ -97,9 +97,9 @@
 <script type="text/ng-template" id="chips.html">
 	<md-chips ng-model="elem.items" readonly="true" md-removable="false">
       <md-chip-template>
-        <span>
-          <strong>{{$chip.key}}</strong>:
-          <em>{{$chip.value}}</em>
+        <span title="{{$chip.title}}">
+          <span ng-if="$chip.key && $chip.displayKey == true"><strong>{{$chip.key}}</strong>:</span>
+		  <div ng-bind-html="$chip.value"></div>
         </span>
       </md-chip-template>
     </md-chips>

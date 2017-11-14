@@ -43,6 +43,7 @@ app.directive("myTable", function() {
 				{
 					var field = $scope.formData.fields[i];
 					console.log("FIELD", field);
+					if(!field.data) continue;
 					
 					if (angular.isArray(field.data.value)) {
 						subargs = []

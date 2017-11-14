@@ -172,7 +172,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	};
 	
 	$scope.onChange = function(newValue){
-		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue);
+		console.log("["+$scope.field.type+"] NEW VALUE: ", newValue, $scope.field);
 		
 			var listener = $scope.field.data.onChange;
 			if(listener && listener.action == "write") {
@@ -267,6 +267,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.update = function(url, fx){
 		
+		if($scope.field.type == "autocomplete") return;
+		
 		if(url == undefined) return;
 		if(url == "") return;
 		
@@ -276,9 +278,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		url = url.replace(/#/g, "_SHARP_");
 		
 		console.log("AJAX TO", url, $scope.field.data);
-		$scope.sending = true;
-		
 		if(fx == undefined) fx = $scope.onDataReceived;
+
+		$scope.sending = true;
 		
 		var promise = $http.get(url);
 		promise.then(fx,
@@ -307,7 +309,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			var item = $scope.field.subdata[k];
 			if(item.id == $scope.field.data.value)
 			{
-				console.log("INIT FOUND", item);
+				console.log("INIT FOUND", item, $scope.field);
 				$scope.field.data.value = item;
 				
 				var listener = $scope.field.data.onChange;
@@ -462,18 +464,20 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
 					$scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
 					
-	//				if($scope.stacked){
-						if($scope.field.data.max) {
-							$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
-						}
-						if($scope.field.data.min) {
-							$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
-						}
-	//				}
-				}
-				else {
-					$scope.field.subdata.points = $scope.field.subdata.points[0];
-					console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
+					if($scope.field.data.max) {
+						$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
+					}
+					if($scope.field.data.min) {
+						$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
+					}
+					
+//					if($scope.field.subdata.points.length == 1)
+//						$scope.field.subdata.points = $scope.field.subdata.points[0];
+					
+//					if(!$scope.stacked) {
+//						$scope.field.subdata.points = $scope.field.subdata.points[0];
+//						console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
+//					}
 				}
 				
 				console.log("CHART OPTIONS", $scope.field.subdata.options);
