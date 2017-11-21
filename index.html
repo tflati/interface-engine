@@ -79,6 +79,10 @@
 	<link rel="stylesheet" href="bower_components/angular-tooltips/dist/angular-tooltips.css" />
 	<script src="bower_components/angular-tooltips/dist/angular-tooltips.js"></script>
 	
+	<!-- File(s) upload -->
+	<script src="bower_components/ng-file-upload/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
+	<script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+	
 	<style>
 	/* .md-table tbody tr { */
 	/* 	transition: all 0.1s ease-in; */
@@ -172,7 +176,7 @@
  		color: white;
  		font-weight: bold;
  		border: 2px solid #F1F1F1;
-}
+	}
 	}
 	
 	.md-row {
@@ -494,11 +498,11 @@
 						'ngRoute',
 						'ngMdIcons',
 						'angular-venn',
-// 						'ngDropover',
 						'tooltips',
 						'ngCookies',
 						'angular-google-analytics',
-						'ngMeta'
+						'ngMeta',
+						'ngFileUpload'
 					] );
 			
 // 			app.run(function ( $templateCache ) {
@@ -566,16 +570,17 @@
 		    $routeProvider.
 		    when("/popup", {
 		    	templateUrl: "components/card/popup.html"
-		    })
-		    .when("/:pageName?", {
+		    }).
+		    when("/:pageName?/:parameters*?", {
 		        templateUrl: "homepage.html",
 		        controller: "pageController",
 		        resolve: {
 		            info: function(configFileService){
+		            	console.log("[ROUTE] [RESOLVE] [CONFIG]");
 		                return configFileService.get_config_file();
 		            },
 		            pageTitle: function($route){
-		            	console.log("ASKED FOR ", $route.current.params.pageName);
+		            	console.log("[ROUTE] [RESOLVE] [PAGE_TITLE]", $route.current.params.pageName, $route);
 		            	
 		            	// if ($route.current.params.pageName == undefined) $route.current.params.pageName = "main";
 		            	

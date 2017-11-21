@@ -8,16 +8,18 @@
 
 <img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}"></img>
 
-<!-- <div ng-if="field.type == 'chips'"> -->
-<!-- 	<md-chips ng-model="field.items" readonly="true" md-removable="false" style="display: inline-block;"> -->
-<!--       <md-chip-template custom-chip> -->
-<!--         <span style="color: {{$chip.color}}"> -->
-<!--           <span ng-if="$chip.key && $chip.displayKey == true"><strong>{{$chip.key}}</strong>:</span> -->
-<!--           <em>{{$chip.value}}</em> -->
-<!--         </span> -->
-<!--       </md-chip-template> -->
-<!--     </md-chips> -->
-<!-- </div> -->
+<div ng-if="field.type == 'chips'">
+	<md-chips ng-model="field.filtered_items" readonly="true" md-removable="false">
+		<md-chip-template custom-chip>
+	        <span style="color: {{$chip.color}}">
+	          <span ng-if="$chip.key && $chip.displayKey == true"><strong>{{$chip.key}}</strong>:</span>
+	          <em>{{$chip.value}}</em>
+	        </span>
+      	</md-chip-template>
+    </md-chips>
+    <md-button ng-if="field.number_limit == field.limit" ng-click="toggleLimit()" class="md-raised md-primary">Show more</md-button>
+    <md-button ng-if="field.number_limit == field.items.length" ng-click="toggleLimit()" class="md-raised md-primary">Show less</md-button>
+</div>
 
 <!-- <md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip> -->
 
@@ -292,6 +294,10 @@
 	<md-content ng-if="field.type != 'autocomplete'">
 	
 		<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
+
+		<!-- Upload file(s) -->		
+		<md-button ng-if="field.type == 'upload' && !field.message || field.error" class="md-raised md-primary" ngf-select="upload($files)" ng-model="files" ngf-multiple="true">Upload</md-button>
+		<p ng-if="field.type == 'upload' && field.message" ng-bind="field.message"></p>
 		
 		<!-- Simple text -->
 		<input ng-if="field.type == 'text' || field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
@@ -346,7 +352,7 @@
 		<!-- Checkbox (group) -->
 		<fieldset ng-if="field.type == 'checkbox' && field.data.multiple" ng-required="{{field.required}}">
 			<legend>{{field.label}}</legend>
-         	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value.label)" ng-click="toggle(value.label)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
+         	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value)" ng-click="toggle(value)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
 			{{value.label}}
             </md-checkbox>
         </fieldset>
@@ -419,7 +425,7 @@
 </md-input-container>
 
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
-<div ng-if="field.type == 'multi'" layout="row" layout-align="start center" layout-wrap>
+<div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>
 	<element flex="{{element.width}}" ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

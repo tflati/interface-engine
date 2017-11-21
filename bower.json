@@ -34,7 +34,8 @@
     "angular-jqcloud": "^1.0.3",
     "angular-google-analytics": "^1.1.9",
     "ngMeta": "^1.0.2",
-    "angular-tooltips": "tooltips-angular#^1.0.4"
+    "angular-tooltips": "tooltips-angular#^1.0.4",
+    "ng-file-upload": "^12.2.13"
   },
   "resolutions": {
     "angular": "~1.5.x",

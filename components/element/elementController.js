@@ -1,4 +1,4 @@
-app.controller("elementController", function($scope, $sce, $http, $window, $mdDialog, dataService, messageService){
+app.controller("elementController", function($scope, $sce, $http, $window, $mdDialog, dataService, messageService, $routeParams, Upload){
 	
 //	$scope.subdata = [];
 	$scope.sending = false;
@@ -11,6 +11,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		$scope.field = data;
 		$scope.field.subdata = data.subdata || [];
+		if($scope.field.limit) {
+			$scope.field.number_limit = $scope.field.limit;
+			$scope.field.filtered_items = $scope.field.items.slice(0, $scope.field.number_limit);
+		}
 		
 //		$scope.field.type = data.type;
 //		$scope.variable_value = data.variable_value;
@@ -137,6 +141,13 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    return $scope.field.data.value.indexOf(item) > -1;
 	};
 	
+	$scope.toggleLimit = function(){
+		if($scope.field.number_limit == $scope.field.items.length) $scope.field.number_limit = $scope.field.limit; 
+		else $scope.field.number_limit = $scope.field.items.length;
+		
+		$scope.field.filtered_items = $scope.field.items.slice(0, $scope.field.number_limit);
+	};
+	
 	$scope.toggle = function (item) {
 		
 		if($scope.field.exclusive) {
@@ -166,9 +177,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    var listener = $scope.field.data.onClick;
 		if(listener.action == "write") {
 			console.log("[3bis] GLOBAL:", dataService);
-			dataService.global[listener.key] = $scope.field.data.value.join("|");
+			dataService.global[listener.key] = $scope.toString($scope.field.data.value);
 			console.log("[3bis] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
 		}
+	};
+	
+	$scope.toString = function(object){
+		if(!angular.isArray(object)) return object.value || object.label || object.id;
+		
+		var arrayString = []
+		for (var i=0; i<object.length; i++)
+			arrayString.push($scope.toString(object[i]));
+		return arrayString.join("|");
 	};
 	
 	$scope.onChange = function(newValue){
@@ -207,7 +227,15 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				var template = templates[index];
 				
 				var value = undefined;
-				if(template.key) value = dataService.global[template.key];
+				if(template.key){
+					if (template.key.indexOf("PARAM") == 0) {
+						console.log("SPECIAL", $routeParams);
+						var n = parseInt(template.key.split("/")[1]); 
+						var params = $routeParams.parameters.split("/");
+						value = params[n-1];
+					}
+					else value = dataService.global[template.key];
+				}
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
 				if(value == undefined) { // value == ""
 //					console.log("GET_URL MID ERROR", $scope.field, dataService);
@@ -248,7 +276,15 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.field.data.value, template, template.key, $scope.field.data.value, dataService.global[template.key], dataService.global);
 			
 			var value = undefined;
-			if(template.key) value = dataService.global[template.key];
+			if(template.key) {
+				if (template.key.indexOf("PARAM") == 0) {
+					console.log("SPECIAL", $routeParams);
+					var n = parseInt(template.key.split("/")[1]); 
+					var params = $routeParams.parameters.split("/");
+					value = params[n-1];
+				}
+				else value = dataService.global[template.key];
+			}
 			if(value == undefined) {
 				console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1bis]", template, value, dataService.global[template.key], dataService.global);
 				continue;
@@ -507,13 +543,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				{
 					var pieces = $scope.field.subdata.header[i].split("\u2229");
 					var final_pieces = []
+					var size = $scope.field.subdata.items[0][i];
+					
 					for(var j=0; j<pieces.length; j++)
 					{
-						final_pieces.push(pieces[j] + " ("+sizes[pieces[j]]+")");
+						final_pieces.push(pieces[j]);
 					}
 //					if (pieces.length == 1) pieces += " ("+$scope.subdata.items[0][i]+")";
+					var datum = {"sets": final_pieces, "size": size}
+					if(final_pieces.length == 1)
+						datum["label"] = final_pieces[0] + " ("+size+")";
 					
-					formatted_data.push({"sets": final_pieces, "size": $scope.field.subdata.items[0][i]});
+					formatted_data.push(datum);
 				}
 				console.log("VENN", formatted_data);
 				
@@ -723,4 +764,28 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.trustSrc = function(src) {
 	    return $sce.trustAsResourceUrl(src);
 	  }
+	
+	$scope.upload = function(file){
+		console.log("UPLOAD", file);
+		
+		Upload.upload({
+            url: $scope.field.data.url,
+            data: {file: file}
+        }).then(function (resp) {
+        	console.log('Success', resp);
+        	var message = 'File ' + resp.config.data.file[0].name + ' uploaded.';
+        	messageService.showMessage(message);
+            $scope.field.message = message;
+        }, function (resp) {
+            console.log('Error status: ', resp);
+            var message = resp.data + " (error code: " + resp.status +")";
+            messageService.showMessage(message, "error");
+            $scope.field.message = message;
+            $scope.field.error = true;
+        }, function (evt) {
+//            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+//            console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+//            messageService.showMessage('File caricato al ' + progressPercentage +'%');
+        });
+	};
 });

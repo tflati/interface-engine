@@ -19,6 +19,7 @@ app.controller("cardController", function($scope, $window, $rootScope){
 		$scope.compact = data.compact,
 		$scope.footer = data.footer;
 		$scope.elements = data.elements;
+		$scope.layout = data.layout;
 		$scope.show = true;
 		
 		if (data.show == "after_send"){

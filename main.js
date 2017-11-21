@@ -1,8 +1,8 @@
-app.controller("pageController", function($http, $window, $rootScope, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle, dataService, ngMeta) {
+app.controller("pageController", function($routeParams, $http, $window, $rootScope, $scope, $mdDialog, $timeout, $mdSidenav, $location, toaster, messageService, info, pageTitle, dataService, ngMeta) {
 
 	var self = this;
 
-	console.log("PAGE CONTROLLER", info, pageTitle);
+	console.log("PAGE CONTROLLER", info, pageTitle, $routeParams);
 
 	$scope.isArray = angular.isArray;
 	$scope.dataService = dataService;
@@ -12,6 +12,25 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 	$scope.pageTitle = pageTitle;
 	$scope.page = 'templates/main.html';
 	$scope.info = info;
+	$scope.pageInfo = undefined;
+	
+	if ($scope.info.pages)
+		for (var i = 0; i < $scope.info.pages.length; i++)
+		{
+			if ($scope.info.pages[i].pageID == $scope.pageTitle)
+			{
+				$scope.pageInfo = $scope.info.pages[i];
+			}
+		}
+	if ($scope.info.forms)
+		for (var i = 0; i < $scope.info.forms.length; i++)
+		{
+			if ($scope.info.forms[i].pageID == $scope.pageTitle)
+			{
+				$scope.pageInfo = $scope.info.forms[i];
+			}
+		}
+	
 	$scope.header = {
 		show_logos : true
 	};
@@ -22,26 +41,30 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 	$scope.form;
 
 	$scope.get_current_page_data = function() {
-		if ($scope.info.pages)
-			for (var i = 0; i < $scope.info.pages.length; i++)
-			{
-				if ($scope.info.pages[i].pageID == $scope.pageTitle)
-				{
-					return $scope.info.pages[i];
-				}
-			}
-		
-		if ($scope.info.forms)
-			for (var i = 0; i < $scope.info.forms.length; i++)
-			{
-				if ($scope.info.forms[i].pageID == $scope.pageTitle)
-				{
-					return $scope.info.forms[i];
-				}
-			}
-
-		return undefined;
+		return $scope.pageInfo;
 	};
+	
+//	$scope.get_current_page_data = function() {
+//		if ($scope.info.pages)
+//			for (var i = 0; i < $scope.info.pages.length; i++)
+//			{
+//				if ($scope.info.pages[i].pageID == $scope.pageTitle)
+//				{
+//					return $scope.info.pages[i];
+//				}
+//			}
+//		
+//		if ($scope.info.forms)
+//			for (var i = 0; i < $scope.info.forms.length; i++)
+//			{
+//				if ($scope.info.forms[i].pageID == $scope.pageTitle)
+//				{
+//					return $scope.info.forms[i];
+//				}
+//			}
+//
+//		return undefined;
+//	};
 	
 	// Set meta tags
 	ngMeta.setTitle($scope.get_current_page_data().title, " | " + info.title_short);
@@ -278,8 +301,8 @@ app.controller("pageController", function($http, $window, $rootScope, $scope, $m
 		$rootScope.search_started = false;
 	};
 
-	if (pageTitle != undefined)
-		$scope.goTo({
-			url: pageTitle
-		});
+//	if (pageTitle != undefined)
+//		$scope.goTo({
+//			url: pageTitle
+//		});
 });

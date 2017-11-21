@@ -18,7 +18,7 @@
 		</div>
 		
 		<!-- layout="{{card.layout ? card.layout : 'row'}}" -->
-		<element ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
+		<element layout="{{layout}}" ng-repeat="element in elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 
 	</md-card-content>
