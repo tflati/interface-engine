@@ -135,12 +135,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.field.data, $scope.field.subdata);
 	};
 	
-	$scope.exists = function(item){
-//		console.log("EXISTS", item, $scope.field.data.value, $scope.field.data.value == undefined ? false : $scope.field.data.value.indexOf(item) > -1);
-	    if($scope.field.data.value == undefined) return false;
-	    return $scope.field.data.value.indexOf(item) > -1;
-	};
-	
 	$scope.toggleLimit = function(){
 		if($scope.field.number_limit == $scope.field.items.length) $scope.field.number_limit = $scope.field.limit; 
 		else $scope.field.number_limit = $scope.field.items.length;
@@ -148,11 +142,20 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		$scope.field.filtered_items = $scope.field.items.slice(0, $scope.field.number_limit);
 	};
 	
+	$scope.exists = function(item){
+//		console.log("EXISTS", item, $scope.field.data.value, $scope.field.data.value == undefined ? false : $scope.field.data.value.indexOf(item) > -1);
+	    if($scope.field.data.value == undefined) return false;
+	    if($scope.field.exclusive || $scope.field.type == "radio") return $scope.field.data.value == item;
+	    else return $scope.field.data.value.indexOf(item) > -1;
+	};
+	
 	$scope.toggle = function (item) {
 		
-		if($scope.field.exclusive) {
-			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
-			else $scope.field.data.value = item;
+		if($scope.field.exclusive || $scope.field.type == "radio") {
+			$scope.field.data.value = item;
+			//$scope.field.data.value.push(item)
+//			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
+//			else $scope.field.data.value = item;
 		}
 		else {
 			if ($scope.field.data.value == undefined) $scope.field.data.value = []
@@ -175,7 +178,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //	    else $scope.field.data.value.push(item);
 	    
 	    var listener = $scope.field.data.onClick;
-		if(listener.action == "write") {
+		if(listener && listener.action == "write") {
 			console.log("[3bis] GLOBAL:", dataService);
 			dataService.global[listener.key] = $scope.toString($scope.field.data.value);
 			console.log("[3bis] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
@@ -272,6 +275,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		for (index in templates)
 		{
 			var template = templates[index];
+			// Tried to initialise the value of variable
+			// dataService.global[template.key] = template.value;
 			
 			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.field.data.value, template, template.key, $scope.field.data.value, dataService.global[template.key], dataService.global);
 			
@@ -589,6 +594,92 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if($scope.field.data.error_message)
 				messageService.showMessage($scope.field.data.error_message, "error");
 		
+		// SUBMIT
+		if($scope.field && $scope.field.type == "submit")
+		{
+			console.log("[SUBMIT]", $scope);
+			
+			var form = dataService.global[$scope.field.data.source];
+			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
+			
+			var fields = [];
+			for(var el=0; el<form.elements.length; el++){
+				var element = form.elements[el];
+				console.log("ELEMENT", element);
+				for(var i=0; i<element.length; i++){
+					var row = element[i];
+					console.log("ROW", row);
+					for(var j=0; j<row.elements.length; j++){
+						var field = row.elements[j];
+						console.log("FIELD", field);
+						fields.push(field);
+					}
+				}
+			}
+			
+			var args = {};
+			for(var i=0; i<fields.length; i++)
+			{
+				var field = fields[i];
+				console.log("FIELD", field);
+				if(!field.key) continue;
+				
+				if (angular.isArray(field.data.value)) {
+					subargs = []
+					for (var j=0; j<field.data.value.length; j++){
+						var value = field.data.value[j].id;
+						if (value == undefined) value = field.data.value[j];
+						console.log("VALUE", value);
+						
+						if (value == undefined || value == "undefined" || value == "") value = "ALL";
+						subargs.push(value);
+					}
+					
+					args[field.key] = subargs;
+				}
+				else {
+					var value = "ALL";
+					if (field.data.value && field.data.value.id) value = field.data.value.id;
+					else if (field.data.value) value = field.data.value;
+					
+					if (field.type == "checkbox") value = field.data.value;
+					
+					console.log("VALUE", value);
+					
+					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
+					args[field.key] = value;
+				}
+			}
+			
+			console.log("BUTTON ARGS SENT VIA POST", args);
+			
+			$scope.doing_ajax = true;
+			dataService.global["num_results"] = 0;
+			$http.post($scope.field.data.url, args)
+				 .then(
+					function(result){
+						$scope.doing_ajax = false;
+						console.log("FORM RESULT", result);
+						
+						dataService.global["num_results"] = result.data.hits.length;
+						
+//						if($scope.field.data.onReceive){
+//							for(var i=0; i<$scope.field.data.onReceive.length; i++){
+//								var instruction = $scope.field.data.onReceive[i];
+//								if (instruction.key == "num_results" && instruction.action == "write") {
+//									dataService.global[instruction.key] = result.data.hits.length;
+//								}
+//							}
+//						}
+					},
+					function(response){
+						$scope.doing_ajax = false;
+						console.log("FORM FAILED", response);
+					}
+				 );
+		}
+		
+		// SEND
 		if($scope.field && $scope.field.data.action == "send")
 		{
 			var form = dataService.global[$scope.field.data.source];

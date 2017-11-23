@@ -45,6 +45,13 @@ app.service("configFileService", function($http, $q, messageService, dataService
 		        	var form = self.info.forms[f];
 		        	dataService.global[form.pageID] = form;
 		        }
+	        if(self.info.pages)
+		        for(var f=0; f<self.info.pages.length; f++)
+		        {
+		        	var page = self.info.pages[f];
+		        	dataService.global[page.pageID] = page;
+		        }
+	        
 	        return self.info;
 	        
 		}, function(response){

@@ -32,10 +32,6 @@
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
 
-<form ng-if="field.type == 'button' && field.action == 'download'" method="get" action="{{field.url}}">
-	<md-button type="submit" title="{{field.title}}" class="md-raised md-primary">{{field.label}}</md-button>
-</form>
-
 <hr ng-if="field.type == 'divider'" class="divider">
 
 <div ng-if="field.type == 'spacer'" class="spacer"></div>
@@ -72,6 +68,7 @@
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in field.subdata.items track by $index">
               <td md-cell ng-switch="f.type" ng-repeat="f in item track by $index" style="text-align: {{f.text_align}};">
+                
                 <span ng-switch-when="undefined">
                 	<span ng-if="f.label">{{f.label}}</span>
               		<span ng-if="!f.label">{{f}}</span>
@@ -84,6 +81,8 @@
 						<element ng-repeat="element in f.subdata" ng-controller="elementController" ng-init="init(element)">
 						</element>
 					</div>
+					
+					<img ng-if="f.type == 'image'" style="width:{{f.data.width || 'auto'}}; margin: {{f.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{f.data.url}}"></img>
 					
 					<span ng-if='f.type == "icon"' style="padding: 5px;">
 						<i class="fa {{f.data.icon}} {{f.data.modifiers}}" aria-label="{{f.data.title}}" title="{{f.data.title}}" style="color: {{f.data.color}}"></i>
@@ -165,7 +164,6 @@
 </div>
 
 <div ng-if="field.type == 'chart-pie'">
-	<p ng-bind="field.title"></p>
 	<canvas
 		class="chart chart-pie"
 		chart-data="field.subdata.points"
@@ -189,8 +187,9 @@
 	</canvas>
 </div>
 
-<div ng-if="field.type == 'chart-bar'">
+<div ng-if="field.type == 'chart-bar'" style="width: 100%;">
 	<canvas
+		style="width: 100%;"
 		class="chart chart-bar"
 		chart-data="field.subdata.points"
 		chart-labels="field.subdata.labels"
@@ -287,13 +286,13 @@
 	<div venn="field.subdata"></div>
 </div>
 
-<!-- <p ng-bind="field | json"></p> -->
+<!-- <i ng-if="form.tooltip" tooltip-show-trigger="focusin" tooltip-hide-trigger="focusout" title-direction="right" title="{{form.tooltip}}" class="fa fa-question-circle fa-2x" style="color: orange"></i> -->
 
 <md-input-container class="md-input-has-placeholder" ng-if="field.subtype == 'form'">
 
 	<md-content ng-if="field.type != 'autocomplete'">
 	
-		<label ng-if="field.type != 'checkbox'" ng-bind="field.label"></label>
+		<label ng-if="field.type != 'checkbox' && field.type != 'submit'" ng-bind="field.label"></label>
 
 		<!-- Upload file(s) -->		
 		<md-button ng-if="field.type == 'upload' && !field.message || field.error" class="md-raised md-primary" ngf-select="upload($files)" ng-model="files" ngf-multiple="true">Upload</md-button>
@@ -357,11 +356,22 @@
             </md-checkbox>
         </fieldset>
         
+        <!-- Radio -->
 		<md-radio-group ng-if="field.type == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.data.value">
 			<md-radio-button ng-click="toggle(value)" ng-repeat="value in field.data.values track by $index" name="{{field.group_id}}" ng-value="value.value" type="radio" aria-label="Multi-choice">
 				{{value.label}}
 			</md-radio-button>
 		</md-radio-group>
+		
+		<!-- Submit -->
+<!-- 		<form ng-if="field.type == 'submit'" method="{{field.data.type || 'GET'}}" action="{{field.data.url}}"> -->
+			<md-button ng-if="field.type == 'submit'" type="submit" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}" ng-disabled="get_url() == undefined">
+				<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
+				<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
+				{{field.label}}
+				<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
+			</md-button>
+<!-- 		</form> -->
         
 	</md-content>
 	

@@ -21,6 +21,7 @@ app.controller("cardController", function($scope, $window, $rootScope){
 		$scope.elements = data.elements;
 		$scope.layout = data.layout;
 		$scope.show = true;
+		if (data.show == false) $scope.show = false;
 		
 		if (data.show == "after_send"){
 			$scope.show = $rootScope.search_started;
