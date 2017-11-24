@@ -213,36 +213,32 @@
 	</canvas>
 </div>
 
-<div ng-if="field.type == 'paginated-table'">
-	<md-table-container>
-	  <table md-table ng-model="field.selected" md-progress="promise">
-	    <thead md-head>
-<!-- 	      <th md-column style="text-align: center; padding-bottom:20px;"> -->
-<!-- 	      Line no. -->
+	<my-table ng-if="field.type == 'paginated-table'" form-data="field.data"></my-table>
+	
+<!-- 	<md-table-container> -->
+<!-- 	  <table md-table ng-model="field.selected" md-progress="promise"> -->
+<!-- 	    <thead md-head> -->
+<!-- 	      <th md-column style="text-align: center; padding-bottom:20px;" ng-repeat="col in field.subdata.header"> -->
+<!-- 	      	<span>{{col}}</span> -->
 <!-- 	      </th> -->
-	      <th md-column style="text-align: center; padding-bottom:20px;" ng-repeat="col in field.subdata.header">
-	      	<span>{{col}}</span>
-	      </th>
-	    </thead>
-	    <tbody md-body>
-	      <tr md-row md-auto-select ng-repeat="row in field.subdata.items track by $index">
-<!-- 	        <td md-cell style="text-align: center; padding: 20px;"><b>{{(query.page-1)*query.limit + $index +1}}</b></td> -->
-			<td md-cell style="text-align: center;" ng-repeat="f in row track by $index">
-				<span ng-if="!field.url">{{f}}</span>
-			</td>
-		  </tr>
-	    </tbody>
-	  </table>
-	</md-table-container>
-	<md-table-pagination
-		md-limit="query.limit"
-		md-limit-options="[5, 10, 15]"
-		md-page="query.page"
-		md-on-paginate="update_table"
-		md-total="{{query.total}}"
-		md-page-select>
-	</md-table-pagination>
-</div>
+<!-- 	    </thead> -->
+<!-- 	    <tbody md-body> -->
+<!-- 	      <tr md-row md-auto-select ng-repeat="row in field.subdata.items track by $index"> -->
+<!-- 			<td md-cell style="text-align: center;" ng-repeat="f in row track by $index"> -->
+<!-- 				<span ng-if="!field.url">{{f}}</span> -->
+<!-- 			</td> -->
+<!-- 		  </tr> -->
+<!-- 	    </tbody> -->
+<!-- 	  </table> -->
+<!-- 	</md-table-container> -->
+<!-- 	<md-table-pagination -->
+<!-- 		md-limit="query.limit" -->
+<!-- 		md-limit-options="[5, 10, 15]" -->
+<!-- 		md-page="query.page" -->
+<!-- 		md-on-paginate="update_table" -->
+<!-- 		md-total="{{query.total}}" -->
+<!-- 		md-page-select> -->
+<!-- 	</md-table-pagination> -->
 
 <div ng-if="field.type == 'slider'">
 	<div>
@@ -263,6 +259,31 @@
 		</md-slider>
 	</md-slider-container>
 </div>
+
+<table ng-if="field.type == 'form_summary'" cellspacing="0" cellpadding="10" style="width: auto;">
+	<tr ng-repeat="f in getFields() track by $index">
+		<td style="background-color: #e9e9e9;">
+			<img ng-if="f.data.value.img" ng-src="{{f.data.value.img}}" style="vertical-align: middle;">
+		</td>
+		<td style="background-color: #e9e9e9; white-space: nowrap; text-align: left !important;">
+			<label style="font-weight: bold;" ng-bind-html="f.label"></label>
+		</td>
+		<td style="text-align: left !important;">
+			<div ng-if="!isArray(f.data.value) && f.data.value.label">
+				{{f.data.value.label}}
+				<span ng-if="f.data.value.extra" style="margin: 0px; color: grey">
+					({{f.data.value.extra}})
+				</span>
+			</div>
+			<span ng-if="isArray(f.data.value)" ng-repeat="subfield in f.data.value track by $index">
+				{{subfield.label}}<span ng-if="subfield.extra" style="margin: 0px; color: grey">
+					({{subfield.extra}})
+				</span><span ng-if="!$last">,</span>
+			</span>
+			<span ng-if="!isArray(f.data.value) && !f.data.value.label" ng-bind-html="f.data.value"></span>
+		</td>
+	</tr>
+</table>
 
 <!-- words="[{text: 'Lorem', weight: 13}, {text: 'Ipsum', weight: 10.5}, {text: 'Dolor', weight: 9.4}, {text: 'Sit', weight: 8}, {text: 'Amet', weight: 6.2}, {text: 'Consectetur', weight: 5}, {text: 'Adipiscing', weight: 5}]" -->
 <div ng-if="field.type == 'cloud'" align="center" ng-controller="cloudController">

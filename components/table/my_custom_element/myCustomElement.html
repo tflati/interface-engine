@@ -88,7 +88,7 @@
 <!-- 	</md-button> -->
 <!-- </div> -->
 <script type="text/ng-template" id="button.html">
-	<md-button title="{{elem.title}}" ng-style="{'background-color': elem.color}" class="md-raised md-primary" ng-click="onClick($event, elem)">
+	<md-button aria-label="{{elem.title}}" title="{{elem.title}}" ng-style="{'background-color': elem.color}" class="md-raised md-primary" ng-click="onClick($event, elem)">
 			<div ng-repeat="elem in elem.items track by $index" ng-include="elem.type + '.html'" ng-style="{display: 'inline-block', 'margin-left': ($first ? '0px' : '5px')}"></div>
 	</md-button>
 </script>

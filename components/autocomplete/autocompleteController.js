@@ -51,7 +51,7 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 		if ($scope.field.data && $scope.field.data.url){
 			var deferred = $q.defer();
 			
-			console.log("AUTOCOMPLETE AJAX", $scope.field);
+			console.log("AUTOCOMPLETE AJAX [GET]", $scope.field);
 			$http.get($scope.field.data.url + query).then(
 					function(response) {
 	//					console.log("AUTOCOMPLETE SUCCESS", response);

@@ -40,6 +40,9 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 	$scope.showing = true;
 	$scope.form;
 
+	if(!$scope.pageInfo.width)
+		$scope.pageInfo.width = "90%";
+	
 	$scope.get_current_page_data = function() {
 		return $scope.pageInfo;
 	};

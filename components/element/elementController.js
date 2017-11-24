@@ -120,11 +120,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		// Needed for checkbox initialization
-		if($scope.field.data && $scope.field.data.checked == true) {
-			console.log("INIT CHECKBOX", data.label, $scope.field.data.checked, $scope.field.data);
-			for(var i=0; i<$scope.field.subdata.length; i++)
+		console.log("INIT CHECKBOX", data.label, $scope.field.data.checked, $scope.field.data);
+		for(var i=0; i<$scope.field.subdata.length; i++)
+			//if($scope.field.data && $scope.field.data.checked == true)
+			if($scope.field.subdata[i].checked == true)
 				$scope.toggle($scope.field.subdata[i]);
-		}
 		
 		if($scope.field.subdata)
 			$scope.convert();
@@ -152,7 +152,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.toggle = function (item) {
 		
 		if($scope.field.exclusive || $scope.field.type == "radio") {
+			console.log("TOGGLE", item, $scope.field);
+			
 			$scope.field.data.value = item;
+			
 			//$scope.field.data.value.push(item)
 //			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
 //			else $scope.field.data.value = item;
@@ -185,8 +188,42 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 	};
 	
+	$scope.getFormData = function(){
+		var source = $scope.field.data.source;
+		var dataForm = {
+				submit: {
+					url: $scope.field.data.url
+				},
+				fields: []
+		};
+		
+		var form = dataService.global[$scope.field.data.source];
+		
+		var fields = [];
+		for(var el=0; el<form.elements.length; el++){
+			var element = form.elements[el];
+			console.log("ELEMENT", element);
+			for(var i=0; i<element.length; i++){
+				var row = element[i];
+				console.log("ROW", row);
+				for(var j=0; j<row.elements.length; j++){
+					var field = row.elements[j];
+					console.log("FIELD", field);
+					fields.push(field);
+				}
+			}
+		}
+		
+		dataForm.fields = fields;
+		
+		console.log("GET FORM DATA", dataForm);
+		
+		return dataForm;
+	}
+	
 	$scope.toString = function(object){
-		if(!angular.isArray(object)) return object.value || object.label || object.id;
+		if(object == "undefined" || object == undefined) return undefined;
+		if(!angular.isArray(object)) return object.value || object.label || object.id || object;
 		
 		var arrayString = []
 		for (var i=0; i<object.length; i++)
@@ -309,6 +346,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	$scope.update = function(url, fx){
 		
 		if($scope.field.type == "autocomplete") return;
+		if($scope.field.type == "paginated-table") return;
+		if($scope.field.type == "submit") return;
 		
 		if(url == undefined) return;
 		if(url == "") return;
@@ -318,16 +357,16 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if(url.slice(-1) != "/") url += "/";
 		url = url.replace(/#/g, "_SHARP_");
 		
-		console.log("AJAX TO", url, $scope.field.data);
 		if(fx == undefined) fx = $scope.onDataReceived;
 
 		$scope.sending = true;
-		
+
+		console.log("AJAX [GET] TO", url, $scope.field.data);		
 		var promise = $http.get(url);
 		promise.then(fx,
 			function myError(response) {
 				$scope.sending = false;
-            	console.log("ERROR IN GETTING DATA FROM " + url, response);
+            	console.log("ERROR IN GETTING DATA FROM " + url, response, $scope.field);
 //            	messageService.showMessage('Errore durante il recupero dei dati da '+response.config.url+'. ' + 'Error code: ' + response.status, "error");
 			}
 		);
@@ -586,6 +625,31 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		console.log("FINAL ELEMENT METADATA: ", $scope.field.type, $scope.field.subdata, $scope);
 	};
 	
+	$scope.getFields = function(){
+		var form = dataService.global[$scope.field.data.source];
+		console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
+		
+		var fields = [];
+		for(var el=0; el<form.elements.length; el++){
+			var element = form.elements[el];
+			console.log("ELEMENT", element);
+			for(var i=0; i<element.length; i++){
+				var row = element[i];
+				console.log("ROW", row);
+				for(var j=0; j<row.elements.length; j++){
+					var field = row.elements[j];
+					if(field.subtype != "form") continue;
+					if(field.type == "submit") continue;
+					
+					console.log("FIELD", field);
+					fields.push(field);
+				}
+			}
+		}
+		
+		return fields;
+	};
+	
 	$scope.onClick = function(evt){
 		
 		console.log("CLICKED!", evt, $scope, dataService.global);
@@ -595,41 +659,25 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				messageService.showMessage($scope.field.data.error_message, "error");
 		
 		// SUBMIT
-		if($scope.field && $scope.field.type == "submit")
+		if($scope.field && $scope.field.type == "submit" && $scope.field.action != "nothing")
 		{
 			console.log("[SUBMIT]", $scope);
 			
-			var form = dataService.global[$scope.field.data.source];
-			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
-			
-			var fields = [];
-			for(var el=0; el<form.elements.length; el++){
-				var element = form.elements[el];
-				console.log("ELEMENT", element);
-				for(var i=0; i<element.length; i++){
-					var row = element[i];
-					console.log("ROW", row);
-					for(var j=0; j<row.elements.length; j++){
-						var field = row.elements[j];
-						console.log("FIELD", field);
-						fields.push(field);
-					}
-				}
-			}
+			var fields = $scope.getFields();
 			
 			var args = {};
 			for(var i=0; i<fields.length; i++)
 			{
 				var field = fields[i];
 				console.log("FIELD", field);
-				if(!field.key) continue;
+				if(!field.key || field.key == "submit") continue;
 				
 				if (angular.isArray(field.data.value)) {
 					subargs = []
 					for (var j=0; j<field.data.value.length; j++){
 						var value = field.data.value[j].id;
 						if (value == undefined) value = field.data.value[j];
-						console.log("VALUE", value);
+//						console.log("VALUE", value);
 						
 						if (value == undefined || value == "undefined" || value == "") value = "ALL";
 						subargs.push(value);
@@ -643,6 +691,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					else if (field.data.value) value = field.data.value;
 					
 					if (field.type == "checkbox") value = field.data.value;
+					if (value.value) value = value.value;
 					
 					console.log("VALUE", value);
 					
@@ -651,17 +700,17 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				}
 			}
 			
-			console.log("BUTTON ARGS SENT VIA POST", args);
-			
 			$scope.doing_ajax = true;
 			dataService.global["num_results"] = 0;
+			console.log("AJAX [POST] BUTTON ARGS", args, $scope.field);
 			$http.post($scope.field.data.url, args)
 				 .then(
 					function(result){
 						$scope.doing_ajax = false;
 						console.log("FORM RESULT", result);
 						
-						dataService.global["num_results"] = result.data.hits.length;
+						$scope.field.results = result.data;
+						dataService.global["num_results"] = $scope.field.results.hits.length;
 						
 //						if($scope.field.data.onReceive){
 //							for(var i=0; i<$scope.field.data.onReceive.length; i++){
@@ -680,7 +729,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		// SEND
-		if($scope.field && $scope.field.data.action == "send")
+		if($scope.field.data.action == "send")
 		{
 			var form = dataService.global[$scope.field.data.source];
 			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
@@ -718,9 +767,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				}
 			}
 			
-			console.log("BUTTON ARGS SENT VIA POST", args);
-			
-			$scope.doing_ajax = true; 
+			$scope.doing_ajax = true;
+			console.log("AJAX [POST] BUTTON ARGS", $scope.field, args);
 			$http.post($scope.field.data.onClick, args)
 				 .then(
 					function(result){
@@ -842,8 +890,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 						}
 						else {
 							console.log("[5] GLOBAL:", dataService, listener, value);
-							dataService.global[actionObject.key] = actionObject.value || value.id || value;
-							dataService.global[actionObject.key + "_value"] = value.id || value.label || value;
+							dataService.global[actionObject.key] = $scope.toString(actionObject.value); // || value.id || value;
+							dataService.global[actionObject.key + "_value"] = $scope.toString(value); // value.id || value.label || value
 							console.log("[5] CHANGING VALUE OF VARIABLE '", actionObject, "' TO ", value, "real value: ", dataService.global[actionObject.key], dataService.global);
 						}
 					}

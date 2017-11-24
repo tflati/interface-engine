@@ -9,7 +9,7 @@
   <md-progress-circular md-mode="indeterminate"></md-progress-circular>
 </div>
 
-<section layout="column" flex="100" style="width:{{get_current_page_data().width || '80%'}}; margin-left: auto; margin-right: auto;">
+<section layout="column" flex="100" style="width:{{pageInfo.width}}; margin-left: auto; margin-right: auto;">
 	<div layout="row" ng-repeat="row in get_current_page_data().elements track by $index">
 		<card ng-repeat="card in row" ng-controller="cardController" ng-init="init(card)" flex="{{card.width}}" ng-class="{right: card.alignment == 'right'}">
 		</card>
