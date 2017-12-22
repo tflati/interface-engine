@@ -1,25 +1,3 @@
-<!--
-
-<span ng-repeat="elem in myElement">
-	<div ng-switch="elem.type" style="display: inline-block">
-		<div ng-switch-when="text">
-			<div  ng-if="elem.url" style="display: inline-block">
-				<a target="{{elem.target}}" ng-href="{{elem.url}}" style="text-decoration: underline">
-					<font color="{{elem.color}}">{{elem.label}}</font>
-				</a>
-			</div>
-			<div  ng-if="!elem.url" style="display: inline-block">
-				<font color="{{elem.color}}">{{elem.label}}</font>
-			</div>
-		</div>
-		<div ng-switch-when="icon" style="display: inline-block">
-			<i class="fa {{elem.icon_img}} {{elem.modifiers}}" aria-label="{{elem.title}}" title="{{elem.title}}" style="color: {{elem.color}}"></i>
-		</div>
-	</div>
-</span>
-
--->
-
 <div ng-repeat="elem in myElement">
 	<div style="width: {{elem.width || '100%'}}" ng-include="elem.type + '.html'" style="display: inline-block;"></div>
 </div>
@@ -28,7 +6,7 @@
 <script type="text/ng-template" id="text.html">
 	<div  ng-if="elem.url" style="display: inline-block">
 		<md-tooltip>{{elem.title}}</md-tooltip>
-		<a target="{{elem.target}}" ng-href="{{elem.url}}" style="text-decoration: underline">
+		<a target="{{elem.target}}" ng-href="{{elem.url}}" style="text-decoration: none">
 			<font color="{{elem.color}}">{{elem.label}}</font>
 		</a>
 		
@@ -103,4 +81,18 @@
         </span>
       </md-chip-template>
     </md-chips>
+</script>
+
+<!-- DOWNLOAD BUTTON -->
+<script type="text/ng-template" id="download_button.html">
+	<form method="get" action="{{elem.url}}">
+		<md-button type="submit" title="{{elem.title}}" class="md-raised md-primary">{{elem.label}}</md-button>
+	</form>
+</script>
+
+<!-- DOWNLOAD -->
+<script type="text/ng-template" id="download.html">
+	<a download	title="{{elem.title}}" href="{{elem.url}}" target="_blank">
+		<img ng-if="elem.icon !== undefined" class="icon" ng-src="{{elem.icon}}"/>{{elem.label}}
+	</a>
 </script>

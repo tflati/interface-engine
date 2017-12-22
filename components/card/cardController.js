@@ -106,5 +106,6 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
 		else return "UNKNOWN";
 	};
 	
-	if($window.opener && $window.opener.parentScope.inputData) $scope.init($window.opener.parentScope.inputData);
+	if($window.opener && $window.opener.parentScope && $window.opener.parentScope.inputData)
+		$scope.init($window.opener.parentScope.inputData);
 });

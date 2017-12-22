@@ -10,26 +10,29 @@ app.directive("myTable", function() {
 
 			$scope.formData.submit = {
 					url : $scope.formData.url,
-					source: $scope.formData.source
 				};
+			if($scope.formData.source) $scope.formData.submit.source = $scope.formData.source;
+			
 			$scope.formData.fields = [];
 
 			console.log("MYTABLE", $scope.formData, dataService.global);
-			var form = dataService.global[$scope.formData.submit.source];
-
+			
 			var fields = [];
-			for (var el = 0; el < form.elements.length; el++) {
-				var element = form.elements[el];
-				console.log("ELEMENT", element);
-				for (var i = 0; i < element.length; i++) {
-					var row = element[i];
-					console.log("ROW", row);
-					for (var j = 0; j < row.elements.length; j++) {
-						var field = row.elements[j];
-						if(field.subtype != "form") continue;
-						
-						console.log("FIELD", field);
-						fields.push(field);
+			if($scope.formData.submit.source){
+				var form = dataService.global[$scope.formData.submit.source];
+				for (var el = 0; el < form.elements.length; el++) {
+					var element = form.elements[el];
+					console.log("ELEMENT", element);
+					for (var i = 0; i < element.length; i++) {
+						var row = element[i];
+						console.log("ROW", row);
+						for (var j = 0; j < row.elements.length; j++) {
+							var field = row.elements[j];
+							if(field.subtype != "form") continue;
+							
+							console.log("FIELD", field);
+							fields.push(field);
+						}
 					}
 				}
 			}

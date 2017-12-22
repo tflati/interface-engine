@@ -15,6 +15,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$scope.field.number_limit = $scope.field.limit;
 			$scope.field.filtered_items = $scope.field.items.slice(0, $scope.field.number_limit);
 		}
+		else {
+			$scope.field.filtered_items = $scope.field.items;
+		}
 		
 //		$scope.field.type = data.type;
 //		$scope.variable_value = data.variable_value;
@@ -58,6 +61,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				console.log("TEMPLATE2", $scope.field.type, data, template);
 				
 				if(template.key && keys.indexOf(template.key) == -1) keys.push(template.key);
+				
+				// Tried to initialise the value of variable
+				if(template.value)
+					dataService.global[template.key] = template.value;
 			}
 			if($scope.field.data.onChange && $scope.field.data.onChange.key != undefined && keys.indexOf($scope.field.data.onChange.key) == -1) keys.push($scope.field.data.onChange.key);
 			
@@ -71,15 +78,14 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					$scope.replaceTemplates();
 				
 				console.log("ADDING WATCH", $scope.field.type, key, $scope.field, dataService, dataService.global[key], $scope);
-				
-				$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
-					console.log("INSIDE WATCH", $scope.field.type, key, newValue, oldValue, $scope);
+				var result = $scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
+					console.log("INSIDE WATCH", $scope.field.type, newValue, oldValue, $scope);
 					
 				    if (newValue != oldValue){
 				    	
-				    	console.log($scope.field.type, "Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
+				    	console.log($scope.field.type, "Change from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
 				    	
-				    	// Update of value (it might be a simple value or an object
+				    	// Update value (it might be a simple value or an object)
 				    	if($scope.field.subdata && $scope.field.subdata.length > 0){
 				    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
 				    		for(var i=0; i<$scope.field.subdata.length; i++) {
@@ -96,7 +102,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
 				    		$scope.update($scope.get_url());
 				    	
-				    	if($scope.field.data.templates)
+				    	if($scope.field.data && $scope.field.data.templates)
 				    		$scope.replaceTemplates();
 				    }
 				});
@@ -120,7 +126,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		// Needed for checkbox initialization
-		console.log("INIT CHECKBOX", data.label, $scope.field.data.checked, $scope.field.data);
+		console.log("INIT CHECKBOX", data.label, $scope.field.data);
 		for(var i=0; i<$scope.field.subdata.length; i++)
 			//if($scope.field.data && $scope.field.data.checked == true)
 			if($scope.field.subdata[i].checked == true)
@@ -181,11 +187,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //	    else $scope.field.data.value.push(item);
 	    
 	    var listener = $scope.field.data.onClick;
-		if(listener && listener.action == "write") {
-			console.log("[3bis] GLOBAL:", dataService);
-			dataService.global[listener.key] = $scope.toString($scope.field.data.value);
-			console.log("[3bis] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
-		}
+	    if(listener) {
+			for(var i=0; i<listener.length; i++)
+			{
+				var actionObject = listener[i];
+				
+				if(actionObject.action == "write") {
+					console.log("[3bis] GLOBAL:", dataService);
+					dataService.global[actionObject.key] = $scope.toString($scope.field.data.value);
+					console.log("[3bis] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[actionObject.key]);
+				}
+			}
+	    }
 	};
 	
 	$scope.getFormData = function(){
@@ -312,8 +325,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		for (index in templates)
 		{
 			var template = templates[index];
-			// Tried to initialise the value of variable
-			// dataService.global[template.key] = template.value;
 			
 			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [1]", $scope.field.data.value, template, template.key, $scope.field.data.value, dataService.global[template.key], dataService.global);
 			
@@ -416,17 +427,16 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			{
 				var condition = $scope.field.data.onFinish[i];
 				
-				console.log("ON FINISH [2]", $scope, condition);
+				console.log("ON FINISH [2]", $scope, condition, dataService.global[condition.key]);
 				
 				var value = "";
 				if (condition.property == "length")
 					value = $scope.field.subdata.items.length;
 				
-				console.log("WATCH", "CHANGING GLOBAL VALUE", condition.key, value);
 				dataService.global[condition.key] = value;
 			}
 			
-			console.log("ON FINISH [3]", $scope, condition, dataService.global);
+			console.log("ON FINISH [3]", $scope, condition, dataService.global[condition.key]);
 		}
 	};
 	
@@ -446,7 +456,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //				}
 //			}
 		
-		if($scope.field.type == "chart-line" || $scope.field.type == "chart-bar" || $scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut"){
+		if($scope.field.type == "chart-line" || $scope.field.type == "chart-bar" || ($scope.field.type == "chart-pie" || $scope.field.type == "chart-doughnut")){
 			$scope.field.subdata.labels = []
 			$scope.field.subdata.points = []
 			
@@ -454,7 +464,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			{
 				for(var i=0; i<$scope.field.subdata.header.length-1; i++)
 					$scope.field.subdata.points.push([]);
-				
+			
 				for(var i=0; i<$scope.field.subdata.items.length; i++)
 				{
 					var item = $scope.field.subdata.items[i];
@@ -473,8 +483,11 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	//					          console.log("TITLE", tooltipItem, chartData)
 						      var item = chartData.labels[tooltipItem[0].index];
 						      
+						      var s = undefined;
 						      if(item.label) s = item.label;
-						      else s = item;
+						      if(item.title) s = item.title;
+						      
+						      if(s == undefined) s = item;
 						      
 						      // if(item.id) s += " (ID:"+item.id+")";
 						      
@@ -551,14 +564,18 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 						$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
 					}
 					
-//					if($scope.field.subdata.points.length == 1)
-//						$scope.field.subdata.points = $scope.field.subdata.points[0];
-					
 //					if(!$scope.stacked) {
 //						$scope.field.subdata.points = $scope.field.subdata.points[0];
 //						console.log("SIMPLIFYING DATA", $scope.field.subdata, $scope.field.subdata.points);				
 //					}
 				}
+				
+				if($scope.field.subdata.points.length == 1 || !$scope.field.stacked)
+				{
+					$scope.field.subdata.points = $scope.field.subdata.points[0];
+					$scope.field.subdata.options.legend.display = false;
+					$scope.field.subdata.series = [];
+				}	
 				
 				console.log("CHART OPTIONS", $scope.field.subdata.options);
 			}
@@ -654,7 +671,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		
 		console.log("CLICKED!", evt, $scope, dataService.global);
 		
-		if($scope.field.data.url && $scope.get_url() == undefined)
+		if($scope.field.data && $scope.field.data.url && $scope.get_url() == undefined)
 			if($scope.field.data.error_message)
 				messageService.showMessage($scope.field.data.error_message, "error");
 		
@@ -729,7 +746,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		// SEND
-		if($scope.field.data.action == "send")
+		if($scope.field.data && $scope.field.data.action == "send")
 		{
 			var form = dataService.global[$scope.field.data.source];
 			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);

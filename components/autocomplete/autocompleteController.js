@@ -1,4 +1,4 @@
-app.controller("autocompleteController", function($scope, $http, $q, $filter, dataService){
+app.controller("autocompleteController", function($scope, $http, $q, $filter, dataService, $timeout){
     
 	var self = this;
 	
@@ -52,15 +52,18 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 			var deferred = $q.defer();
 			
 			console.log("AUTOCOMPLETE AJAX [GET]", $scope.field);
-			$http.get($scope.field.data.url + query).then(
-					function(response) {
-	//					console.log("AUTOCOMPLETE SUCCESS", response);
-						
-						deferred.resolve(response.data);
-					},
-					function(response) {
-	//					console.log("AUTOCOMPLETE FAILURE", response);
-					});
+			
+			$timeout.cancel(self.filterTextTimeout);
+
+	        self.filterTextTimeout = $timeout(function() {
+	        	
+	        	$http.get($scope.field.data.url + query).then(
+						function(response) {
+							deferred.resolve(response.data);
+						},
+						function(response) {
+						});
+	        }, 1000);
 			
 			return deferred.promise;
 		}

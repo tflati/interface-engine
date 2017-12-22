@@ -11,14 +11,14 @@
 <div ng-if="field.type == 'chips'">
 	<md-chips ng-model="field.filtered_items" readonly="true" md-removable="false">
 		<md-chip-template custom-chip>
-	        <span style="color: {{$chip.color}}">
+	        <span style="color: {{$chip.color}};">
 	          <span ng-if="$chip.key && $chip.displayKey == true"><strong>{{$chip.key}}</strong>:</span>
-	          <em>{{$chip.value}}</em>
+	          <em title="{{$chip.title}}">{{$chip.value}}</em>
 	        </span>
       	</md-chip-template>
     </md-chips>
-    <md-button ng-if="field.number_limit == field.limit" ng-click="toggleLimit()" class="md-raised md-primary">Show more</md-button>
-    <md-button ng-if="field.number_limit == field.items.length" ng-click="toggleLimit()" class="md-raised md-primary">Show less</md-button>
+    <md-button ng-if="field.number_limit && field.number_limit == field.limit" ng-click="toggleLimit()" class="md-raised md-primary">Show more</md-button>
+    <md-button ng-if="field.number_limit && field.number_limit == field.items.length" ng-click="toggleLimit()" class="md-raised md-primary">Show less</md-button>
 </div>
 
 <!-- <md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip> -->
@@ -48,7 +48,7 @@
 	</ul>
 </div>
 
-<div ng-if="field.type == 'table'" style="overflow: auto;">
+<div ng-if="field.type == 'table'" style="overflow: auto; width: 100%;" ng-show="!sending">
 
 	<table md-table md-row-select multiple>
 		<tbody md-body>
@@ -77,7 +77,7 @@
                 <div ng-switch-default>
                 
 <!--                 	flex="{{element.width || '100'}}" -->
-                	<div ng-if="f.type == 'multi'" layout="{{f.layout || 'column'}}" layout-align="{{f.align || 'start start'}}">
+                	<div ng-if="f.type == 'multi'" layout="{{f.layout || 'column'}}" layout-align="{{f.layout_align || 'start start'}}">
 						<element ng-repeat="element in f.subdata" ng-controller="elementController" ng-init="init(element)">
 						</element>
 					</div>
@@ -89,7 +89,7 @@
 					</span>
 					
 <!--                style="width: 100px; overflow-wrap: break-word; word-wrap: break-word; max-width: 150px;" -->
-					<p ng-if='f.type == "text"' style="width: {{f.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: center;" ng-bind-html="f.label"></p>
+					<p ng-if='f.type == "text"' style="width: {{f.width}}; overflow-wrap: break-word; word-wrap: break-word; text-align: {{f.text_align || 'center'}};" ng-bind-html="f.label"></p>
                 
 <!--                 	<md-button ng-if='field.field.type == "button" && field.action == "dialog"' ng-click="onClick()" class="md-raised md-primary">{{field.label}}</md-button> -->
                 	
@@ -128,7 +128,7 @@
 <!-- 	 </table> -->
 </div>
 
-<div ng-if="field.type == 'two-column-table'" style="max-height: 500px; overflow: auto;">
+<div ng-if="field.type == 'two-column-table'" style="width:100%; max-height: 500px; overflow: auto;" ng-show="!sending">
 	<table md-table md-row-select multiple>
 		<tbody md-body>
 			<thead md-head>
@@ -163,7 +163,7 @@
 	</table>
 </div>
 
-<div ng-if="field.type == 'chart-pie'">
+<div ng-if="field.type == 'chart-pie'" style="width:{{field.data.width || '100%'}};">
 	<canvas
 		class="chart chart-pie"
 		chart-data="field.subdata.points"
@@ -187,7 +187,7 @@
 	</canvas>
 </div>
 
-<div ng-if="field.type == 'chart-bar'" style="width: 100%;">
+<div ng-if="field.type == 'chart-bar'" style="width:{{field.data.width || '100%'}};">
 	<canvas
 		style="width: 100%;"
 		class="chart chart-bar"
@@ -280,13 +280,14 @@
 					({{subfield.extra}})
 				</span><span ng-if="!$last">,</span>
 			</span>
-			<span ng-if="!isArray(f.data.value) && !f.data.value.label" ng-bind-html="f.data.value"></span>
+			<span ng-if="!isArray(f.data.value) && !f.data.value.label && f.data.value" ng-bind-html="f.data.value"></span>
+			<span ng-if="!isArray(f.data.value) && !f.data.value.label && !f.data.value">Any</span>
 		</td>
 	</tr>
 </table>
 
 <!-- words="[{text: 'Lorem', weight: 13}, {text: 'Ipsum', weight: 10.5}, {text: 'Dolor', weight: 9.4}, {text: 'Sit', weight: 8}, {text: 'Amet', weight: 6.2}, {text: 'Consectetur', weight: 5}, {text: 'Adipiscing', weight: 5}]" -->
-<div ng-if="field.type == 'cloud'" align="center" ng-controller="cloudController">
+<div ng-if="field.type == 'cloud'" ng-controller="cloudController" style="margin-left: auto; margin-right: auto;">
 	<jqcloud
 		words="field.subdata"
 		width="{{field.width}}"
@@ -303,7 +304,7 @@
 	<div align="center" style="font-size: 0.5em;" id="biocircos" ng-show="!sending"></div>
 </div>
 
-<div class="container well" ng-if="field.type == 'venn'">
+<div class="container well" ng-if="field.type == 'venn'" ng-show="!sending">
 	<div venn="field.subdata"></div>
 </div>
 
@@ -366,7 +367,7 @@
 		
 		<!-- Checkbox (simple) -->
 		<md-checkbox ng-if="field.type == 'checkbox' && !field.data.multiple" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
-			{{field.label}}
+			<div ng-bind-html="field.label"></div>
 		</md-checkbox>
 		
 		<!-- Checkbox (group) -->

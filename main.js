@@ -138,6 +138,7 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 
 		url = item.url
 		console.log("Want to go to " + url);
+		dataService.global["search_started"] = undefined;
 
 		// Check if the url is a form name
 		var isForm = false;
