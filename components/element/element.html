@@ -17,8 +17,8 @@
 	        </span>
       	</md-chip-template>
     </md-chips>
-    <md-button ng-if="field.number_limit && field.number_limit == field.limit" ng-click="toggleLimit()" class="md-raised md-primary">Show more</md-button>
-    <md-button ng-if="field.number_limit && field.number_limit == field.items.length" ng-click="toggleLimit()" class="md-raised md-primary">Show less</md-button>
+    <md-button ng-if="field.number_limit && field.items.length > field.limit && field.number_limit == field.limit" ng-click="toggleLimit()" class="md-raised md-primary">Show more</md-button>
+    <md-button ng-if="field.number_limit && field.filtered_items.length > field.limit && field.number_limit == field.items.length" ng-click="toggleLimit()" class="md-raised md-primary">Show less</md-button>
 </div>
 
 <!-- <md-chip ng-if="field.type == 'chip'">{{field.subdata.label}}</md-chip> -->
