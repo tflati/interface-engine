@@ -1,5 +1,5 @@
 <div ng-repeat="elem in myElement">
-	<div style="width: {{elem.width || '100%'}}" ng-include="elem.type + '.html'" style="display: inline-block;"></div>
+	<div ng-class="{'margin-left-small': !$first}" style="width: {{elem.width || '100%'}}" ng-include="elem.type + '.html'" style="display: inline-block;"></div>
 </div>
 
 <!-- TEXT -->

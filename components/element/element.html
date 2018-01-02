@@ -6,7 +6,13 @@
 <p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
 <span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
-<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}"></img>
+<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
+</img>
+
+<a ng-if="field.data.link" ng-href="{{field.data.link}}" target="_blank">
+	<img ng-if="field.type == 'linkable_image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
+	</img>
+</a>
 
 <div ng-if="field.type == 'chips'">
 	<md-chips ng-model="field.filtered_items" readonly="true" md-removable="false">
@@ -138,13 +144,8 @@
 			</thead>
 			<tr md-row md-auto-select ng-repeat="item in field.subdata.header track by $index">
 				<td md-cell style="font-weight: bold;">
-					<div ng-dropover ng-dropover-options="{'triggerEvent':'hover', 'verticalOffset': 10}">
-						<div ng-show="item.tooltip" ng-dropover-contents class="tooltip-container">
-					      <div ng-bind="item.tooltip" class="custom-tooltip"></div>
-					    </div>
-						<span ng-if='item.type == "text"' ng-bind-html="item.label"></span>
-						<span ng-if='item.type != "text"' ng-bind-html="item"></span>
-					</div>
+					<span ng-if='item.type == "text"' title="{{item.tooltip}}" ng-bind-html="item.label"></span>
+					<span ng-if='item.type != "text"' title="{{item.tooltip}}" ng-bind-html="item"></span>
 				</td>
 				<td md-cell style="text-align: right;"><span>{{field.subdata.items[0][$index]}}</span></td>
 			</tr>
@@ -401,7 +402,8 @@
 		class="md-input-has-placeholder"
 		ng-controller="autocompleteController as actrl"
 		ng-disabled="{{field.disabled}}"
-		ng-required="{{field.required}}">
+		ng-required="{{field.required}}"
+		md-select-on-match>
 		
 		<label ng-bind="field.label"></label>
 		
