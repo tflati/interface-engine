@@ -18,7 +18,10 @@
 <!-- 		</div> -->
 		
 		<!-- layout="{{card.layout ? card.layout : 'row'}}" -->
-		<element layout="{{card.layout}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
+		<element ng-if="element.layout" layout="{{element.layout || 'row'}}" flex="{{element.layout != undefined ? 'auto' : 'none'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
+		</element>
+		
+		<element ng-if="!element.layout" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 
 	</md-card-content>

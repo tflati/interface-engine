@@ -6,11 +6,11 @@
 <p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
 <span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
-<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
+<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
 </img>
 
 <a ng-if="field.data.link" ng-href="{{field.data.link}}" target="_blank">
-	<img ng-if="field.type == 'linkable_image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || field.data.width || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
+	<img ng-if="field.type == 'linkable_image'" title="{{field.data.title}}" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
 	</img>
 </a>
 
@@ -32,9 +32,9 @@
 <iframe ng-if="field.type == 'iframe'" allowfullscreen src="{{trustSrc(field.data.url)}}" width="{{field.width || '100%'}}" height="{{field.height || '100%'}}"></iframe>
 
 <md-button ng-if="field.type == 'button' && field.action != 'download'" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}" ng-disabled="get_url() == undefined">
-	<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
 	<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
 	{{field.label}}
+	<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
 
@@ -375,7 +375,7 @@
 		<fieldset ng-if="field.type == 'checkbox' && field.data.multiple" ng-required="{{field.required}}">
 			<legend>{{field.label}}</legend>
          	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value)" ng-click="toggle(value)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
-			{{value.label}}
+			<span ng-bind-html="value.label" title="{{value.title}}"></span>
             </md-checkbox>
         </fieldset>
         

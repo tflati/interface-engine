@@ -72,6 +72,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			for(index in keys)
 			{
+				if($scope.field.type == "autocomplete") continue;
+				
 				var key = keys[index];
 				
 				if($scope.field.data && $scope.field.data.variable_value)
@@ -120,7 +122,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			var listener = $scope.field.data.onChange;
 			if(listener.action == "write") {
 				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.field.data);
-				dataService.global[listener.key] = $scope.field.data.value;
+				dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
 				console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
 			}
 		}
@@ -236,7 +238,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.toString = function(object){
 		if(object == "undefined" || object == undefined) return undefined;
-		if(!angular.isArray(object)) return object.value || object.label || object.id || object;
+		if(!angular.isArray(object)) return object.value || object.id || object.label || object;
 		
 		var arrayString = []
 		for (var i=0; i<object.length; i++)
@@ -359,6 +361,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if($scope.field.type == "autocomplete") return;
 		if($scope.field.type == "paginated-table") return;
 		if($scope.field.type == "submit") return;
+		if($scope.field.type == "button" && $scope.field.action != "submit") return;
 		
 		if(url == undefined) return;
 		if(url == "") return;
@@ -484,21 +487,22 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 						      var item = chartData.labels[tooltipItem[0].index];
 						      
 						      var s = undefined;
-						      if(item.label) s = item.label;
+//						      if(item.label) s = item.label;
+						      if(item.name) s = item.name;
 						      if(item.title) s = item.title;
 						      
-						      if(s == undefined) s = item;
+//						      if(s == undefined) s = item;
 						      
 						      // if(item.id) s += " (ID:"+item.id+")";
 						      
 					          return s;
 					        },
 					        label: function(tooltipItem, chartData) {
-	//					          console.log("LABEL", tooltipItem, chartData)
+						          console.log("LABEL", tooltipItem, chartData)
 						          var datasetIndex = tooltipItem.datasetIndex;
 						          
-						          var key = chartData.datasets[datasetIndex].label;
-						          if (key == undefined) key = chartData.labels[tooltipItem.index].label;
+						          var key = chartData.datasets[datasetIndex].value;
+						          if (key == undefined) key = chartData.labels[tooltipItem.index].value || chartData.labels[tooltipItem.index].label;
 						          
 						          var value = chartData.datasets[datasetIndex].data[tooltipItem.index];
 						          
@@ -515,7 +519,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 							          
 							          console.log(total, value, fraction, percentage);
 							          
-							          finalString += " ("+percentage+"%)";
+							          finalString += " ("+percentage+"% of the total)";
 						          }
 						          
 						          return finalString;
@@ -820,7 +824,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			console.log("Opening a new window through link", $scope, url);
 			
 			if(url != undefined)
-				$window.open(url, "_blank", "width=800,height=600,left=50,top=50");
+				// $window.open(url, "_blank", "width=800,height=600,left=50,top=50");
+				$window.open(url);
 		}
 		else if($scope.field.action == "window") {
 			console.log("Opening a new window with data", $scope);
