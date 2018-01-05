@@ -162,7 +162,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		if($scope.field.exclusive || $scope.field.type == "radio") {
 			console.log("TOGGLE", item, $scope.field);
 			
-			$scope.field.data.value = item;
+			if($scope.field.data.value == item) $scope.field.data.value = undefined;
+			else $scope.field.data.value = item;
 			
 			//$scope.field.data.value.push(item)
 //			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
@@ -170,6 +171,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		else {
 			if ($scope.field.data.value == undefined) $scope.field.data.value = []
+			
 			var idx = $scope.field.data.value.indexOf(item);
 			console.log("TOGGLE", item, $scope.field.data.value, idx);
 			if (idx >= 0) {
