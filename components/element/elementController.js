@@ -205,38 +205,38 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    }
 	};
 	
-	$scope.getFormData = function(){
-		var source = $scope.field.data.source;
-		var dataForm = {
-				submit: {
-					url: $scope.field.data.url
-				},
-				fields: []
-		};
-		
-		var form = dataService.global[$scope.field.data.source];
-		
-		var fields = [];
-		for(var el=0; el<form.elements.length; el++){
-			var element = form.elements[el];
-			console.log("ELEMENT", element);
-			for(var i=0; i<element.length; i++){
-				var row = element[i];
-				console.log("ROW", row);
-				for(var j=0; j<row.elements.length; j++){
-					var field = row.elements[j];
-					console.log("FIELD", field);
-					fields.push(field);
-				}
-			}
-		}
-		
-		dataForm.fields = fields;
-		
-		console.log("GET FORM DATA", dataForm);
-		
-		return dataForm;
-	}
+//	$scope.getFormData = function(){
+//		var source = $scope.field.data.source;
+//		var dataForm = {
+//				submit: {
+//					url: $scope.field.data.url
+//				},
+//				fields: []
+//		};
+//		
+//		var form = dataService.global[$scope.field.data.source];
+//		
+//		var fields = [];
+//		for(var el=0; el<form.elements.length; el++){
+//			var element = form.elements[el];
+//			console.log("ELEMENT", element);
+//			for(var i=0; i<element.length; i++){
+//				var row = element[i];
+//				console.log("ROW", row);
+//				for(var j=0; j<row.elements.length; j++){
+//					var field = row.elements[j];
+//					console.log("FIELD", field);
+//					fields.push(field);
+//				}
+//			}
+//		}
+//		
+//		dataForm.fields = fields;
+//		
+//		console.log("GET FORM DATA", dataForm);
+//		
+//		return dataForm;
+//	}
 	
 	$scope.toString = function(object){
 		if(object == "undefined" || object == undefined) return undefined;
@@ -673,6 +673,47 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		return fields;
 	};
 	
+	$scope.getArgs = function(){
+		var fields = $scope.getFields();
+		
+		var args = {};
+		for(var i=0; i<fields.length; i++)
+		{
+			var field = fields[i];
+			console.log("FIELD", field);
+			if(!field.key || field.key == "submit") continue;
+			
+			if (angular.isArray(field.data.value)) {
+				subargs = []
+				for (var j=0; j<field.data.value.length; j++){
+					var value = field.data.value[j].id;
+					if (value == undefined) value = field.data.value[j];
+//					console.log("VALUE", value);
+					
+					if (value == undefined || value == "undefined" || value == "") value = "ALL";
+					subargs.push(value);
+				}
+				
+				args[field.key] = subargs;
+			}
+			else {
+				var value = "ALL";
+				if (field.data.value && field.data.value.id) value = field.data.value.id;
+				else if (field.data.value) value = field.data.value;
+				
+				if (field.type == "checkbox") value = field.data.value;
+				if (value.value) value = value.value;
+				
+				console.log("VALUE", value);
+				
+				// if (value == undefined || value == "undefined" || value == "") value = "ALL";
+				args[field.key] = value;
+			}
+		}
+		
+		return args;
+	};
+	
 	$scope.onClick = function(evt){
 		
 		console.log("CLICKED!", evt, $scope, dataService.global);
@@ -686,42 +727,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		{
 			console.log("[SUBMIT]", $scope);
 			
-			var fields = $scope.getFields();
-			
-			var args = {};
-			for(var i=0; i<fields.length; i++)
-			{
-				var field = fields[i];
-				console.log("FIELD", field);
-				if(!field.key || field.key == "submit") continue;
-				
-				if (angular.isArray(field.data.value)) {
-					subargs = []
-					for (var j=0; j<field.data.value.length; j++){
-						var value = field.data.value[j].id;
-						if (value == undefined) value = field.data.value[j];
-//						console.log("VALUE", value);
-						
-						if (value == undefined || value == "undefined" || value == "") value = "ALL";
-						subargs.push(value);
-					}
-					
-					args[field.key] = subargs;
-				}
-				else {
-					var value = "ALL";
-					if (field.data.value && field.data.value.id) value = field.data.value.id;
-					else if (field.data.value) value = field.data.value;
-					
-					if (field.type == "checkbox") value = field.data.value;
-					if (value.value) value = value.value;
-					
-					console.log("VALUE", value);
-					
-					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
-					args[field.key] = value;
-				}
-			}
+			var args = $scope.getArgs();
 			
 			$scope.doing_ajax = true;
 			dataService.global["num_results"] = 0;
@@ -757,38 +763,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			var form = dataService.global[$scope.field.data.source];
 			console.log("DATA SOURCE", $scope.field.data.source, dataService.global, form);
 			
-			var args = {};
-			for(var i=0; i<form.fields.length; i++)
-			{
-				var field = form.fields[i];
-				console.log("FIELD", field);
-				
-				if (angular.isArray(field.data.value)) {
-					subargs = []
-					for (var j=0; j<field.data.value.length; j++){
-						var value = field.data.value[j].id;
-						if (value == undefined) value = field.data.value[j];
-						console.log("VALUE", value);
-						
-						if (value == undefined || value == "undefined" || value == "") value = "ALL";
-						subargs.push(value);
-					}
-					
-					args[field.key] = subargs;
-				}
-				else {
-					var value = "ALL";
-					if (field.data.value && field.data.value.id) value = field.data.value.id;
-					else if (field.data.value) value = field.data.value;
-					
-					if (field.type == "checkbox") value = field.data.value;
-					
-					console.log("VALUE", value);
-					
-					// if (value == undefined || value == "undefined" || value == "") value = "ALL";
-					args[field.key] = value;
-				}
-			}
+			var args = $scope.getArgs();
 			
 			$scope.doing_ajax = true;
 			console.log("AJAX [POST] BUTTON ARGS", $scope.field, args);
