@@ -324,7 +324,10 @@
 		<p ng-if="field.type == 'upload' && field.message" ng-bind="field.message"></p>
 		
 		<!-- Simple text -->
-		<input ng-if="field.type == 'text' || field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
+		<input ng-if="field.type == 'text'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="text" ng-required="{{field.required}}" />
+
+		<!-- Numbers -->
+		<input ng-if="field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" step="{{field.step || 1}}" type="number" ng-required="{{field.required}}" />
 
 		<!-- Password -->
 		<input ng-if="field.type == 'password'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
