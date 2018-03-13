@@ -12,7 +12,7 @@ app.directive("myCustomElement", function() {
 					console.log("Opening a new window with data", elem.card);
 					$scope.inputData = elem.card;
 					$window.parentScope = $scope;
-					var popup = $window.open("/buffalo/popup", "_blank", "width=800,height=600,left=50,top=50");
+					var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 				}
 				else {
 					console.log(ev, elem);

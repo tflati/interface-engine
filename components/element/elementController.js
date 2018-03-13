@@ -810,7 +810,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if($scope.get_url() != undefined){
 				$scope.inputData = $scope.field.card;
 				$window.parentScope = $scope;
-				var popup = $window.open("/buffalo/popup", "_blank", "width=800,height=600,left=50,top=50");
+				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 			}
 		}
 		else if($scope.field.action == "dialog") {
