@@ -23,7 +23,10 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
 //		$scope.elements = data.elements;
 //		$scope.layout = data.layout;
 		
-		if(!$scope.card.show_conditions) $scope.card.show = true;
+		if(!$scope.card.show_conditions) {
+            $scope.card.show_conditions = []
+            $scope.card.show = true;
+		}
 		
 //		$scope.show = true;
 //		if (data.show == false) $scope.show = false;
