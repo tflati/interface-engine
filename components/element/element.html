@@ -6,7 +6,7 @@
 <p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
 <span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
-<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
+<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.image_url}}">
 </img>
 
 <a ng-if="field.data.link" ng-href="{{field.data.link}}" target="_blank">
@@ -421,7 +421,7 @@
 			  md-match-case-insensitive
 			  placeholder="{{field.label}}"
 	          md-search-text="actrl.searchText"
-	          md-selected-item="field.data.value"
+	          md-selected-item="field.data.chosenValue"
 	          md-selected-item-change="actrl.selectedItemChange(item)"
 	          md-items="item in actrl.querySearch(actrl.searchText)"
 	          md-item-text="item.label"

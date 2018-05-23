@@ -16,11 +16,16 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 				dataService.global[$scope.field.data.onChange.key] = item == undefined ? item : item.label || item;
 			}
 		}
+		
+		$scope.field.data.value = item;
     };
 	
 	self.querySearch = function(query){
 		
 		console.log("AUTOCOMPLETE", query, $scope, $scope.field);
+		
+		if(query != "")
+			$scope.field.data.value = query;
 		
 		if ($scope.field.data && $scope.field.data.url){
 			var deferred = $q.defer();
@@ -35,7 +40,6 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 						function(response) {
 							
 							console.log("AUTOCOMPLETE AJAX [RESULT]", query, response);
-							
 							if (response.data.length == 1)
 								self.selectedItemChange(response.data[0]);
 							
@@ -106,6 +110,7 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 //			});
 		}
 		
-		if($scope.field.value) self.querySearch($scope.field.value);
+		// INIT DEL CAMPO
+		if($scope.field.data.value) self.querySearch($scope.field.data.value);
 	}
 });

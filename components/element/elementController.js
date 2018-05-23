@@ -19,6 +19,8 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			$scope.field.filtered_items = $scope.field.items;
 		}
 		
+		if($scope.field.type == "autocomplete") $scope.field.data.chosenValue = $scope.field.data.value;
+		
 //		$scope.field.type = data.type;
 //		$scope.variable_value = data.variable_value;
 //		$scope.disabled = data.disabled;
@@ -45,7 +47,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //		if($scope.field.data && $scope.field.data.value && $scope.field.data.key)
 //			dataService.global[$scope.field.data.key] = $scope.field.data.value;
 		
-		if($scope.field.type != "image" && $scope.field.type != "iframe")
+		if($scope.field.type != "iframe")
 			$scope.update($scope.get_url());
 		
 		if($scope.field.value) $scope.field.data.value = $scope.field.value;
@@ -101,43 +103,45 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    		$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
 				    	}
 				    	
-				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
-				    		$scope.update($scope.get_url());
-				    	
 				    	if($scope.field.data && $scope.field.data.templates)
 				    		$scope.replaceTemplates();
+				    	
+				    	if($scope.field.data && $scope.field.data.onChange != "nothing")
+				    		$scope.update($scope.get_url());
 				    }
 				});
 			}
 			
-			// Necessary for checkbox
-			if(! $scope.field.data.url && $scope.field.data.values ) {
-				$scope.field.subdata = $scope.field.data.values;
+			if($scope.field.data.onChange){
+				console.log("ANALYZING ON CHANGE", $scope.field.data.onChange);
+				
+				var listener = $scope.field.data.onChange;
+				if(listener.action == "write") {
+					console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.field.data);
+					dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
+					console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
+				}
 			}
 		}
 		
-		if($scope.field.data && $scope.field.data.onChange){
-			console.log("ANALYZING ON CHANGE", $scope.field.data.onChange);
-			
-			var listener = $scope.field.data.onChange;
-			if(listener.action == "write") {
-				console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.field.data);
-				dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
-				console.log("[1] ONCHANGE CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
-			}
-		}
+		// Necessary for checkbox
+		if(! $scope.field.data.url && $scope.field.data.values )
+			$scope.field.subdata = $scope.field.data.values;
 		
 		// Needed for checkbox initialization
-		console.log("INIT CHECKBOX", data.label, $scope.field.data);
-		for(var i=0; i<$scope.field.subdata.length; i++)
-			//if($scope.field.data && $scope.field.data.checked == true)
-			if($scope.field.subdata[i].checked == true)
-				$scope.toggle($scope.field.subdata[i]);
+		if($scope.field.type == "checkbox" || $scope.field.type == "radio"){
+			if($scope.field.data.value == undefined){
+				
+				for(var i=0; i<$scope.field.subdata.length; i++)
+					if($scope.field.subdata[i].checked == true)
+						$scope.set($scope.field.subdata[i]);
+			}
+		}
 		
 		if($scope.field.subdata)
 			$scope.convert();
 		
-		if($scope.field.data && $scope.field.data.variable_value)
+		if($scope.field.data)
 			$scope.replaceTemplates();
 		
 		console.log("INIT FINAL ELEMENT METADATA: ", data, $scope.field.data, $scope.field.subdata);
@@ -157,6 +161,31 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	    else return $scope.field.data.value.indexOf(item) > -1;
 	};
 	
+	$scope.set = function (value) {
+		
+		if($scope.field.exclusive || $scope.field.type == "radio")
+			$scope.field.data.value = value;
+		else {
+			if ($scope.field.data.value == undefined) $scope.field.data.value = []
+			
+			if(value != undefined) $scope.field.data.value.push(value);
+			else $scope.field.data.value.splice($scope.field.data.value.indexOf(value), 1);
+		}
+		
+		var listener = $scope.field.data.onClick;
+	    if(listener)
+			for(var i=0; i<listener.length; i++)
+			{
+				var actionObject = listener[i];
+				
+				if(actionObject.action == "write") {
+					console.log("[3bis] GLOBAL:", dataService);
+					dataService.global[actionObject.key] = $scope.toString($scope.field.data.value);
+					console.log("[3bis] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[actionObject.key]);
+				}
+			}
+	};
+	
 	$scope.toggle = function (item) {
 		
 		if($scope.field.exclusive || $scope.field.type == "radio") {
@@ -164,10 +193,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			if($scope.field.data.value == item) $scope.field.data.value = undefined;
 			else $scope.field.data.value = item;
-			
-			//$scope.field.data.value.push(item)
-//			if ($scope.field.data.value == item) $scope.field.data.value = undefined;
-//			else $scope.field.data.value = item;
 		}
 		else {
 			if ($scope.field.data.value == undefined) $scope.field.data.value = []
@@ -191,7 +216,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //	    else $scope.field.data.value.push(item);
 	    
 	    var listener = $scope.field.data.onClick;
-	    if(listener) {
+	    if(listener)
 			for(var i=0; i<listener.length; i++)
 			{
 				var actionObject = listener[i];
@@ -202,7 +227,6 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 					console.log("[3bis] CHANGING VALUE OF VARIABLE '" + actionObject.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[actionObject.key]);
 				}
 			}
-	    }
 	};
 	
 //	$scope.getFormData = function(){
@@ -318,7 +342,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 	
 	$scope.replaceTemplates = function(){
 		
-		if($scope.field.data.url) return;
+//		if($scope.field.data.url) return;
 		
 		console.log($scope.field.type, $scope.field.data, "REPLACEMENT IN VALUE [0]", $scope);
 		
@@ -353,7 +377,16 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 
 			console.log($scope.field.type, $scope.field.data, "TEMPLATE REPLACEMENT IN VALUE [2]", $scope.field.data.value, template, value);
 			
-			$scope.field.data.value = $scope.field.data.value.replace(template.template, value);
+			if (template.target != undefined) {
+				if(value == "") value = "empty";
+				var source = template.source || template.target;
+				$scope.field.data[template.target] = $scope.field.data[source].replace(template.template, value);
+				
+				console.log("REPLACING TARGET SPECIAL!", $scope.field.type, template.target, value, $scope.field);
+			}
+			else $scope.field.data.value = $scope.field.data.value.replace(template.template, value);
+			
+//			$scope.field.data.value = $scope.field.data.value.replace(template.template, value);
 		}
 		console.log($scope.field.type, $scope.field.data, "REPLACED", $scope.field.data.variable_value, $scope.field.data.value);
 	};
@@ -443,6 +476,16 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			console.log("ON FINISH [3]", $scope, condition, dataService.global[condition.key]);
 		}
+		
+		if($scope.field.data.onReceive){
+			for(var i=0; i<$scope.field.data.onReceive.length; i++){
+				var instruction = $scope.field.data.onReceive[i];
+				
+				if (instruction.action == "write") {
+					$scope.field.data[instruction.target] = result.data;
+				}
+			}
+		}
 	};
 	
 	$scope.convert = function(){
@@ -481,7 +524,46 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				}
 			
 				$scope.field.subdata.options = {
-					legend: { display: false },
+					legend: {
+						display: ($scope.field.data.options != undefined && $scope.field.data.options.legend.show) || ($scope.field.subdata.options != undefined && $scope.field.subdata.options.legend.show),
+						position: ($scope.field.data.options != undefined && $scope.field.data.options.legend.position) || 'top',
+						labels: {
+							fontSize: ($scope.field.data.options != undefined && $scope.field.data.options.legend.fontSize) || 12,
+			                generateLabels: function(chart){
+			                	var data = chart.data;
+			                	console.log("GENERATE LABELS", data);
+			                    if (data.labels.length && data.datasets.length) {
+			                        return data.labels.map(function(label, i) {
+			                            var meta = chart.getDatasetMeta(0);
+			                            var ds = data.datasets[0];
+			                            var arc = meta.data[i];
+			                            var custom = arc && arc.custom || {};
+			                            var getValueAtIndexOrDefault = Chart.helpers.getValueAtIndexOrDefault;
+			                            var arcOpts = chart.options.elements.arc;
+			                            var fill = custom.backgroundColor ? custom.backgroundColor : getValueAtIndexOrDefault(ds.backgroundColor, i, arcOpts.backgroundColor);
+			                            var stroke = custom.borderColor ? custom.borderColor : getValueAtIndexOrDefault(ds.borderColor, i, arcOpts.borderColor);
+			                            var bw = custom.borderWidth ? custom.borderWidth : getValueAtIndexOrDefault(ds.borderWidth, i, arcOpts.borderWidth);
+
+										// We get the value of the current label
+										var value = chart.config.data.datasets[arc._datasetIndex].data[arc._index];
+
+			                            return {
+			                                // Instead of `text: label,`
+			                                // We add the value to the string
+			                                text: label.name || label.label || label.id || label,
+			                                fillStyle: fill,
+			                                strokeStyle: stroke,
+			                                lineWidth: bw,
+			                                hidden: isNaN(ds.data[i]) || meta.data[i].hidden,
+			                                index: i
+			                            };
+			                        });
+			                    } else {
+			                        return [];
+			                    }
+			                }
+			            }
+					},
 					tooltips: {
 					    callbacks: {
 					        title: function(tooltipItem, chartData) {
@@ -561,7 +643,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				
 				if($scope.field.type == "chart-bar" || $scope.field.type == "chart-line") {
 					$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
-					$scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
+					// $scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
 					
 					if($scope.field.data.max) {
 						$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
@@ -579,7 +661,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				if($scope.field.subdata.points.length == 1 || !$scope.field.stacked)
 				{
 					$scope.field.subdata.points = $scope.field.subdata.points[0];
-					$scope.field.subdata.options.legend.display = false;
+//					$scope.field.subdata.options.legend.display = false;
 					$scope.field.subdata.series = [];
 				}	
 				
@@ -744,8 +826,9 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //						if($scope.field.data.onReceive){
 //							for(var i=0; i<$scope.field.data.onReceive.length; i++){
 //								var instruction = $scope.field.data.onReceive[i];
-//								if (instruction.key == "num_results" && instruction.action == "write") {
-//									dataService.global[instruction.key] = result.data.hits.length;
+//								
+//								if (instruction.action == "write") {
+//									$scope.field.data[instruction.target] = result.data;
 //								}
 //							}
 //						}
@@ -810,7 +893,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if($scope.get_url() != undefined){
 				$scope.inputData = $scope.field.card;
 				$window.parentScope = $scope;
-				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+				var popup = $window.open("/fusion/popup", "_blank", "width=800,height=600,left=50,top=50");
 			}
 		}
 		else if($scope.field.action == "dialog") {
