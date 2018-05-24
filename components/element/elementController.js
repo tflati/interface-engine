@@ -99,7 +99,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				    		}
 				    	}
 				    	else {
-				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue);
+				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
 				    		$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
 				    	}
 				    	
@@ -125,7 +125,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 		}
 		
 		// Necessary for checkbox
-		if(! $scope.field.data.url && $scope.field.data.values )
+		if($scope.field.data && (!$scope.field.data.url && $scope.field.data.values) )
 			$scope.field.subdata = $scope.field.data.values;
 		
 		// Needed for checkbox initialization
@@ -786,7 +786,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 				if (field.type == "checkbox") value = field.data.value;
 				if (value != undefined && value.value) value = value.value;
 				
-//				console.log("VALUE", value);
+//				console.log("FORM VALUE", field.key, value);
 				
 				// if (value == undefined || value == "undefined" || value == "") value = "ALL";
 				args[field.key] = value;
@@ -813,6 +813,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			
 			$scope.doing_ajax = true;
 			dataService.global["num_results"] = 0;
+			dataService.global["success"] = undefined;
 			console.log("AJAX [POST] BUTTON ARGS", args, $scope.field);
 			$http.post($scope.field.data.url, args)
 				 .then(
@@ -821,7 +822,10 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 						console.log("FORM RESULT", result);
 						
 						$scope.field.results = result.data;
-						dataService.global["num_results"] = $scope.field.results.hits.length;
+						dataService.global["success"] = true;
+						dataService.global["num_results"] = $scope.field.results.hits != undefined ? $scope.field.results.hits.length : $scope.field.results.total;
+						
+						dataService.global[$scope.field.id] = $scope.field.results.data.value;
 						
 //						if($scope.field.data.onReceive){
 //							for(var i=0; i<$scope.field.data.onReceive.length; i++){
@@ -834,6 +838,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 //						}
 					},
 					function(response){
+						dataService.global["success"] = false;
 						$scope.doing_ajax = false;
 						console.log("FORM FAILED", response);
 					}
@@ -893,7 +898,7 @@ app.controller("elementController", function($scope, $sce, $http, $window, $mdDi
 			if($scope.get_url() != undefined){
 				$scope.inputData = $scope.field.card;
 				$window.parentScope = $scope;
-				var popup = $window.open("/fusion/popup", "_blank", "width=800,height=600,left=50,top=50");
+				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
 			}
 		}
 		else if($scope.field.action == "dialog") {

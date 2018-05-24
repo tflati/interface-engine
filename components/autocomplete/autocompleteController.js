@@ -89,25 +89,27 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 			if($scope.field.data && $scope.field.data.variable_value)
 				$scope.replaceTemplates();
 			
-//			console.log("ADDING WATCH", $scope.field.type, key, $scope.field, dataService, dataService.global[key], $scope);
-//			
-//			$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
-//				console.log("INSIDE WATCH", $scope.field.type, key, newValue, oldValue, $scope);
-//				
-//			    if (newValue != oldValue){
-//			    	
-//			    	console.log($scope.field.type, "Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
-//			    	
-//			    	// $scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
-//			    	// $scope.field.data.value = newValue == undefined ? newValue : newValue[$scope.field.data.onChange.field];
-//			    	
-//			    	if($scope.field.data && $scope.field.data.onChange != "nothing")
-//			    		$scope.update($scope.get_url());
-//			    	
-//			    	if($scope.field.data.templates)
-//			    		$scope.replaceTemplates();
-//			    }
-//			});
+			console.log("ADDING WATCH", $scope.field.type, key, $scope.field, dataService, dataService.global[key], $scope);
+			
+			$scope.$watch(function(){return dataService.global[key];}, function(newValue, oldValue) {
+				console.log("INSIDE WATCH", $scope.field.type, key, newValue, oldValue, $scope);
+				
+			    if (newValue != oldValue){
+			    	
+			    	console.log($scope.field.type, "Variable " + key + " changed from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
+			    	
+			    	// $scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
+			    	// $scope.field.data.value = newValue == undefined ? newValue : newValue[$scope.field.data.onChange.field];
+			    	
+			    	if($scope.field.data && $scope.field.data.onChange != "nothing")
+			    		$scope.update($scope.get_url());
+			    	
+			    	if($scope.field.data.templates)
+			    		$scope.replaceTemplates();
+			    	
+			    	self.searchText = newValue;
+			    }
+			});
 		}
 		
 		// INIT DEL CAMPO

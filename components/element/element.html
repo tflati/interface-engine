@@ -6,7 +6,7 @@
 <p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
 <span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
-<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.image_url}}">
+<img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
 </img>
 
 <a ng-if="field.data.link" ng-href="{{field.data.link}}" target="_blank">
@@ -281,8 +281,8 @@
 					({{subfield.extra}})
 				</span><span ng-if="!$last">,</span>
 			</span>
-			<span ng-if="!isArray(f.data.value) && !f.data.value.label && f.data.value" ng-bind-html="f.data.value"></span>
-			<span ng-if="!isArray(f.data.value) && !f.data.value.label && !f.data.value">Any</span>
+			<span ng-if="!isArray(f.data.value) && f.data.value.label == undefined && f.data.value != undefined" ng-bind-html="f.data.value"></span>
+			<span ng-if="!isArray(f.data.value) && f.data.value.label == undefined && f.data.value == undefined">Any</span>
 		</td>
 	</tr>
 </table>
