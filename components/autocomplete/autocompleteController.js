@@ -107,12 +107,13 @@ app.controller("autocompleteController", function($scope, $http, $q, $filter, da
 			    	if($scope.field.data.templates)
 			    		$scope.replaceTemplates();
 			    	
+			    	if (newValue == undefined) newValue = "";
 			    	self.searchText = newValue;
 			    }
 			});
 		}
 		
 		// INIT DEL CAMPO
-		if($scope.field.data.value) self.querySearch($scope.field.data.value);
+		if($scope.field.data.value) self.querySearch($scope.field.data.value.label || $scope.field.data.value);
 	}
 });

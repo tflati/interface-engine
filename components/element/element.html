@@ -1,10 +1,10 @@
-<div ng-if="sending" style="text-align: center; color: cadetblue;">
-	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-</div>
+<!-- <div ng-if="sending" style="text-align: center; color: cadetblue;"> -->
+<!-- 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> -->
+<!-- </div> -->
 
-<!-- <div ng-if="field.type == 'text'" ng-bind-html="field.label"></div> -->
-<p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
-<span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
+<div ng-if="field.type == 'text'" ng-bind-html="field.label" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}"></div>
+<p    ng-if="field.type == 'paragraph' && field.inline != 'true'" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}" ng-bind-html="field.data.value"></p>
+<span ng-if="field.type == 'paragraph' && field.inline == 'true'" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
 <img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
 </img>
@@ -80,11 +80,11 @@
               		<span ng-if="!f.label">{{f}}</span>
               	</span>
               	
-                <div ng-switch-default>
+                <div ng-switch-default layout="row" layout-align="center center">
                 
 <!--                 	flex="{{element.width || '100'}}" -->
                 	<div ng-if="f.type == 'multi'" layout="{{f.layout || 'column'}}" layout-align="{{f.layout_align || 'start start'}}">
-						<element ng-repeat="element in f.subdata" ng-controller="elementController" ng-init="init(element)">
+						<element ng-repeat="element in f.elements" ng-controller="elementController" ng-init="init(element)">
 						</element>
 					</div>
 					
@@ -111,6 +111,10 @@
               			<img ng-if="f.icon !== undefined" class="icon" ng-src="{{f.icon}}"/>{{f.label}}
               		</a>
               		
+              		<a ng-if="f.data.link" ng-href="{{f.data.link}}" target="_blank">
+						<img ng-if="f.type == 'linkable_image'" title="{{f.data.title}}" style="width:{{f.data.width || 'auto'}}; height:{{f.data.height || 'auto'}}; margin: {{f.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{f.data.url}}">
+						</img>
+					</a>              		
                 </div>
                 
               </td>
@@ -261,8 +265,8 @@
 	</md-slider-container>
 </div>
 
-<table ng-if="field.type == 'form_summary'" cellspacing="0" cellpadding="10" style="width: auto;">
-	<tr ng-repeat="f in getFields() track by $index">
+<table ng-if="field.type == 'form_summary'" cellspacing="0" cellpadding="10" style="width: auto;" ng-init="fields = getFields()">
+	<tr ng-repeat="f in fields track by $index">
 		<td style="background-color: #e9e9e9;">
 			<img ng-if="f.data.value.img" ng-src="{{f.data.value.img}}" style="vertical-align: middle;">
 		</td>
@@ -340,24 +344,26 @@
 		
 		<!-- Select simple -->
 		<md-select
+			md-on-open="get_options()"
 			ng-model-options="{trackBy: '$value.id'}"
 			ng-model="field.data.value"
 			ng-change="onChange(field.data.value)"
 			ng-if="field.type == 'select' && (!field.data.multiple || field.data.multiple == false)"
 			ng-required="{{field.required}}"
 		>
+		
 <!-- 			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option> -->
 			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">
-				<div ng-if="value.label" style="padding-bottom: 5px; display: table;">
+				<div ng-if="value.label != undefined" layout="row" layout-align="start center">
 					<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
 						<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
 					</div>
-					<div style="overflow: hidden; display: table-cell;">
-						<div ng-if="value.label">{{value.label}}</div>
+					<div layout="column" layout-align="center center">
+						<div ng-if="value.label != undefined">{{value.label}}</div>
 						<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
 					</div>
 				</div>
-				<span ng-if="!value.label">{{value}}</span>
+				<span ng-if="value.label == undefined">{{value}}</span>
 			</md-option>
 		</md-select>
 		
@@ -465,6 +471,6 @@
 
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
 <div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>
-	<element flex="{{element.width}}" ng-repeat="element in field.subdata" ng-controller="elementController" ng-init="init(element)">
+	<element flex="{{element.width}}" ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

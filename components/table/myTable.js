@@ -13,30 +13,30 @@ app.directive("myTable", function() {
 				};
 			if($scope.formData.source) $scope.formData.submit.source = $scope.formData.source;
 			
-			$scope.formData.fields = [];
+//			$scope.formData.fields = [];
 
 			console.log("MYTABLE", $scope.formData, dataService.global);
 			
-			var fields = [];
-			if($scope.formData.submit.source){
-				var form = dataService.global[$scope.formData.submit.source];
-				for (var el = 0; el < form.elements.length; el++) {
-					var element = form.elements[el];
-					console.log("ELEMENT", element);
-					for (var i = 0; i < element.length; i++) {
-						var row = element[i];
-						console.log("ROW", row);
-						for (var j = 0; j < row.elements.length; j++) {
-							var field = row.elements[j];
-							if(field.subtype != "form") continue;
-							
-							console.log("FIELD", field);
-							fields.push(field);
-						}
-					}
-				}
-			}
-			$scope.formData.fields = fields;
+//			var fields = [];
+//			if($scope.formData.submit.source){
+//				var form = dataService.global[$scope.formData.submit.source];
+//				for (var el = 0; el < form.elements.length; el++) {
+//					var element = form.elements[el];
+//					console.log("ELEMENT", element);
+//					for (var i = 0; i < element.length; i++) {
+//						var row = element[i];
+//						console.log("ROW", row);
+//						for (var j = 0; j < row.elements.length; j++) {
+//							var field = row.elements[j];
+//							if(field.subtype != "form") continue;
+//							
+//							console.log("FIELD", field);
+//							fields.push(field);
+//						}
+//					}
+//				}
+//			}
+//			$scope.formData.fields = fields;
 			
 			console.log("MYTABLE", $scope.formData);
 			
@@ -73,44 +73,45 @@ app.directive("myTable", function() {
 			$scope.paginatorCallback = function(page, pageSize, options) {
 
 //				$scope.formData.results.hits = [];
-
-				var args = {};
-				for (var i = 0; i < $scope.formData.fields.length; i++) {
-					var field = $scope.formData.fields[i];
-//					console.log("FIELD", field);
-					if (!field.data) continue;
-					if(!field.key) continue;
-
-					if (angular.isArray(field.data.value)) {
-						subargs = []
-						for (var j = 0; j < field.data.value.length; j++) {
-							var value = field.data.value[j].id;
-							if (value == undefined) value = field.data.value[j];
-//							console.log("VALUE", value);
-
-							if (value == undefined || value == "undefined" || value == "") value = "ALL";
-							subargs.push(value);
-						}
-
-						args[field.key] = subargs;
-					} else {
-						var value = "ALL";
-						if (field.data.value && field.data.value.id) value = field.data.value.id;
-						else if (field.data.value) value = field.data.value;
-
-						if (field.type == "checkbox") {
-							value = field.data.value ? field.data.value : false;
-							if (value.value) value = value.value;
-						}
-
-						console.log("VALUE", value);
-
-						// if (value == undefined || value ==
-						// "undefined" || value == "") value =
-						// "ALL";
-						args[field.key] = value;
-					}
-				}
+				var args = dataService.getArgs($scope.formData.submit.source);
+				
+//				var args = {};
+//				for (var i = 0; i < $scope.formData.fields.length; i++) {
+//					var field = $scope.formData.fields[i];
+////					console.log("FIELD", field);
+//					if (!field.data) continue;
+//					if(!field.key) continue;
+//
+//					if (angular.isArray(field.data.value)) {
+//						subargs = []
+//						for (var j = 0; j < field.data.value.length; j++) {
+//							var value = field.data.value[j].id;
+//							if (value == undefined) value = field.data.value[j];
+////							console.log("VALUE", value);
+//
+//							if (value == undefined || value == "undefined" || value == "") value = "ALL";
+//							subargs.push(value);
+//						}
+//
+//						args[field.key] = subargs;
+//					} else {
+//						var value = "ALL";
+//						if (field.data.value && field.data.value.id) value = field.data.value.id;
+//						else if (field.data.value) value = field.data.value;
+//
+//						if (field.type == "checkbox") {
+//							value = field.data.value ? field.data.value : false;
+//							if (value.value) value = value.value;
+//						}
+//
+//						console.log("VALUE", value);
+//
+//						// if (value == undefined || value ==
+//						// "undefined" || value == "") value =
+//						// "ALL";
+//						args[field.key] = value;
+//					}
+//				}
 
 				if (!page) page = 1;
 				var offset = (page - 1) * pageSize;
