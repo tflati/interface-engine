@@ -2,9 +2,11 @@
 <!-- 	<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i> -->
 <!-- </div> -->
 
-<div ng-if="field.type == 'text'" ng-bind-html="field.label" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}"></div>
-<p    ng-if="field.type == 'paragraph' && field.inline != 'true'" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}" ng-bind-html="field.data.value"></p>
-<span ng-if="field.type == 'paragraph' && field.inline == 'true'" layout="{{field.layout || 'column'}}" layout-align="{{field.layout_align || 'start start'}}" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
+<div ng-if="field.type == 'dynamic'"></div>
+
+<div ng-if="field.type == 'text'" ng-bind-html="field.label"></div>
+<p    ng-if="field.type == 'paragraph' && field.inline != 'true'" ng-bind-html="field.data.value"></p>
+<span ng-if="field.type == 'paragraph' && field.inline == 'true'" ng-bind-html="field.data.value" style="vertical-align: middle;"></span>
 
 <img ng-if="field.type == 'image'" style="width:{{field.data.width || 'auto'}}; height:{{field.data.height || 'auto'}}; margin: {{field.data.margin || '0px'}}; vertical-align: middle;" ng-src="{{field.data.url}}">
 </img>
@@ -42,7 +44,7 @@
 
 <div ng-if="field.type == 'spacer'" class="spacer"></div>
 
-<span ng-if='field.type == "icon"' style="padding: 5px;">
+<span ng-if='field.type == "icon"' style="padding: 5px;" >
 	<i class="fa {{field.data.icon}} {{field.data.modifiers}}" aria-label="{{field.data.title}}" title="{{field.data.title}}" style="color: {{field.data.color}}"></i>
 </span>
 
@@ -471,6 +473,6 @@
 
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
 <div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>
-	<element flex="{{element.width}}" ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
+	<element ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

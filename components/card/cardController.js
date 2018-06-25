@@ -28,6 +28,8 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
             $scope.card.show = true;
 		}
 		
+		$scope.card.showVector = {}
+		
 //		$scope.show = true;
 //		if (data.show == false) $scope.show = false;
 		
@@ -49,33 +51,130 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
 //			}, true);
 //		}
 		
-		for(var i=0; i < $scope.card.show_conditions.length; i++)
-		{
-			var condition = $scope.card.show_conditions[i];
-			var arg1 = condition.arg1;
-			if(arg1.key){
-				console.log("CARD SHOW ADDING WATCH TO ", arg1);
-				$scope.$watch(function(){return dataService.global[arg1.key];}, function(newValue, oldValue) {
-					console.log("WATCH CARD SHOW ARG1", oldValue, newValue);
-					condition.arg1.value = newValue;
-//					if(newValue != oldValue)
-						$scope.updateShow(condition);
-				});
+//		for(var i=0; i < $scope.card.show_conditions.length; i++)
+//		{
+//			var condition = $scope.card.show_conditions[i];
+//			var arg1 = condition.arg1;
+//			if(arg1.key){
+//				console.log("CARD SHOW ADDING WATCH TO ", arg1);
+//				$scope.$watch(function(){return dataService.global[arg1.key];}, function(newValue, oldValue) {
+//					console.log("WATCH CARD SHOW ARG1", oldValue, newValue);
+//					condition.arg1.value = newValue;
+////					if(newValue != oldValue)
+//						$scope.updateShow(condition);
+//				});
+//			}
+//			
+//			var op = condition.op;
+//			var arg2 = condition.arg2;
+//			if(arg2.key){
+//				console.log("CARD SHOW ADDING WATCH TO ", arg2);
+//				$scope.$watch(function(){return dataService.global[arg2.key];}, function(newValue, oldValue) {
+//					console.log("WATCH CARD SHOW ARG2", oldValue, newValue);
+//					condition.arg2.value = newValue;
+////					if(newValue != oldValue)
+//						$scope.updateShow(condition);
+//				});
+//			}
+//			
+//			$scope.updateShow(condition);
+//		}
+		
+		if($scope.card.show_conditions){
+
+			for(var i=0; i < $scope.card.show_conditions.length; i++)
+			{
+				var condition = $scope.card.show_conditions[i];
+//				console.log("SHOW CONDITION", $scope.card.title, condition.arg1.value, condition.arg2, typeof(condition.arg1.value), typeof(condition.arg2));
+				$scope.card.showVector[i] = $scope.updateShow(condition);
 			}
 			
-			var op = condition.op;
-			var arg2 = condition.arg2;
-			if(arg2.key){
-				console.log("CARD SHOW ADDING WATCH TO ", arg2);
-				$scope.$watch(function(){return dataService.global[arg2.key];}, function(newValue, oldValue) {
-					console.log("WATCH CARD SHOW ARG2", oldValue, newValue);
-					condition.arg2.value = newValue;
-//					if(newValue != oldValue)
-						$scope.updateShow(condition);
-				});
+			var show = true;
+			for(var key in $scope.card.showVector)
+				if(!$scope.card.showVector[key]) {show = false; break;}
+			$scope.card.show = show;
+			
+			var watchGroup = [];
+			for(var i=0; i < $scope.card.show_conditions.length; i++)
+			{
+				var condition = $scope.card.show_conditions[i];
+//				console.log("WATCH GROUP CONDITION", $scope.card.title, condition);
+				watchGroup[2*i] = "dataService.global['"+condition.arg1.key+"']";
+				watchGroup[2*i+1] = "dataService.global['"+condition.arg2.key+"']";
 			}
 			
-			$scope.updateShow(condition);
+//			console.log("WATCH GROUP VECTOR", $scope.card.title, watchGroup);
+			
+			$scope.$watchGroup(watchGroup, function(newValues, oldValues){
+				
+				// console.log("WATCH GROUP", $scope.card.title, newValues, oldValues);
+				
+				for(var i=0; i<newValues.length; i+=2)
+				{
+					// Retrieve the condition associated
+					var condition = $scope.card.show_conditions[i/2];
+					
+					if(newValues[i] != oldValues[i])
+					{
+//						console.log("WATCH GROUP CHANGED ARG1", i, $scope.card.title, oldValues[i], newValues[i], typeof(newValues[i]));
+						condition.arg1.value = newValues[i];
+					}
+					
+					if(newValues[i+1] != oldValues[i+1]){
+//						console.log("WATCH GROUP CHANGED ARG2", i, $scope.card.title, oldValues[i+1], newValues[i+1]);
+						condition.arg2.value = newValues[i+1];
+					}
+					
+//					console.log("SHOW VECTOR UPDATE CONDITION", $scope.card.title, i, i/2, condition.arg1.value, condition.op, condition.arg2, typeof(condition.arg1.value), typeof(condition.arg2), $scope.updateShow(condition));
+					
+					$scope.card.showVector[i/2] = $scope.updateShow(condition);
+				}
+				
+				var show = true;
+				for(var key in $scope.card.showVector){
+//					console.log("SHOW VECTOR", $scope.card.title, key, $scope.card.showVector[key]);
+					if(!$scope.card.showVector[key]) {show = false; break;}
+				}
+				$scope.card.show = show;
+			});
+			
+//			for(var i=0; i < $scope.card.show_conditions.length; i++)
+//			{
+//				var condition = $scope.card.show_conditions[i];
+//				console.log("CARD SHOW CONDITION", condition, $scope.card.title, $scope.card);
+//				
+//				var arg1 = condition.arg1;
+//				if(arg1.key){
+//					console.log("CARD SHOW ADDING WATCH TO ", this, $scope.card.title, $scope.card, arg1);
+//					$scope.$watch(function(){return dataService.global[arg1.key];}, function(newValue, oldValue) {
+//						console.log("WATCH CARD SHOW ARG1", $scope.card.title, $scope.card, oldValue, newValue);
+//						condition.arg1.value = newValue;
+//						$scope.card.show = $scope.updateShow(condition);
+//						
+////						$scope.card.showVector[$scope.card.show_conditions.indexOf(condition)] = $scope.updateShow(condition);
+////						var show = true;
+////						for(var key in $scope.card.showVector)
+////							if(!$scope.card.showVector[key]) {show = false; break;}
+////						$scope.card.show = show;
+//					});
+//				}
+//				
+//				var op = condition.op;
+//				var arg2 = condition.arg2;
+//				if(arg2.key){
+//					console.log("CARD SHOW ADDING WATCH TO ", $scope.card.title, $scope.card, arg2);
+//					$scope.$watch(function(){return dataService.global[arg2.key];}, function(newValue, oldValue) {
+//						console.log("WATCH CARD SHOW ARG2", $scope.card.title, $scope.card, oldValue, newValue);
+//						condition.arg2.value = newValue;
+//						$scope.card.show = $scope.updateShow(condition);
+//					});
+//				}
+//				
+//				var b = $scope.updateShow(condition);
+//				if (!b) console.log("ASSIGNING FALSE 2", $scope.card.title, $scope.card, b);
+//				else console.log("ASSIGNING TRUE 2", $scope.card.title, $scope.card, b);
+//				$scope.card.showVector[i] = b;
+//			}
 		}
 		
 		console.log("CARD DATA: ", data);
@@ -99,10 +198,11 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
 		else if(condition.op == "<") show = arg1 < arg2;
 		else if(condition.op == "<=") show = arg1 <= arg2;
 		else if(condition.op == "==") show = arg1 == arg2;
+		else if(condition.op == "!=") show = arg1 != arg2;
 		
-		console.log("WATCH CARD SHOW UPDATE", show, condition, arg1, arg2);
+		console.log("WATCH CARD SHOW UPDATE", $scope.card, show, condition, arg1, arg2, typeof(arg1), typeof(arg2), arg1 == arg2);
 		
-		$scope.card.show = show;
+		return show;
 	};
 	
 	$scope.footerFunction = function(fx){

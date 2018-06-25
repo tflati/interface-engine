@@ -2,8 +2,6 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 
 	var self = this;
 	
-//	$rootScope.search_started = false;
-//	dataService.global["search_started"] = false;
 	dataService.global["search_started"] = undefined;
 
 	console.log("PAGE CONTROLLER", info, pageTitle, $routeParams);
@@ -51,28 +49,6 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 		return $scope.pageInfo;
 	};
 	
-//	$scope.get_current_page_data = function() {
-//		if ($scope.info.pages)
-//			for (var i = 0; i < $scope.info.pages.length; i++)
-//			{
-//				if ($scope.info.pages[i].pageID == $scope.pageTitle)
-//				{
-//					return $scope.info.pages[i];
-//				}
-//			}
-//		
-//		if ($scope.info.forms)
-//			for (var i = 0; i < $scope.info.forms.length; i++)
-//			{
-//				if ($scope.info.forms[i].pageID == $scope.pageTitle)
-//				{
-//					return $scope.info.forms[i];
-//				}
-//			}
-//
-//		return undefined;
-//	};
-	
 	// Set meta tags
 	ngMeta.setTitle($scope.get_current_page_data().title, " | " + info.title_short);
 	for(var i=0; i<info.meta.length; i++){
@@ -80,60 +56,8 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 		ngMeta.setTag(singleMeta["key"], singleMeta["value"]);
 	}
 
-//	$scope.load_form = function(group, option) {
-//
-//		// Remove previous form inputs...
-//		for (var f = 0; f < $scope.form.fields.length;) {
-//			// console.log("FORM FIELD: ", f,
-//			// $scope.form.fields[f]);
-//
-//			if ($scope.form.fields[f].parent_group_id == group.group_id) {
-//				// console.log("Removing form field " + f,
-//				// $scope.form.fields[f]);
-//				// toRemove.push(f);
-//				$scope.form.fields.splice(f, 1);
-//			} else
-//				f++;
-//		}
-//
-//		// ... and add newly selected form inputs
-//		if(option.form)
-//		{	
-//			for (var f = 0; f < option.form.fields.length; f++) {
-//				// console.log("Adding form field " + f,
-//				// option.form.fields[f]);
-//				option.form.fields[f].parent_group_id = group.group_id;
-//				var newForm = option.form.fields[f];
-//
-//				$scope.form.fields.push(newForm);
-//			}
-//		}
-//	};
-
 	$scope.inForm = function() {
-
-		// var p = $scope.page.replace("templates/",
-		// "").replace(".html", "");
-		// console.log("IN_FORM", "Asking if in form or not",
-		// $scope.page, p);
 		return $scope.pageTitle == "form";
-		// console.log("IN_FORM",
-		// $scope.get_current_page_data(),
-		// $scope.get_current_page_data() == 'form');
-		// return $scope.get_current_page_data() == 'form';
-
-		// var isForm = false;
-		// if( $scope.info.forms )
-		// for(var f=0; f<$scope.info.forms.length; f++)
-		// {
-		// var form = $scope.info.forms[f];
-		// if(form.name == p)
-		// {
-		// return true;
-		// break;
-		// }
-		// }
-		// return false;
 	};
 
 	$scope.goTo = function(item) {
@@ -143,7 +67,6 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 		url = item.url
 		console.log("Want to go to " + url);
 		dataService.global["search_started"] = undefined;
-//		$rootScope.search_started = undefined;
 
 		// Check if the url is a form name
 		var isForm = false;
@@ -273,47 +196,4 @@ app.controller("pageController", function($routeParams, $http, $window, $rootSco
 					clickOutsideToClose : true
 				});
 	};
-
-//	/* MOVE TO FORM CONTROLLER */
-//	$scope.exists = function(item, field) {
-//		if (field.value == undefined) return false;
-//		
-//		if(field.exclusive) return field.value == item;
-//		return field.value.indexOf(item) > -1;
-//	};
-//
-//	/* MOVE TO FORM CONTROLLER */
-//	$scope.toggle = function(item, field) {
-//		
-//		if(field.exclusive) {
-//			if (field.value == item) field.value = undefined;
-//			else field.value = item;
-//		}
-//		else {
-//			if (field.value == undefined) field.value = []
-//			var idx = field.value.indexOf(item);
-//			if (idx > -1)
-//				field.value.splice(idx, 1);
-//			else
-//				field.value.push(item);
-//		}
-//	};
-
-//	$scope.send_query = function() {
-//
-////		$rootScope.search_started = true;
-//		dataService.global["search_started"] = true;
-//		$scope.form.results = [];
-//		console.log("Want to make a new search!");
-//	};
-//
-//	$scope.show_form = function() {
-////		$rootScope.search_started = false;
-//		dataService.global["search_started"] = true;
-//	};
-
-//	if (pageTitle != undefined)
-//		$scope.goTo({
-//			url: pageTitle
-//		});
 });

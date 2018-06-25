@@ -54,6 +54,9 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		
 		if($scope.field.data != undefined){
 			
+			// Keys will contain:
+			// - field.data.key
+			// - template.key, for each template in field.data.templates (different from field.key)
 			var keys = [];
 			if($scope.field.data.key) keys.push($scope.field.data.key);
 			
@@ -106,6 +109,10 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				    				$scope.field.data.value = obj;
 				    		}
 				    	}
+				    	else if(newValue.type != undefined){
+				    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
+				    		$scope.field = newValue;
+				    	}
 				    	else {
 				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
 				    		$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
@@ -125,15 +132,24 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				console.log("ADDED WATCH KEY", $scope.field.type, $scope.field.key, result);
 			}
 			
+			// ON CHANGE INIT (otherwise the value do not change)
 			if($scope.field.data.onChange){
 				console.log("ANALYZING ON CHANGE", $scope.field.data.onChange);
 				
 				var listener = $scope.field.data.onChange;
 				if(listener.action == "write") {
-					console.log("[1] ONCHANGE GLOBAL:", dataService, $scope.field.data);
-					console.log("MODIFYING GLOBAL", listener.key, $scope.field.data.id || $scope.field.data.value);
+					console.log("[1 WRITE] ONCHANGE GLOBAL:", dataService, $scope.field.data);
+					console.log("MODIFYING GLOBAL WRITE", listener.key, $scope.field.data.id || $scope.field.data.value);
 					dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
-					console.log("[1] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
+					console.log("[1 WRITE] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
+				}
+				else if(listener.action == "read") {
+					console.log("[1 READ] ONCHANGE GLOBAL:", dataService, $scope.field.data);
+					console.log("MODIFYING GLOBAL READ", listener.key, $scope.field.data.id || $scope.field.data.value);
+					
+//					if(listener.scope == "global") field = dataService.global[listener.key];
+					
+					console.log("[1 READ] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
 				}
 			}
 		}
@@ -503,11 +519,14 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		}
 		
 		if($scope.field.data.onReceive){
+			console.log("ON RECEIVE", $scope.field.data);
+			
 			for(var i=0; i<$scope.field.data.onReceive.length; i++){
 				var instruction = $scope.field.data.onReceive[i];
 				
 				if (instruction.action == "write") {
-					$scope.field.data[instruction.target] = result.data;
+					if(instruction.scope == "global") dataService.global[instruction.target] = result.data;
+					else $scope.field.data[instruction.target] = result.data;
 				}
 			}
 		}
@@ -790,16 +809,6 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 						
 						console.log("MODIFYING GLOBAL", $scope.field.id, $scope.field.results);
 						dataService.global[$scope.field.id] = $scope.field.results;
-						
-//						if($scope.field.data.onReceive){
-//							for(var i=0; i<$scope.field.data.onReceive.length; i++){
-//								var instruction = $scope.field.data.onReceive[i];
-//								
-//								if (instruction.action == "write") {
-//									$scope.field.data[instruction.target] = result.data;
-//								}
-//							}
-//						}
 					},
 					function(response){
 						dataService.global["success"] = false;
@@ -862,7 +871,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 			if($scope.get_url() != undefined){
 				$scope.inputData = $scope.field.card;
 				$window.parentScope = $scope;
-				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+				var popup = $window.open("/pioppo/popup", "_blank", "width=800,height=600,left=50,top=50");
 			}
 		}
 		else if($scope.field.action == "dialog") {
@@ -940,7 +949,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 							});
 						}
 						else {
-							console.log("[5] GLOBAL:", dataService, listener, value, dataService.global[actionObject.key]);
+							console.log("[5] GLOBAL:", dataService, listener, value, $scope.toString(actionObject.value));
 							console.log("MODIFYING GLOBAL", actionObject.key, $scope.toString(actionObject.value));
 							dataService.global[actionObject.key] = $scope.toString(actionObject.value); // || value.id || value;
 							dataService.global[actionObject.key + "_value"] = $scope.toString(value); // value.id || value.label || value

@@ -6,7 +6,7 @@
 	    </md-card-title-text>
 	</md-card-title>
 	
-	<md-card-content>
+	<md-card-content layout="{{card.layout || 'row'}}" layout-align="{{card.layout_align || 'start start'}}">
 	
 		<div ng-if="sending" style="text-align: center; color: cadetblue;">
      		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
@@ -18,11 +18,11 @@
 <!-- 		</div> -->
 		
 		<!-- layout="{{card.layout ? card.layout : 'row'}}" -->
-		<element ng-if="element.layout" layout="{{element.layout || 'row'}}" layout-align="{{field.layout_align || 'start start'}}" flex="{{element.layout != undefined ? 'auto' : 'none'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
+		<element layout="{{element.layout || 'row'}}" layout-align="{{element.layout_align || 'start start'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 		
-		<element ng-if="!element.layout" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
-		</element>
+<!-- 		<element ng-if="!element.layout" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)"> -->
+<!-- 		</element> -->
 
 	</md-card-content>
 	
