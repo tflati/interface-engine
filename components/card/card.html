@@ -12,18 +12,9 @@
      		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
  		</div>
  		
-<!-- 		<div ng-if="actions" style="display: inline-block; width: auto; float: right;"> -->
-<!-- 			<action ng-controller="buttonController" ng-init="init(action)" ng-repeat="action in actions"> -->
-<!-- 			</action> -->
-<!-- 		</div> -->
-		
-		<!-- layout="{{card.layout ? card.layout : 'row'}}" -->
-		<element layout="{{element.layout || 'row'}}" layout-align="{{element.layout_align || 'start start'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
+		<element style="margin: {{element.margin || '0px'}}; max-width: 100%;" layout="{{element.layout || 'row'}}" layout-align="{{element.layout_align || 'start start'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 		
-<!-- 		<element ng-if="!element.layout" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)"> -->
-<!-- 		</element> -->
-
 	</md-card-content>
 	
 	<md-divider ng-if="card.footer"></md-divider>

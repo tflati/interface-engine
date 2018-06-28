@@ -40,7 +40,7 @@
 	<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 </md-button>
 
-<hr ng-if="field.type == 'divider'" class="divider">
+<md-divider ng-if="field.type == 'divider'"></md-divider>
 
 <div ng-if="field.type == 'spacer'" class="spacer"></div>
 
@@ -357,12 +357,12 @@
 <!-- 			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option> -->
 			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">
 				<div ng-if="value.label != undefined" layout="row" layout-align="start center">
-					<div style="display: table-cell; vertical-align: middle;" ng-if="value.img">
+					<div ng-if="value.img">
 						<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
 					</div>
-					<div layout="column" layout-align="center center">
-						<div ng-if="value.label != undefined">{{value.label}}</div>
-						<div ng-if="value.extra"><p style="margin: 0px; color: grey">({{value.extra}})</p></div>
+					<div layout="row" layout-align="center center">
+						<p ng-if="value.label != undefined">{{value.label}}</p>
+						<p ng-if="value.extra" style="margin-left: 5px; color: grey">({{value.extra}})</p>
 					</div>
 				</div>
 				<span ng-if="value.label == undefined">{{value}}</span>
@@ -473,6 +473,6 @@
 
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
 <div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>
-	<element ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
+	<element style="margin: {{element.margin || '0px'}}; max-width: 100%;" ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

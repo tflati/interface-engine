@@ -12,6 +12,7 @@ app.directive("myTable", function() {
 					url : $scope.formData.url,
 				};
 			if($scope.formData.source) $scope.formData.submit.source = $scope.formData.source;
+			if($scope.formData.args) $scope.formData.submit.args = $scope.formData.args;
 			
 //			$scope.formData.fields = [];
 
@@ -73,7 +74,9 @@ app.directive("myTable", function() {
 			$scope.paginatorCallback = function(page, pageSize, options) {
 
 //				$scope.formData.results.hits = [];
-				var args = dataService.getArgs($scope.formData.submit.source);
+				var args = undefined;
+				if($scope.formData.submit.source != undefined) args = dataService.getArgs($scope.formData.submit.source);
+				else args = $scope.formData.submit.args;
 				
 //				var args = {};
 //				for (var i = 0; i < $scope.formData.fields.length; i++) {
@@ -126,7 +129,7 @@ app.directive("myTable", function() {
 					'filter' : $scope.filter_list
 				};
 
-				for ( var key in args) {
+				for (var key in args) {
 					var value = args[key];
 					if (angular.isString(value))
 						value = value.replace(/#/g, "_SHARP_");
