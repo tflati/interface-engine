@@ -54,34 +54,38 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		
 		if($scope.field.data != undefined){
 			
-			// Keys will contain:
-			// - field.data.key
-			// - template.key, for each template in field.data.templates (different from field.key)
-			var keys = [];
-			if($scope.field.data.key) keys.push($scope.field.data.key);
+			if($scope.field.type != "autocomplete"){
 			
-			for(index in $scope.field.data.templates){
+				// Keys will contain:
+				// - field.data.key
+				// - template.key, for each template in field.data.templates (different from field.key)
+				var keys = [];
+				if($scope.field.data.key) keys.push($scope.field.data.key);
 				
-				var template = $scope.field.data.templates[index];
-				console.log("TEMPLATE2", $scope.field.type, data, template);
-				
-				if(template.key && keys.indexOf(template.key) == -1){
-					var key = template.key;
-					if(key != $scope.field.key) keys.push(key);
+				for(index in $scope.field.data.templates){
+					
+					var template = $scope.field.data.templates[index];
+					console.log("TEMPLATE2", $scope.field.type, data, template);
+					
+					if(template.key && keys.indexOf(template.key) == -1){
+						var key = template.key;
+						if(key != $scope.field.key)
+							keys.push(key);
+					}
+					
+					// Tried to initialise the value of variable
+					if(template.value){
+						console.log("MODIFYING GLOBAL", template.key, template.value);
+						dataService.global[template.key] = template.value;
+					}
 				}
 				
-				// Tried to initialise the value of variable
-				if(template.value){
-					console.log("MODIFYING GLOBAL", template.key, template.value);
-					dataService.global[template.key] = template.value;
-				}
-			}
-			
-			if($scope.field.data.onChange && $scope.field.data.onChange.key != undefined && keys.indexOf($scope.field.data.onChange.key) == -1){
-				var key = $scope.field.data.onChange.key;
-				if(key != $scope.field.key) keys.push(key);
-			}
-			console.log("KEYS", $scope.field.type, $scope.field.key, data, keys);
+				var key = $scope.field.data.onChange && $scope.field.data.onChange.key? $scope.field.data.onChange.key : undefined;
+				if(key != undefined && keys.indexOf(key) == -1)
+//					if(key != $scope.field.key)
+						keys.push(key);
+				
+				console.log("KEYS", $scope.field.type, $scope.field.key, data, keys);
 			
 //			// MODIFIED 26/06/18
 //			if($scope.field.data && $scope.field.data.variable_value){
@@ -133,62 +137,63 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 //				console.log("ADDED WATCH KEY", $scope.field.type, $scope.field.key, result);
 //			}
 			
-			var watchGroup = [];
-			for(var i=0; i < keys.length; i++)
-			{
-				var key = keys[i];
-				watchGroup[i] = "dataService.global['"+key+"']";
-			}
-			
-			$scope.$watchGroup(watchGroup, function(newValues, oldValues) {
-				for(var i=0; i<newValues.length; i+=1)
+				var watchGroup = [];
+				for(var i=0; i < keys.length; i++)
 				{
-					// Retrieve the key associated
 					var key = keys[i];
-					var newValue = newValues[i];
-					var oldValue = oldValues[i];
-					
-					console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
-					
-					if(newValue != oldValue)
-					{
-						console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
-//				    	console.log($scope.field.type, "Change from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
-				    	
-				    	// Update value (it might be a simple value or an object)
-				    	if($scope.field.subdata && $scope.field.subdata.length > 0){
-				    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
-				    		for(var i=0; i<$scope.field.subdata.length; i++) {
-				    			var obj = $scope.field.subdata[i];
-				    			if (obj == newValue || obj.id == newValue)
-				    				$scope.field.data.value = obj;
-				    		}
-				    	}
-				    	else if(newValue.type != undefined){
-				    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
-				    		$scope.field = newValue;
-				    	}
-				    	else {
-				    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
-				    		if (key == $scope.field.key)
-				    			$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
-				    	}
-				    	
-				    	if($scope.field.data && $scope.field.data.templates)
-				    	{
-				    		console.log("REPLACE TEMPLATES INSIDE WATCH", $scope.field.type, $scope.field.key, key, newValue, oldValue, $scope.field);
-				    		$scope.replaceTemplates();
-				    	}
-				    	
-//						// THINK ABOUT THIS...
-				    	if (key != $scope.field.key)
-					    	if($scope.field.data) {// && $scope.field.data.onChange != "nothing"
-					    		console.log("UPDATING", $scope.field.type, $scope.field.key, key, $scope.field);
-					    		$scope.update($scope.get_url());
-					    	}
-					}
+					watchGroup[i] = "dataService.global['"+key+"']";
 				}
-			});
+				
+				$scope.$watchGroup(watchGroup, function(newValues, oldValues) {
+					for(var i=0; i<newValues.length; i+=1)
+					{
+						// Retrieve the key associated
+						var key = keys[i];
+						var newValue = newValues[i];
+						var oldValue = oldValues[i];
+						
+						console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
+						
+						if(newValue != oldValue)
+						{
+							console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
+	//				    	console.log($scope.field.type, "Change from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
+					    	
+					    	// Update value (it might be a simple value or an object)
+					    	if($scope.field.subdata && $scope.field.subdata.length > 0){
+					    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
+					    		for(var i=0; i<$scope.field.subdata.length; i++) {
+					    			var obj = $scope.field.subdata[i];
+					    			if (obj == newValue || obj.id == newValue)
+					    				$scope.field.data.value = obj;
+					    		}
+					    	}
+					    	else if(newValue != undefined && newValue.type != undefined){
+					    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
+					    		$scope.field = newValue;
+					    	}
+					    	else {
+					    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
+					    		if (key == $scope.field.key)
+					    			$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
+					    	}
+					    	
+					    	if($scope.field.data && $scope.field.data.templates)
+					    	{
+					    		console.log("REPLACE TEMPLATES INSIDE WATCH", $scope.field.type, $scope.field.key, key, newValue, oldValue, $scope.field);
+					    		$scope.replaceTemplates();
+					    	}
+					    	
+	//						// THINK ABOUT THIS...
+					    	if (key != $scope.field.key)
+						    	if($scope.field.data) {// && $scope.field.data.onChange != "nothing"
+						    		console.log("UPDATING", $scope.field.type, $scope.field.key, key, $scope.field);
+						    		$scope.update($scope.get_url());
+						    	}
+						}
+					}
+				});
+			}
 			
 			// ON CHANGE INIT (otherwise the value do not change)
 			if($scope.field.data.onChange){
@@ -482,7 +487,8 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				console.log("REPLACING TARGET SPECIAL!", $scope.field.type, template.target, value, $scope.field);
 			}
 			else if($scope.field.data.value) {
-				$scope.field.data.value = $scope.field.data.value.replace(template.template, value);
+				if ($scope.field.data.value.label != undefined) $scope.field.data.value = ("" + $scope.field.data.value.label).replace(template.template, value);
+				else $scope.field.data.value = ("" + $scope.field.data.value).replace(template.template, value);
 			}
 			
 //			$scope.field.data.value = $scope.field.data.value.replace(template.template, value);
