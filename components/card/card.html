@@ -1,4 +1,4 @@
-<md-card ng-if="card.show">
+<md-card ng-if="card.show" ng-style="card.style">
 	<md-card-title ng-if="card.title || card.subtitle" ng-class="{'padding-v-small': card.compact}">
 		<md-card-title-text>
 	            <span class="md-headline" ng-if="card.title" ng-bind-html="card.title"></span>
@@ -12,7 +12,7 @@
      		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
  		</div>
  		
-		<element style="margin: {{element.margin || '0px'}}; max-width: 100%;" layout="{{element.layout || 'row'}}" layout-align="{{element.layout_align || 'start start'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
+		<element ng-style="element.style" layout="{{element.layout || 'row'}}" layout-align="{{element.layout_align || 'start start'}}" ng-repeat="element in card.elements" ng-controller="elementController" ng-init="init(element)">
 		</element>
 		
 	</md-card-content>

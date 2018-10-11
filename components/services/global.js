@@ -73,33 +73,44 @@ app.service("dataService", function($cookies) {
 	myService.getFields = function(x){
 		var form = myService.global[x];
 		console.log("[GET FIELDS] DATA SOURCE", x, form);
-		
 		var fields = [];
 		
-		for(var el=0; el<form.elements.length; el++){
-			var row = form.elements[el];
-			
-			for(var i=0; i<row.length; i++){
-				var element = row[i];
-//				console.log("[GET FIELDS] ELEMENT", element);
-				myService.getFieldsRecursive(element, fields);				
+		if (form != undefined && form.elements != undefined)
+			for(var el=0; el<form.elements.length; el++){
+				var row = form.elements[el];
+				
+				if(angular.isArray(row))
+					for(var i=0; i<row.length; i++){
+						var element = row[i];
+						console.log("[GET FIELDS] MACRO ELEMENT", element);
+						myService.getFieldsRecursive(element, fields);
+					}
+				else {
+					myService.getFieldsRecursive(row, fields);
+				}
 			}
-		}
 
-//		console.log("[GET FIELDS] DATA SOURCE", x, form, fields);		
+		console.log("[GET FIELDS] FINAL", x, fields);
 		return fields;
 	};
 	
 	myService.getFieldsRecursive = function(form, fields){
-		if(form.type == "submit") return;
+		if(form.type == "submit") {
+			console.log("[GET FIELDS] SKIPPING", form);
+			return;
+		}
 		
 		if(form.elements)
 			for(var j=0; j<form.elements.length; j++){
 				var field = form.elements[j];
+				
+				console.log("[GET FIELDS] ELEMENT", field);
 				myService.getFieldsRecursive(field, fields);
 			}
 		else
-			if(form.subtype == "form")
+			if(form.subtype == "form"){
+				console.log("[GET FIELDS] ADDING FIELD TO FIELDS", form);
 				fields.push(form);
+			}
 	};
 });

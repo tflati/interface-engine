@@ -101,13 +101,23 @@
                 
 <!--                 	<md-button ng-if='field.field.type == "button" && field.action == "dialog"' ng-click="onClick()" class="md-raised md-primary">{{field.label}}</md-button> -->
                 	
-                	<element ng-controller="elementController" ng-if='f.type == "button" && (f.action == "window" || f.action == "dialog")' ng-init="init(f)"></element>
+<!--                 	Commented on 08/10/18 -->
+<!--                 	<element ng-controller="elementController" ng-if='f.type == "button" && (f.action == "window" || f.action == "dialog")' ng-init="init(f)"></element> -->
 
 					<a ng-if="f.type == 'link'" title="{{f.title}}" target="{{f.target}}" ng-href="{{f.url}}" ng-bind="f.label"></a>
                 	
                 	<form ng-if='f.type == "button" && f.action == "download"' method="get" action="{{f.url}}">
                 		<md-button type="submit" title="{{f.title}}" class="md-raised md-primary">{{f.label}}</md-button>
                 	</form>
+                	
+                	<a class="md-button md-primary md-raised" ng-if="f.type == 'button' && f.action == 'link'" title="{{f.title}}" target="{{f.data.target}}" ng-href="{{f.data.url}}" ng-bind="f.label"></a>
+                	
+<!--                 	<md-button ng-if="f.type == 'button' && f.action != 'download'" class="md-primary md-raised" style="text-decoration: none; background-color: {{f.color}}" ng-click="onClick()" title="{{f.title}}" ng-disabled="get_url() == undefined"> -->
+<!-- 						<img ng-if="f.data.image" ng-src="{{f.data.image}}" height="{{f.data.height}}" style="vertical-align: middle;"> -->
+<!-- 						{{f.label}} -->
+<!-- 						<i ng-if="f.data.icon" class="fa {{f.data.icon}} {{f.data.modifiers}}" style="color: {{f.data.color}}"></i> -->
+<!-- 						<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i> -->
+<!-- 					</md-button> -->
                 	
               		<a download	ng-if='f.type == "download"' title="{{f.title}}" href="{{f.url}}" target="_blank">
               			<img ng-if="f.icon !== undefined" class="icon" ng-src="{{f.icon}}"/>{{f.label}}
@@ -470,9 +480,9 @@
 	      </md-autocomplete>
 	</md-content>
 </md-input-container>
-
+<!-- 'padding-bottom': element.padding_bottom; -->
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
 <div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>
-	<element style="margin: {{element.margin || '0px'}}; max-width: 100%;" ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
+	<element ng-style="element.style" ng-repeat="element in field.elements" ng-controller="elementController" ng-init="init(element)">
 	</element>
 </div>

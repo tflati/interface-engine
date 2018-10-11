@@ -120,6 +120,8 @@
 	
 	<div ng-repeat="field in table_data.structure.field_list">
 		<mdt-custom-cell column-key={{field.label}}>
+<!-- 			<element ng-repeat="el in value" field="el" ng-controller="elementController" ng-init="init(el)"> -->
+<!-- 			</element> -->
 			<my-custom-element my-element="value" layout="row" layout-align="start center"></my-custom-element>
 		</mdt-custom-cell>
 	</div>

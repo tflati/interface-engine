@@ -144,55 +144,60 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 					watchGroup[i] = "dataService.global['"+key+"']";
 				}
 				
-				$scope.$watchGroup(watchGroup, function(newValues, oldValues) {
-					for(var i=0; i<newValues.length; i+=1)
-					{
-						// Retrieve the key associated
-						var key = keys[i];
-						var newValue = newValues[i];
-						var oldValue = oldValues[i];
-						
-						console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
-						
-						if(newValue != oldValue)
+				if(watchGroup.length > 0)
+					$scope.$watchGroup(watchGroup, function(newValues, oldValues) {
+						for(var i=0; i<newValues.length; i+=1)
 						{
-							console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, newValue, oldValue, dataService.global, $scope);
-	//				    	console.log($scope.field.type, "Change from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
-					    	
-					    	// Update value (it might be a simple value or an object)
-					    	if($scope.field.subdata && $scope.field.subdata.length > 0){
-					    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
-					    		for(var i=0; i<$scope.field.subdata.length; i++) {
-					    			var obj = $scope.field.subdata[i];
-					    			if (obj == newValue || obj.id == newValue)
-					    				$scope.field.data.value = obj;
-					    		}
-					    	}
-					    	else if(newValue != undefined && newValue.type != undefined){
-					    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
-					    		$scope.field = newValue;
-					    	}
-					    	else {
-					    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
-					    		if (key == $scope.field.key)
-					    			$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
-					    	}
-					    	
-					    	if($scope.field.data && $scope.field.data.templates)
-					    	{
-					    		console.log("REPLACE TEMPLATES INSIDE WATCH", $scope.field.type, $scope.field.key, key, newValue, oldValue, $scope.field);
-					    		$scope.replaceTemplates();
-					    	}
-					    	
-	//						// THINK ABOUT THIS...
-					    	if (key != $scope.field.key)
-						    	if($scope.field.data) {// && $scope.field.data.onChange != "nothing"
-						    		console.log("UPDATING", $scope.field.type, $scope.field.key, key, $scope.field);
-						    		$scope.update($scope.get_url());
+							// Retrieve the key associated
+							var key = keys[i];
+							var newValue = newValues[i];
+							var oldValue = oldValues[i];
+							
+							console.log("INSIDE WATCH", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, "N", newValue, "O", oldValue, dataService.global, $scope);
+							
+							if(newValue != oldValue)
+							{
+								console.log("INSIDE WATCH (CHANGE)", i, keys, watchGroup, key, $scope.field.type, $scope.field.key, "N", newValue, "O", oldValue, dataService.global, $scope);
+		//				    	console.log($scope.field.type, "Change from " + oldValue + " to ", newValue, "effective value=", dataService.global[key], " field=", $scope.field);
+						    	
+						    	// Update value (it might be a simple value or an object)
+						    	if($scope.field.subdata && $scope.field.subdata.length > 0){
+						    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
+						    		for(var i=0; i<$scope.field.subdata.length; i++) {
+						    			var obj = $scope.field.subdata[i];
+						    			if (obj == newValue || obj.id == newValue)
+						    				$scope.field.data.value = obj;
+						    		}
 						    	}
+						    	else if(newValue != undefined && newValue.type != undefined){
+						    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
+						    		$scope.field = newValue;
+						    	}
+//						    	// COMMENTED ON 10/10/18
+//						    	else if (newValue != undefined){
+//						    		$scope.field.elements = newValue;
+//						    	}
+						    	else {
+						    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
+						    		if (key == $scope.field.key)
+						    			$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
+						    	}
+						    	
+						    	if($scope.field.data && $scope.field.data.templates)
+						    	{
+						    		console.log("REPLACE TEMPLATES INSIDE WATCH", $scope.field.type, $scope.field.key, key, newValue, oldValue, $scope.field);
+						    		$scope.replaceTemplates();
+						    	}
+						    	
+		//						// THINK ABOUT THIS...
+						    	if (key != $scope.field.key)
+							    	if($scope.field.data) {// && $scope.field.data.onChange != "nothing"
+							    		console.log("UPDATING", $scope.field.type, $scope.field.key, key, $scope.field);
+							    		$scope.update($scope.get_url());
+							    	}
+							}
 						}
-					}
-				});
+					});
 			}
 			
 			// ON CHANGE INIT (otherwise the value do not change)
@@ -515,8 +520,17 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 
 		$scope.sending = true;
 
-		console.log("AJAX [GET] TO", url, $scope.field.data);		
-		$scope.promise = $http.get(url);
+		console.log("AJAX [GET] TO", url, $scope.field);
+		
+		var method = $scope.field.method || "POST";
+		if (method == "GET")		
+			$scope.promise = $http.get(url);
+		else if (method == "POST"){
+			var args = dataService.getArgs($scope.field.data.source);
+			console.log("AJAX [POST] BUTTON ARGS", args, $scope.field);
+			$scope.promise = $http.post($scope.field.data.url, args);
+		}
+		
 		$scope.promise.then(fx,
 			function myError(response) {
 				$scope.sending = false;
@@ -531,12 +545,15 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		$scope.sending = false;
 		console.log("SUCCESS IN GETTING DATA FROM " + response.config.url, response, $scope, $scope.field.data);
 		
-		if(response.data.details) $scope.field.subdata = response.data.details;
-		else $scope.field.subdata = response.data;
-
-		if($scope.field.subdata.items && $scope.field.subdata.items.length == 0 && $scope.field.data.empty_message){
-			messageService.showMessage($scope.field.data.empty_message, "error");
+		if($scope.field.type == "dynamic"){
+			$scope.field = response.data;
 		}
+		else{
+			if(response.data.details) $scope.field.subdata = response.data.details;
+			else $scope.field.subdata = response.data;
+		}
+//		if($scope.field.subdata.items && $scope.field.subdata.items.length == 0 && $scope.field.data.empty_message)
+//			messageService.showMessage($scope.field.data.empty_message, "error");
 		
 		for(var k in $scope.field.subdata)
 		{
@@ -565,7 +582,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		$scope.convert();
 //		console.log("SCOPE ELEMENT DATA: ", $scope);
 		
-		if($scope.field.data.onFinish){
+		if($scope.field.data && $scope.field.data.onFinish){
 			
 			console.log("ON FINISH [1]", $scope);
 			
@@ -586,15 +603,15 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 			console.log("ON FINISH [3]", $scope, condition, dataService.global[condition.key]);
 		}
 		
-		if($scope.field.data.onReceive){
+		if($scope.field.data && $scope.field.data.onReceive){
 			console.log("ON RECEIVE", $scope.field.data);
 			
 			for(var i=0; i<$scope.field.data.onReceive.length; i++){
 				var instruction = $scope.field.data.onReceive[i];
 				
 				if (instruction.action == "write") {
-					if(instruction.scope == "global") dataService.global[instruction.target] = result.data;
-					else $scope.field.data[instruction.target] = result.data;
+					if(instruction.scope == "global") dataService.global[instruction.target] = response.data;
+					else $scope.field.data[instruction.target] = response.data;
 				}
 			}
 		}
@@ -757,10 +774,10 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 					$scope.field.subdata.series = $scope.field.subdata.header.slice(1, $scope.field.subdata.header.length);
 					// $scope.field.subdata.options.legend.display = $scope.field.subdata.series.length > 0;
 					
-					if($scope.field.data.max) {
+					if($scope.field.data.max != undefined) {
 						$scope.field.subdata.options.scales.yAxes[0].ticks.max = parseFloat($scope.field.data.max);
 					}
-					if($scope.field.data.min) {
+					if($scope.field.data.min != undefined) {
 						$scope.field.subdata.options.scales.yAxes[0].ticks.min = parseFloat($scope.field.data.min);
 					}
 					
@@ -777,7 +794,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 					$scope.field.subdata.series = [];
 				}	
 				
-				console.log("CHART OPTIONS", $scope.field.subdata.options);
+				console.log("CHART OPTIONS", $scope.field.subdata.options, $scope.field);
 			}
 		}
 		else if($scope.field.type == 'venn')
@@ -839,7 +856,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 			}
 		}
 		
-		console.log("FINAL ELEMENT METADATA: ", $scope.field.type, $scope.field.subdata, $scope);
+//		console.log("FINAL ELEMENT METADATA: ", $scope.field.type, $scope.field.subdata, $scope);
 	};
 	
 	$scope.get_options = function(){
@@ -939,7 +956,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 			if($scope.get_url() != undefined){
 				$scope.inputData = $scope.field.card;
 				$window.parentScope = $scope;
-				var popup = $window.open("/interface-engine/popup", "_blank", "width=800,height=600,left=50,top=50");
+				var popup = $window.open("/stress_mice/popup", "_blank", "width=800,height=600,left=50,top=50");
 			}
 		}
 		else if($scope.field.action == "dialog") {
