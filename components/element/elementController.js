@@ -55,6 +55,20 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		if($scope.field.data != undefined){
 			
 			if($scope.field.type != "autocomplete"){
+				
+//				if($scope.field.data.value != undefined){
+//					// Update selected value (it might be a simple value or an object)
+//			    	if($scope.field.subdata && $scope.field.subdata.length > 0){
+//			    		for(var i=0; i<$scope.field.subdata.length; i++) {
+//			    			var obj = $scope.field.subdata[i];
+//			    			if (obj == newValue || obj.id == newValue){
+//			    				console.log("UPDATING VALUE 1", key, obj, $scope.field.type, $scope.field.subdata, newValue);
+//			    				$scope.field.data.value = obj;
+//			    			}
+//			    		}
+//			    	}
+//				}
+				
 			
 				// Keys will contain:
 				// - field.data.key
@@ -80,10 +94,14 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 					}
 				}
 				
-				var key = $scope.field.data.onChange && $scope.field.data.onChange.key? $scope.field.data.onChange.key : undefined;
-				if(key != undefined && keys.indexOf(key) == -1)
-//					if(key != $scope.field.key)
-						keys.push(key);
+				if($scope.field.data.onChange)
+					for(var i=0; i<$scope.field.data.onChange.length; i++){
+						var listener = $scope.field.data.onChange[i];
+						var key = listener.key? listener.key : undefined;
+						if(key != undefined && keys.indexOf(key) == -1)
+//							if(key != $scope.field.key)
+								keys.push(key);
+					}
 				
 				console.log("KEYS", $scope.field.type, $scope.field.key, data, keys);
 			
@@ -162,12 +180,17 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 						    	
 						    	// Update value (it might be a simple value or an object)
 						    	if($scope.field.subdata && $scope.field.subdata.length > 0){
-						    		console.log("UPDATING VALUE 1", $scope.field.type, $scope.field.subdata, newValue);
-						    		for(var i=0; i<$scope.field.subdata.length; i++) {
-						    			var obj = $scope.field.subdata[i];
-						    			if (obj == newValue || obj.id == newValue)
-						    				$scope.field.data.value = obj;
-						    		}
+						    		
+						    		if(newValue == undefined)
+						    			$scope.field.data.value = newValue;
+						    		else
+							    		for(var i=0; i<$scope.field.subdata.length; i++) {
+							    			var obj = $scope.field.subdata[i];
+							    			if (obj == newValue || obj.id == newValue){
+							    				console.log("UPDATING VALUE 1", key, obj, $scope.field.type, $scope.field.subdata, newValue);
+							    				$scope.field.data.value = obj;
+							    			}
+							    		}
 						    	}
 						    	else if(newValue != undefined && newValue.type != undefined){
 						    		console.log("UPDATING VALUE 3", $scope.field.type, newValue);
@@ -178,7 +201,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 //						    		$scope.field.elements = newValue;
 //						    	}
 						    	else {
-						    		console.log("UPDATING VALUE 2", $scope.field.type, $scope.field.data, newValue, $scope.field);
+						    		console.log("UPDATING VALUE 2", key, $scope.field.type, $scope.field.data, newValue, $scope.field);
 						    		if (key == $scope.field.key)
 						    			$scope.field.data.value = newValue == undefined ? newValue : (newValue.label || newValue);
 						    	}
@@ -206,9 +229,17 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				
 				var listener = $scope.field.data.onChange;
 				if(listener.action == "write") {
+					
 					console.log("[1 WRITE] ONCHANGE GLOBAL:", dataService, $scope.field.data);
-					console.log("MODIFYING GLOBAL WRITE", listener.key, $scope.field.data.id || $scope.field.data.value);
-					dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
+					
+//					dataService.global[listener.key] = $scope.field.data.id || $scope.field.data.value;
+					var value = $scope.field.data.id || $scope.field.data.value || $scope.field.data.id || listener.value;
+					console.log("MODIFYING GLOBAL WRITE", listener.key, value);					
+					if(listener.scope == "global") dataService.global[listener.target] = value;
+					else if(listener.scope == "self") $scope.field[listener.target] = value;
+					else if(listener.scope != undefined) $scope.field[listener.scope][listener.target] = value;
+					else dataService.global[listener.key] = value;
+					
 					console.log("[1 WRITE] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ", dataService.global[listener.key]);
 				}
 				else if(listener.action == "read") {
@@ -262,6 +293,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 	};
 	
 	$scope.set = function (value) {
+		console.log("SET", value, $scope.field);
 		
 		if($scope.field.exclusive || $scope.field.type == "radio")
 			$scope.field.data.value = value;
@@ -377,13 +409,38 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 	$scope.onChange = function(newValue){
 		console.log("["+$scope.field.type+"] ONCHANGE NEW VALUE: ", newValue, $scope.field);
 		
-			var listener = $scope.field.data.onChange;
-			if(listener && listener.action == "write") {
-				console.log("[2] ONCHANGE GLOBAL:", dataService);
-				console.log("MODIFYING GLOBAL", listener.key, newValue == undefined ? newValue : (newValue.id || newValue.key || newValue));
-				 dataService.global[listener.key] = newValue == undefined ? newValue : (newValue.id || newValue.key || newValue);
-//				dataService.global[listener.key] = newValue.id;
-				console.log("[2] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
+		if($scope.field.data.onChange)
+			for(var i=0; i<$scope.field.data.onChange.length; i++){
+				var listener = $scope.field.data.onChange[i];
+
+				if (listener.target != undefined){
+					if(listener.scope == "global") {
+						var o = dataService.global;
+						var path = listener.target;
+						var pieces = path.split(".")
+						for(var j=0;j<pieces.length-1; j++)
+						{
+							var piece = pieces[j];
+							console.log(piece, o);
+							o = o[piece]
+						}
+						
+						if(listener.action == "write")
+							o[pieces[pieces.length-1]] = newValue;
+						else(listener.action == "delete")
+							delete o[pieces[pieces.length-1]];
+						console.log("AFTER CHANGE", listener, o);
+					}
+				}
+				else{
+					if(listener.action == "write") {
+						console.log("[2] ONCHANGE GLOBAL:", dataService);
+						console.log("MODIFYING GLOBAL", listener.key, newValue == undefined ? newValue : (newValue.id || newValue.key || newValue));
+						dataService.global[listener.key] = newValue == undefined ? newValue : (newValue.id || newValue.key || newValue);
+		//				dataService.global[listener.key] = newValue.id;
+						console.log("[2] ONCHANGE GLOBAL CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", newValue, " (real value: "+dataService.global[listener.key]+")");
+					}
+				}
 			}
 	};
 	
@@ -419,7 +476,10 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 						var params = $routeParams.parameters.split("/");
 						value = params[n-1];
 					}
-					else value = dataService.global[template.key];
+					else {
+						if(!(template.key in dataService.global)) return undefined;
+						else value = dataService.global[template.key];
+					}
 				}
 				// else if(template.value_of) value = dataService.global[dataService.global[template.value_of]];
 				if(value == undefined) { // value == ""
@@ -428,14 +488,14 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 					return undefined;
 				}
 				
-//				console.log("GET URL MID", $scope.field.type, value);
+				console.log("GET URL MID", $scope.field.type, url, template, value, dataService.global);
 				
-				if(value.label) value = value.id; // MODIFIED
+				if(value.id) value = value.id; // MODIFIED
 				//if(angular.isString(value)) value = value.replace("/", "");
 				
-//				console.log("TEMPLATE REPLACEMENT", template, value);
-				
+				console.log("URL TEMPLATE REPLACEMENT BEFORE", finalUrl, template, value);
 				finalUrl = finalUrl.replace(template.template, value);
+				console.log("URL TEMPLATE REPLACEMENT AFTER", finalUrl, template, value);
 			}
 			
 //			console.log("GET_URL FINAL", url, finalUrl);
@@ -492,6 +552,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				console.log("REPLACING TARGET SPECIAL!", $scope.field.type, template.target, value, $scope.field);
 			}
 			else if($scope.field.data.value) {
+				console.log("ASSIGNING VALUE!", $scope.field.type, $scope.field);
 				if ($scope.field.data.value.label != undefined) $scope.field.data.value = ("" + $scope.field.data.value.label).replace(template.template, value);
 				else $scope.field.data.value = ("" + $scope.field.data.value).replace(template.template, value);
 			}
@@ -523,12 +584,14 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		console.log("AJAX [GET] TO", url, $scope.field);
 		
 		var method = $scope.field.method || "POST";
-		if (method == "GET")		
+		if (method == "GET"){
+			console.log("AJAX [GET]", url, $scope.field);
 			$scope.promise = $http.get(url);
+		}
 		else if (method == "POST"){
 			var args = dataService.getArgs($scope.field.data.source);
 			console.log("AJAX [POST] BUTTON ARGS", args, $scope.field);
-			$scope.promise = $http.post($scope.field.data.url, args);
+			$scope.promise = $http.post(url, args);
 		}
 		
 		$scope.promise.then(fx,
@@ -558,18 +621,21 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 		for(var k in $scope.field.subdata)
 		{
 			var item = $scope.field.subdata[k];
-			if(item.id == $scope.field.data.value)
+			if(item.id != undefined && item.id == $scope.field.data.value)
 			{
 				console.log("INIT FOUND", item, $scope.field);
 				$scope.field.data.value = item;
 				
-				var listener = $scope.field.data.onChange;
-				if(listener && listener.action == "write") {
-					console.log("[3] GLOBAL:", dataService);
-					console.log("MODIFYING GLOBAL", listener.key, $scope.field.data.value.id || $scope.field.data.value);
-					dataService.global[listener.key] = $scope.field.data.value.id || $scope.field.data.value;
-					console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
-				}
+				if($scope.field.data.onChange)
+					for(var i=0; i<$scope.field.data.onChange.length; i++){
+						var listener = $scope.field.data.onChange[i];
+						if(listener.action == "write") {
+							console.log("[3] GLOBAL:", dataService);
+							console.log("MODIFYING GLOBAL", listener.key, $scope.field.data.value.id || $scope.field.data.value);
+							dataService.global[listener.key] = $scope.field.data.value.id || $scope.field.data.value;
+							console.log("[3] CHANGING VALUE OF VARIABLE '" + listener.key + "' TO ", $scope.field.data.value, "real value: ",dataService.global[listener.key]);
+						}
+					}
 				
 				break;
 			}
@@ -611,6 +677,8 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				
 				if (instruction.action == "write") {
 					if(instruction.scope == "global") dataService.global[instruction.target] = response.data;
+					else if(instruction.scope == "self") $scope.field[instruction.target] = response.data;
+					else if(instruction.scope != undefined) $scope.field[instruction.scope][instruction.target] = response.data;
 					else $scope.field.data[instruction.target] = response.data;
 				}
 			}
@@ -1022,7 +1090,7 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 				{
 					var actionObject = listener[i];
 					
-					if(actionObject.action == "write")
+					if(actionObject.action == "write" || actionObject.action == "delete")
 					{
 						if($scope.field.type == "chart-pie")
 						{
@@ -1034,12 +1102,38 @@ app.controller("elementController", function($scope, $timeout, $sce, $http, $win
 							});
 						}
 						else {
-							console.log("[5] GLOBAL:", dataService, listener, value, $scope.toString(actionObject.value));
-							console.log("MODIFYING GLOBAL", actionObject.key, $scope.toString(actionObject.value));
+							
 							var newValue = $scope.toString(actionObject.value);
-							dataService.global[actionObject.key] = newValue;
-							dataService.global[actionObject.key + "_value"] = $scope.toString(value); // value.id || value.label || value
-							console.log("[5] CHANGING VALUE OF VARIABLE '", actionObject, "' TO ", newValue, "real value: ", dataService.global[actionObject.key], dataService.global);
+							
+							if(actionObject.scope == "global") {
+								if (actionObject.target != undefined){
+									var o = dataService.global;
+									var path = actionObject.target;
+									var pieces = path.split(".")
+									for(var j=0;j<pieces.length-1; j++)
+									{
+										var piece = pieces[j];
+										console.log(piece, o);
+										o = o[piece]
+									}
+									
+									if(actionObject.action == "write")
+										o[pieces[pieces.length-1]] = newValue;
+									else(actionObject.action == "delete")
+										delete o[pieces[pieces.length-1]];
+									console.log("AFTER CLICK", actionObject, o);
+								}
+							}
+							else if(actionObject.scope == "self") $scope.field[actionObject.target] = newValue;
+							else if(actionObject.scope != undefined) $scope.field[actionObject.scope][actionObject.target] = newValue;
+							else {
+								console.log("[5] GLOBAL:", dataService, listener, value, $scope.toString(actionObject.value));
+								console.log("MODIFYING GLOBAL", actionObject.key, $scope.toString(actionObject.value));
+								
+								dataService.global[actionObject.key] = newValue;
+								dataService.global[actionObject.key + "_value"] = $scope.toString(value); // value.id || value.label || value
+								console.log("[5] CHANGING VALUE OF VARIABLE '", actionObject, "' TO ", newValue, "real value: ", dataService.global[actionObject.key], dataService.global);
+							}
 						}
 					}
 				}

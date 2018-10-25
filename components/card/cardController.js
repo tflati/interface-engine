@@ -200,7 +200,7 @@ app.controller("cardController", function($scope, $window, $rootScope, dataServi
 		else if(condition.op == "==") show = arg1 == arg2;
 		else if(condition.op == "!=") show = arg1 != arg2;
 		
-		console.log("WATCH CARD SHOW UPDATE", $scope.card, show, condition, arg1, arg2, typeof(arg1), typeof(arg2), arg1 == arg2);
+//		console.log("WATCH CARD SHOW UPDATE", $scope.card, show, condition, arg1, arg2, typeof(arg1), typeof(arg2), arg1 == arg2);
 		
 		return show;
 	};

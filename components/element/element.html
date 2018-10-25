@@ -16,6 +16,8 @@
 	</img>
 </a>
 
+<a ng-if="field.type == 'link'" title="{{field.title}}" target="{{field.target}}" ng-href="{{field.url}}" ng-bind="field.label"></a>
+
 <div ng-if="field.type == 'chips'">
 	<md-chips ng-model="field.filtered_items" readonly="true" md-removable="false">
 		<md-chip-template custom-chip>
@@ -329,111 +331,110 @@
 
 <!-- <i ng-if="form.tooltip" tooltip-show-trigger="focusin" tooltip-hide-trigger="focusout" title-direction="right" title="{{form.tooltip}}" class="fa fa-question-circle fa-2x" style="color: orange"></i> -->
 
-<md-input-container class="md-input-has-placeholder" ng-if="field.subtype == 'form'">
+<md-input-container class="md-block md-input-has-value" ng-if="field.subtype == 'form' && field.type != 'autocomplete'">
 
-	<md-content ng-if="field.type != 'autocomplete'">
+	<label ng-if="field.type != 'checkbox' && field.type != 'submit'" ng-bind="field.label"></label>
+
+	<!-- Upload file(s) -->		
+	<md-button ng-if="field.type == 'upload' && !field.message || field.error" class="md-raised md-primary" ngf-select="upload($files)" ng-model="files" ngf-multiple="true">Upload</md-button>
+	<p ng-if="field.type == 'upload' && field.message" ng-bind="field.message"></p>
 	
-		<label ng-if="field.type != 'checkbox' && field.type != 'submit'" ng-bind="field.label"></label>
+	<!-- Simple text -->
+	<input ng-if="field.type == 'text'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="text" ng-required="{{field.required}}" />
 
-		<!-- Upload file(s) -->		
-		<md-button ng-if="field.type == 'upload' && !field.message || field.error" class="md-raised md-primary" ngf-select="upload($files)" ng-model="files" ngf-multiple="true">Upload</md-button>
-		<p ng-if="field.type == 'upload' && field.message" ng-bind="field.message"></p>
-		
-		<!-- Simple text -->
-		<input ng-if="field.type == 'text'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="text" ng-required="{{field.required}}" />
+	<!-- Numbers -->
+	<input ng-if="field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" step="{{field.step || 1}}" type="number" ng-required="{{field.required}}" />
 
-		<!-- Numbers -->
-		<input ng-if="field.type == 'number'" ng-change="onChange(field.data.value)" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" step="{{field.step || 1}}" type="number" ng-required="{{field.required}}" />
+	<!-- Password -->
+	<input ng-if="field.type == 'password'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
 
-		<!-- Password -->
-		<input ng-if="field.type == 'password'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
+	<!-- Email -->
+	<input ng-if="field.type == 'email'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
 
-		<!-- Email -->
-		<input ng-if="field.type == 'email'" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" type="{{field.type}}" ng-required="{{field.required}}" />
-
-		<!-- Textarea -->
-		<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" ng-required="{{field.required}}"></textarea>
-		
-		<!-- Select simple -->
-		<md-select
-			md-on-open="get_options()"
-			ng-model-options="{trackBy: '$value.id'}"
-			ng-model="field.data.value"
-			ng-change="onChange(field.data.value)"
-			ng-if="field.type == 'select' && (!field.data.multiple || field.data.multiple == false)"
-			ng-required="{{field.required}}"
-		>
-		
+	<!-- Textarea -->
+	<textarea ng-if="field.type == 'textarea'" rows="4" max-rows="4" placeholder="{{field.placeholder}}" ng-model="field.data.value" ng-value="{{field.data.default}}" ng-required="{{field.required}}"></textarea>
+	
+	<!-- Select simple -->
+	<md-select
+		aria-label="A select form"
+		md-on-open="get_options()"
+		ng-model-options="{trackBy: '$value.id'}"
+		ng-model="field.data.value"
+		ng-change="onChange(field.data.value)"
+		ng-if="field.type == 'select' && (!field.data.multiple || field.data.multiple == false)"
+		ng-required="{{field.required}}"
+	>
+	
 <!-- 			<md-option ng-value="value" ng-repeat="value in subdata track by $index"><span>{{value.label}}</span></md-option> -->
-			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">
-				<div ng-if="value.label != undefined" layout="row" layout-align="start center">
-					<div ng-if="value.img">
-						<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
-					</div>
-					<div layout="row" layout-align="center center">
-						<p ng-if="value.label != undefined">{{value.label}}</p>
-						<p ng-if="value.extra" style="margin-left: 5px; color: grey">({{value.extra}})</p>
-					</div>
+		<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">
+			<div ng-if="value.label != undefined" layout="row" layout-align="start center">
+				<div ng-if="value.img">
+					<img ng-src="{{value.img}}" style="vertical-align: middle; margin-right: 15px;">
 				</div>
-				<span ng-if="value.label == undefined">{{value}}</span>
-			</md-option>
-		</md-select>
-		
-		<!-- Select multiple -->
-		<md-select multiple
-			ng-if="field.type == 'select' && field.data.multiple && field.data.multiple == true"
-			ng-model="field.data.value"
-			ng-model-options="{trackBy: '$value.id'}"
-			ng-required="{{field.required}}"
-			>
-			<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">{{value}}</md-option>
-		</md-select>
-		
-		<!-- Checkbox (simple) -->
-		<md-checkbox ng-if="field.type == 'checkbox' && !field.data.multiple" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
-			<div ng-bind-html="field.label"></div>
-		</md-checkbox>
-		
-		<!-- Checkbox (group) -->
-		<fieldset ng-if="field.type == 'checkbox' && field.data.multiple" ng-required="{{field.required}}">
-			<legend>{{field.label}}</legend>
-         	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value)" ng-click="toggle(value)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
-			<span ng-bind-html="value.label" title="{{value.title}}"></span>
-            </md-checkbox>
-        </fieldset>
-        
-        <!-- Radio -->
-		<md-radio-group ng-if="field.type == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.data.value">
-			<md-radio-button ng-click="toggle(value)" ng-repeat="value in field.data.values track by $index" name="{{field.group_id}}" ng-value="value.value" type="radio" aria-label="Multi-choice">
-				{{value.label}}
-			</md-radio-button>
-		</md-radio-group>
-		
-		<!-- Submit -->
-<!-- 		<form ng-if="field.type == 'submit'" method="{{field.data.type || 'GET'}}" action="{{field.data.url}}"> -->
-			<md-button ng-if="field.type == 'submit'" type="submit" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}" ng-disabled="get_url() == undefined">
-				<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
-				<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
-				{{field.label}}
-				<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
-			</md-button>
-<!-- 		</form> -->
-        
-	</md-content>
+				<div layout="row" layout-align="center center">
+					<p ng-if="value.label != undefined">{{value.label}}</p>
+					<p ng-if="value.extra" style="margin-left: 5px; color: grey">({{value.extra}})</p>
+				</div>
+			</div>
+			<span ng-if="value.label == undefined">{{value}}</span>
+		</md-option>
+	</md-select>
 	
-	<md-content ng-if="field.type == 'autocomplete'"
+	<!-- Select multiple -->
+	<md-select multiple
+		ng-if="field.type == 'select' && field.data.multiple && field.data.multiple == true"
+		ng-model="field.data.value"
+		ng-model-options="{trackBy: '$value.id'}"
+		ng-required="{{field.required}}"
+		>
+		<md-option ng-value="value" ng-repeat="value in field.subdata track by $index">{{value}}</md-option>
+	</md-select>
+	
+	<!-- Checkbox (simple) -->
+	<md-checkbox ng-if="field.type == 'checkbox' && !field.data.multiple" ng-model="field.data.value" ng-checked="field.data.value == true" ng-required="{{field.required}}">
+		<div ng-bind-html="field.label"></div>
+	</md-checkbox>
+	
+	<!-- Checkbox (group) -->
+	<fieldset ng-if="field.type == 'checkbox' && field.data.multiple" ng-required="{{field.required}}">
+		<legend>{{field.label}}</legend>
+        	<md-checkbox ng-repeat="value in field.subdata track by $index" ng-checked="exists(value)" ng-click="toggle(value)" style="display: {{field.inline ? 'inline-block' : 'block'}}">
+		<span ng-bind-html="value.label" title="{{value.title}}"></span>
+           </md-checkbox>
+       </fieldset>
+       
+       <!-- Radio -->
+	<md-radio-group ng-if="field.type == 'radio'" ng-disabled="{{field.disabled}}" ng-required="{{field.required}}" ng-model="field.data.value">
+		<md-radio-button ng-click="toggle(value)" ng-repeat="value in field.data.values track by $index" name="{{field.group_id}}" ng-value="value.value" type="radio" aria-label="Multi-choice">
+			{{value.label}}
+		</md-radio-button>
+	</md-radio-group>
+	
+	<!-- Submit -->
+<!-- 		<form ng-if="field.type == 'submit'" method="{{field.data.type || 'GET'}}" action="{{field.data.url}}"> -->
+		<md-button ng-if="field.type == 'submit'" type="submit" class="md-primary md-raised" style="text-decoration: none; background-color: {{field.color}}" ng-click="onClick()" title="{{field.title}}" ng-disabled="get_url() == undefined">
+			<i ng-if="field.data.icon" class="fa {{field.data.icon}} {{field.data.modifiers}}" style="color: {{field.data.color}}"></i>
+			<img ng-if="field.data.image" ng-src="{{field.data.image}}" height="{{field.data.height}}" style="vertical-align: middle;">
+			{{field.label}}
+			<i ng-if="doing_ajax" class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
+		</md-button>
+<!-- 		</form> -->
+</md-input-container>
+	
+<md-input-container class="md-block md-input-has-value" ng-if="field.subtype == 'form' && field.type == 'autocomplete'">
+	<md-content
 		class="md-input-has-placeholder"
 		ng-controller="autocompleteController as actrl"
 		ng-disabled="{{field.disabled}}"
 		ng-required="{{field.required}}"
 		md-select-on-match>
-		
-		<label ng-bind="field.label"></label>
-		
-		<div ng-if="sending" style="text-align: center; color: cadetblue;">
-			<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
-		</div>
-		
+	
+	<label ng-bind="field.label"></label>
+	
+	<div ng-if="sending" style="text-align: center; color: cadetblue;">
+		<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i>
+	</div>
+	
 		<md-autocomplete
 		      md-select-on-match
 			  md-match-case-insensitive
@@ -447,8 +448,8 @@
 	          style="min-width: 100%"
 	          ng-required="{{field.required}}"
 	        >
-	        <md-item-template>
-	        
+        	<md-item-template>
+        
 	        	<div ng-class="{'disabled': item.disabled}">
 		        	<img ng-if="item.img" ng-src="{{item.img}}" style="vertical-align: middle;" ng-class="{'img-disabled': item.disabled}">
 		        	<span style="padding-bottom: 5px;" md-highlight-text="actrl.searchText" md-highlight-flags="^i">
@@ -456,7 +457,7 @@
 					</span>
 					<span ng-if="item.extra" style="margin: 0px; color: grey">({{item.extra}})</span>
 				</div>
-	        
+        
 <!-- 	        	<div ng-if="item.label" style="padding-bottom: 5px; display: table; width: 100%;"> -->
 <!-- 					<div style="display: table-cell; vertical-align: middle;" ng-if="item.img"> -->
 <!-- 						<img ng-src="{{item.img}}" style="vertical-align: middle; margin-right: 15px;"> -->
@@ -469,17 +470,17 @@
 <!-- 				<div ng-if="!value.label"> -->
 <!-- 					<span md-highlight-text="actrl.searchText" md-highlight-flags="^i">{{item.label}}</span> -->
 <!-- 				</div> -->
-	        </md-item-template>
+        	</md-item-template>
 	        <md-not-found>
 				<span ng-if="!sending">No items matching "{{actrl.searchText}}" were found.</span>
 	         	<span ng-if="sending">
 	         		<i class="fa fa-spinner fa-2x fa-spin fa-fw"></i>
 	         		Loading data...
 	         	</span>
-	       </md-not-found>
-	      </md-autocomplete>
-	</md-content>
+			</md-not-found>
+		</md-autocomplete>
 </md-input-container>
+
 <!-- 'padding-bottom': element.padding_bottom; -->
 <!-- layout-align="start center" layout-wrap layout="row" flex="100" -->
 <div ng-if="field.type == 'multi'" layout="{{field.layout || 'row'}}" layout-align="{{field.layout_align || 'start center'}}" layout-wrap>

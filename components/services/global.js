@@ -72,7 +72,7 @@ app.service("dataService", function($cookies) {
     
 	myService.getFields = function(x){
 		var form = myService.global[x];
-		console.log("[GET FIELDS] DATA SOURCE", x, form);
+//		console.log("[GET FIELDS] DATA SOURCE", x, form);
 		var fields = [];
 		
 		if (form != undefined && form.elements != undefined)
@@ -82,7 +82,7 @@ app.service("dataService", function($cookies) {
 				if(angular.isArray(row))
 					for(var i=0; i<row.length; i++){
 						var element = row[i];
-						console.log("[GET FIELDS] MACRO ELEMENT", element);
+//						console.log("[GET FIELDS] MACRO ELEMENT", element);
 						myService.getFieldsRecursive(element, fields);
 					}
 				else {
@@ -90,13 +90,13 @@ app.service("dataService", function($cookies) {
 				}
 			}
 
-		console.log("[GET FIELDS] FINAL", x, fields);
+//		console.log("[GET FIELDS] FINAL", x, fields);
 		return fields;
 	};
 	
 	myService.getFieldsRecursive = function(form, fields){
 		if(form.type == "submit") {
-			console.log("[GET FIELDS] SKIPPING", form);
+//			console.log("[GET FIELDS] SKIPPING", form);
 			return;
 		}
 		
@@ -104,12 +104,12 @@ app.service("dataService", function($cookies) {
 			for(var j=0; j<form.elements.length; j++){
 				var field = form.elements[j];
 				
-				console.log("[GET FIELDS] ELEMENT", field);
+//				console.log("[GET FIELDS] ELEMENT", field);
 				myService.getFieldsRecursive(field, fields);
 			}
 		else
 			if(form.subtype == "form"){
-				console.log("[GET FIELDS] ADDING FIELD TO FIELDS", form);
+//				console.log("[GET FIELDS] ADDING FIELD TO FIELDS", form);
 				fields.push(form);
 			}
 	};
